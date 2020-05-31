@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+    {% block head %}{% endblock %}
+    <link rel="shortcut icon" type="image/x-icon" href="static/Frog mask.png"/>
+    <link rel="stylesheet" type="text/css" href="static/Main.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<title>{% block title %}{% endblock %}</title>
+</head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<body class="body" style="min-height: 100%;">
+    <div class="topnav">
+        <a class="active" href="home">Home</a>
+        <a href="bar">Revolution</a>
+        <a href="#why_you_click_this">Bliep</a>
+        <a href="#frogs4life">Bloop</a>
+
+        <div class="search-container">
+            <form action="/#action_page.php">
+                <input type="text" placeholder="Doesn't work :D" name="search">
+                <button type="submit"><i class="fa fa-search">Search</i></button>
+            </form>
+        </div>
+    </div>
+
+    {% block content %}
+    {% endblock %}
+<!--    <div class="costumfooter">-->
+<!--      <p style="color: #BEBEBE;"> Froggo </p>-->
+<!--    </div>-->
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+</body>
+</html>

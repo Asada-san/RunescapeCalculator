@@ -1,0 +1,723 @@
+{% extends "base.html" %}
+{% block head %}
+  <link rel="stylesheet" type="text/css" href="static/bar.css">
+{% endblock %}
+{% block title %}Revolution{% endblock %}
+{% block content %}
+
+<div class="note">
+  <h2 style="text-align: center; margin-bottom: 15px; margin-top: 15px;">Revolution Bar</h2>
+  <button id="guide-button" class="note-button">General Info</button>
+  <div id="Bar-guide" class="content note-collapsible">
+    <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;">
+      Calculate the Average Ability Damage Per Tick (AADPT) as a percentage of the base damage of a revolution
+      bar by simply dragging and dropping abilities onto the bar below followed by pressing the "FIGHT!" button. <br><br>
+
+      Upon the press a fight between a player and a dummy is simulated. If so
+      desired, it is also possible to see more information by clicking
+      on the resulting DPT number (the script output is cut off after 3 min). Even more
+      information can be seen by checking the "Print more info" option under Python Script.<br><br>
+
+      Clicking on an ability links to the ability's RS3 wiki page.</p>
+  </div>
+  <button id="notes-button" class="note-button">Important Notes</button>
+  <div id="Bar-notes" class="content note-collapsible">
+    <ul style="margin-top: 10px; margin-right: 15px;">
+      <li>For every situation, average ability damages are used</li>
+      <li>Tuska's Wrath does its normal damage only. When fighting slayer creatures, please
+      don't let revolution activate this ability and instead activate it manually once every
+      2 minutes</li>
+      <li>As the name A --> Ability <-- DPT suggests, auto attacks are not taken into account</li>
+      <li>All ability information used to determine the AADPT can be viewed <a href="https://docs.google.com/spreadsheets/d/1RMa8fUcd_zgWi6WbCBz3xHjzrdCuumzlVF6y9aPkrgM/edit#gid=0" target="_blank" style="color: #4CAF50"><strong>here</strong></a></li>
+      <li>All ability images were yoinked from the RS3 wiki</li>
+    </ul>
+  </div>
+    <button id="options-button" class="note-button">Options Info</button>
+  <div id="Option-guide" class="content note-collapsible">
+    <ul style="margin-top: 10px; margin-right: 15px;">
+      <li><strong>Efficient:</strong><br>
+        When activated, the player cancels channeling abilities such that all damage is
+        still applied (except for the third hit of Concentrated Blast)
+        causing the next ability to be activated earlier.<br><br></li>
+      <li><strong>Switcher:</strong><br>
+        When activated, the player is allowed to have both dual and 2h abilities on the bar.
+        <br><br></li>
+      <li><strong>Base Damage:</strong><br>
+        The weapon damage of the player (default 1000; min 0; max 10000).
+        <br><br></li>
+      <li><strong>Stationary:</strong><br>
+        When activated, the dummy is not allowed to move such that bleed ability damage cannot
+        be doubled/tripled.<br><br></li>
+      <li><strong>Stun&Bind Immune:</strong><br>
+        When activated, the dummy is immune to stun and binds.<br><br></li>
+      <li><strong>Targets:</strong><br>
+        Determines the number of dummies within range up to a max of 5.<br><br></li>
+      <li><strong>Python Script Simulation Time and Starting Adrenaline:</strong><br>
+        Setting a value for both the simulation time (in seconds; min 1; max 3600) and
+        the starting adrenaline (min 0; max 100), the script won't detect cycles but instead
+        calculates the Damage Per Tick in the given simulation time.<br><br></li>
+    </ul>
+  </div>
+</div>
+
+<div class="centering">
+  <div class="btn-group">
+    <button id="OptBtn">Options</button>
+  </div>
+</div>
+
+<div id="optblock" class="content OptionBlock" style="background-color: #DGDGDG; margin-top: 20px;">
+  <form id="optmenu" name="optmenu" action="/action_page.php" method="get">
+    <div class="optsect" style="width: 50px;"></div>
+
+    <div id="AbilityOptions1" class="optsect">
+      <p style="margin-left: 15px; margin-top: 15px; text-align: center; font-weight: bold; color: var(--textColor2);">Equipment</p>
+      <label class="SingleOpt" for="StrengthCape" style="margin-left: 20px;">Strength Cape
+        <input id="StrengthCape" type="checkbox" value="true">
+        <span class="tickbox"></span>
+      </label>
+      <label class="SingleOpt" for="RoV" style="margin-left: 20px;">Ring of Vigour
+        <input id="RoV" type="checkbox" value="true">
+        <span class="tickbox"></span>
+      </label>
+      <label class="SingleOpt" for="MSoA" style="margin-left: 20px;">MS of Annihilation
+        <input id="MSoA" type="checkbox" value="true">
+        <span class="tickbox"></span>
+      </label>
+      <label class="SingleOpt" for="Grimoire" style="margin-left: 20px;">Erethdor's Grimoire
+        <input id="Grimoire" type="checkbox" value="true">
+        <span class="tickbox"></span>
+      </label>
+      <label class="OptSelect" for="Aura" style="margin-left: 15px; margin-right: 15px;">
+        <select id="Aura" style="float: center; width: 100%;" >
+          <option value="None" disabled selected hidden>Aura</option>
+          <option value="None">None</option>
+          <option value="Equilibrium">Equilibrium</option>
+          <option value="Berserker">Berserker</option>
+          <option value="Maniacal">Maniacal</option>
+          <option value="Reckless">Reckless</option>
+        </select>
+      </label>
+      <p style="margin-left: 15px; margin-top: 15px; text-align: center; font-weight: bold; color: var(--textColor2);">Bash Ability</p>
+      <label class="OptText" for="DefenceLevel">Defence Level:
+        <input type="number" id="DefenceLevel" name="fname" min="0" max="200" value="99" style="width: 50px;"><br>
+      </label>
+      <label class="OptText" for="ShieldArmourValue">Shield Armour:
+        <input type="number" id="ShieldArmourValue" name="fname" min="0" max="1000" value="491" style="width: 50px;"><br>
+      </label>
+    </div>
+
+    <div id="AbilityOptions2" class="optsect">
+      <p style="margin-left: 15px; margin-top: 15px; text-align: center; font-weight: bold; color: var(--textColor2);">Invention Perks</p>
+      <label class="SingleOpt" for="Level20Gear" style="margin-left: 20px;">Level 20 Gear
+        <input id="Level20Gear" type="checkbox" value="true">
+        <span class="tickbox"></span>
+      </label>
+      <label class="SingleOpt" for="PlantedFeet" style="margin-left: 20px;">Planted Feet
+        <input id="PlantedFeet" type="checkbox" value="true">
+        <span class="tickbox"></span>
+      </label>
+      <label class="OptSelect" for="Precise" style="margin-left: 15px; margin-right: 15px;">
+        <select id="Precise" style="float: center; width: 100%;" >
+          <option value="0" disabled selected hidden>Precise Perk</option>
+          <option value="0">None</option>
+          <option value="1">Precise 1</option>
+          <option value="2">Precise 2</option>
+          <option value="3">Precise 3</option>
+          <option value="4">Precise 4</option>
+          <option value="5">Precise 5</option>
+          <option value="6">Precise 6</option>
+        </select>
+      </label>
+      <label class="OptSelect" for="Equilibrium" style="margin-left: 15px; margin-right: 15px;">
+        <select id="Equilibrium" style="float: center; width: 100%;" >
+          <option value="0" disabled selected hidden>Equilibrium Perk</option>
+          <option value="0">None</option>
+          <option value="1">Equilibrium 1</option>
+          <option value="2">Equilibrium 2</option>
+          <option value="3">Equilibrium 3</option>
+          <option value="4">Equilibrium 4</option>
+        </select>
+      </label>
+      <label class="OptSelect" for="Biting" style="margin-left: 15px; margin-right: 15px;">
+        <select id="Biting" style="float: center; width: 100%;" >
+          <option value="0" disabled selected hidden>Biting Perk</option>
+          <option value="0">None</option>
+          <option value="1">Biting 1</option>
+          <option value="2">Biting 2</option>
+          <option value="3">Biting 3</option>
+          <option value="4">Biting 4</option>
+        </select>
+      </label>
+      <label class="OptSelect" for="Flanking" style="margin-left: 15px; margin-right: 15px;">
+        <select id="Flanking" style="float: center; width: 100%;" >
+          <option value="0" disabled selected hidden>Flanking Perk</option>
+          <option value="0">None</option>
+          <option value="1">Flanking 1</option>
+          <option value="2">Flanking 2</option>
+          <option value="3">Flanking 3</option>
+          <option value="4">Flanking 4</option>
+        </select>
+      </label>
+      <label class="OptSelect" for="Lunging" style="margin-left: 15px; margin-right: 15px;">
+        <select id="Lunging" style="float: center; width: 100%;" >
+          <option value="0" disabled selected hidden>Lunging Perk</option>
+          <option value="0">None</option>
+          <option value="1">Lunging 1</option>
+          <option value="2">Lunging 2</option>
+          <option value="3">Lunging 3</option>
+          <option value="4">Lunging 4</option>
+        </select>
+      </label>
+      <label class="OptSelect" for="Aftershock" style="margin-left: 15px; margin-right: 15px;">
+        <select id="Aftershock" style="float: center; width: 100%;" >
+          <option value="0" disabled selected hidden>Aftershock Perk</option>
+          <option value="0">None</option>
+          <option value="1">Aftershock 1</option>
+          <option value="2">Aftershock 2</option>
+          <option value="3">Aftershock 3</option>
+          <option value="4">Aftershock 4</option>
+        </select>
+      </label>
+    </div>
+
+    <div id="PlayerOptions" class="optsect">
+      <p style="margin-left: 15px; margin-top: 15px; text-align: center; font-weight: bold; color: var(--textColor2);">Player</p>
+      <label class="SingleOpt" for="afkStatus" style="margin-left: 20px;">Efficient
+        <input id="afkStatus" type="checkbox" value="true">
+        <span class="tickbox"></span>
+      </label>
+      <label class="SingleOpt" for="switchStatus" style="margin-left: 20px;">Switcher
+        <input id="switchStatus" type="checkbox" value="true">
+        <span class="tickbox"></span>
+      </label>
+      <label class="OptText" for="baseDamage">Base Damage:
+        <input type="number" id="baseDamage" name="fname" min="0" max="10000" value="1000"><br>
+      </label>
+      <p style="margin-left: 15px; margin-top: 5px; text-align: center; font-weight: bold; color: var(--textColor2);">Strength Boost</p>
+      <label class="OptText" for="StrengthBoost">Level Boost:
+        <input type="number" id="StrengthBoost" name="fname" min="0" max="60" value="0" style="width: 50px;"><br>
+      </label>
+      <label class="OptSelect" for="StrengthPrayer" style="margin-left: 15px; margin-right: 15px;">
+        <select id="StrengthPrayer" style="float: center; width: 100%;" >
+          <option value="1" disabled selected hidden>Strength Prayer</option>
+          <option value="1">None</option>
+          <option value="1.02">Burst of Strength</option>
+          <option value="1.04">Superhuman Strength</option>
+          <option value="1.06">Ultimate Strength</option>
+          <option value="1.08">Piety</option>
+          <option value="1.10">Turmoil</option>
+          <option value="1.12">Malevolence</option>
+        </select>
+      </label>
+      <p style="margin-left: 15px; margin-top: 5px; text-align: center; font-weight: bold; color: var(--textColor2);">Magic Boost</p>
+      <label class="OptText" for="MagicBoost">Level Boost:
+        <input type="number" id="MagicBoost" name="fname" min="0" max="60" value="0" style="width: 50px;"><br>
+      </label>
+      <label class="OptSelect" for="MagicPrayer" style="margin-left: 15px; margin-right: 15px;">
+        <select id="MagicPrayer" style="float: center; width: 100%;" >
+          <option value="1" disabled selected hidden>Magic Prayer</option>
+          <option value="1">None</option>
+          <option value="1.02">Charge</option>
+          <option value="1.04">Super Charge</option>
+          <option value="1.06">Overcharge</option>
+          <option value="1.08">Augury</option>
+          <option value="1.10">Torment</option>
+          <option value="1.12">Affliction</option>
+        </select>
+      </label>
+      <p style="margin-left: 15px; margin-top: 5px; text-align: center; font-weight: bold; color: var(--textColor2);">Ranged Boost</p>
+      <label class="OptText" for="RangedBoost">Level Boost:
+        <input type="number" id="RangedBoost" name="fname" min="0" max="60" value="0" style="width: 50px;"><br>
+      </label>
+      <label class="OptSelect" for="RangedPrayer" style="margin-left: 15px; margin-right: 15px;">
+        <select id="RangedPrayer" style="float: center; width: 100%;" >
+          <option value="1" disabled selected hidden>Ranged Prayer</option>
+          <option value="1">None</option>
+          <option value="1.02">Unstoppable Force</option>
+          <option value="1.04">Unrelenting Force</option>
+          <option value="1.06">Overpowering Force</option>
+          <option value="1.08">Rigour</option>
+          <option value="1.10">Anguish</option>
+          <option value="1.12">Desolation</option>
+        </select>
+      </label>
+    </div>
+
+
+    <div id="DummyOptions" class="optsect">
+      <p style="margin-top: 15px; text-align: center; font-weight: bold; color: var(--textColor2);">Dummy</p>
+      <label class="SingleOpt" for="movementStatus" style="margin-left: 20px;">Stationary
+        <input id="movementStatus" type="checkbox" value="true" checked>
+        <span class="tickbox"></span>
+      </label>
+      <label class="SingleOpt" for="stunbindStatus" style="margin-left: 20px;">Stun&Bind Immune
+        <input id="stunbindStatus" type="checkbox" value="true">
+        <span class="tickbox"></span>
+      </label>
+      <label class="OptSelect" for="nTargets" style="margin-left: 15px; margin-right: 15px;">Targets:
+        <select id="nTargets" style="float: right; width: 62%;" >
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </label>
+    </div>
+
+    <div id="PythonScriptOptions" class="optsect">
+      <p style="margin-top: 15px; text-align: center; font-weight: bold; color: var(--textColor2);">Python Script</p>
+      <label class="OptText" for="simulationTime">Simulation T(s):
+        <input type="number" id="simulationTime" name="fname" min="0" max="3600" value="0" style="float: right;"><br>
+      </label>
+      <label class="OptText" for="Adrenaline">Start Adrenaline:
+        <input type="number" id="Adrenaline" name="fname" min="0" max="100" value="0" style="width: 50px; float: right;"><br>
+      </label>
+      <label class="SingleOpt" for="HTMLwrite" style="margin-left: 20px;">Print more info
+        <input id="HTMLwrite" type="checkbox" value="true">
+        <span class="tickbox"></span>
+      </label>
+    </div>
+
+    <div class="optsect" style="width: 50px;"></div>
+  </form>
+</div>
+
+
+<div class="centering">
+  <div class="btn-group">
+    <button id="AttBtn" class="collapsible">Attack</button>
+    <button id="StrBtn" class="collapsible">Strength</button>
+    <button id="MagBtn" class="collapsible">Magic</button>
+    <button id="RanBtn" class="collapsible">Ranged</button>
+    <button id="ConBtn" class="collapsible">Constitution</button>
+    <button id="DefBtn" class="collapsible">Defence</button>
+  </div>
+</div>
+
+<!--length: n*70+5+200-->
+<div id="attabils" class="content AbilBlock" style="background-color: #FFD700; margin-top: 20px;">
+  <div class="attbox">
+    <div class="AbilType">Basic</div>
+    <div class="att">
+      <img src="static/Slice.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Slice" width="60" height="60">
+    </div>
+    <div class="att">
+      <img src="static/Backhand.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Backhand" width="60" height="60">
+    </div>
+    <div class="att">
+      <img src="static/Havoc.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Havoc" width="60" height="60">
+    </div>
+    <div class="att">
+      <img src="static/Smash.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Smash" width="60" height="60">
+    </div>
+    <div class="att">
+      <img src="static/Barge.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Barge" width="60" height="60">
+    </div>
+    <div class="att">
+      <img src="static/Greater_Barge.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Greater_Barge" width="60" height="60">
+    </div>
+    <div class="att">
+      <img src="static/Sever.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Sever" width="60" height="60">
+    </div>
+    <div class="att">
+      <img src="static/Bladed_Dive.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Bladed_Dive" width="60" height="60">
+    </div>
+  </div>
+
+  <div class="attbox">
+    <div class="AbilType">Threshold</div>
+    <div class="att">
+      <img src="static/Slaughter.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Slaughter" width="60" height="60">
+    </div>
+    <div class="att">
+      <img src="static/Forceful_Backhand.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Forceful_Backhand" width="60" height="60">
+    </div>
+    <div class="att">
+      <img src="static/Flurry.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Flurry" width="60" height="60">
+    </div>
+    <div class="att">
+      <img src="static/Greater_Flurry.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Greater_Flurry" width="60" height="60">
+    </div>
+    <div class="att">
+      <img src="static/Hurricane.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Hurricane" width="60" height="60">
+    </div>
+    <div class="att">
+      <img src="static/Blood_Tendrils.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Blood_Tendrils" width="60" height="60">
+    </div>
+  </div>
+
+  <div class="attbox">
+    <div class="AbilType">Ultimate</div>
+    <div class="att">
+      <img src="static/Overpower.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Overpower" width="60" height="60">
+    </div>
+    <div class="att">
+      <img src="static/Massacre.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Massacre" width="60" height="60">
+    </div>
+    <div class="att">
+      <img src="static/Meteor_Strike.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Meteor_Strike" width="60" height="60">
+    </div>
+    <div class="att">
+      <img src="static/Balanced_Strike.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Balanced_Strike" width="60" height="60">
+    </div>
+  </div>
+
+  <div class="attbox">
+    <div class="AbilType">Lesser</div>
+    <div class="att">
+      <img src="static/Lesser_Havoc.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Lesser_Havoc" width="60" height="60">
+    </div>
+    <div class="att">
+      <img src="static/Lesser_Smash.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Lesser_Smash" width="60" height="60">
+    </div>
+    <div class="att">
+      <img src="static/Lesser_Sever.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Lesser_Sever" width="60" height="60">
+    </div>
+  </div>
+</div>
+
+<div id="strabils" class="content AbilBlock" style="background-color: #FFA500;">
+  <div class="strbox">
+    <div class="AbilType" style="background-color: var(--strColor);">Basic</div>
+    <div class="str">
+      <img src="static/Kick.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Kick" width="60" height="60">
+    </div>
+    <div class="str">
+      <img src="static/Punish.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Punish" width="60" height="60">
+    </div>
+    <div class="str">
+      <img src="static/Dismember.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Dismember" width="60" height="60">
+    </div>
+    <div class="str">
+      <img src="static/Fury.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Fury" width="60" height="60">
+    </div>
+    <div class="str">
+      <img src="static/Greater_Fury.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Greater_Fury" width="60" height="60">
+    </div>
+    <div class="str">
+      <img src="static/Cleave.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Cleave" width="60" height="60">
+    </div>
+    <div class="str">
+      <img src="static/Decimate.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Decimate" width="60" height="60">
+    </div>
+  </div>
+
+  <div class="strbox">
+    <div class="AbilType" style="background-color: var(--strColor);">Threshold</div>
+    <div class="str">
+      <img src="static/Stomp.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Stomp" width="60" height="60">
+    </div>
+    <div class="str">
+      <img src="static/Destroy.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Destroy" width="60" height="60">
+    </div>
+    <div class="str">
+      <img src="static/Quake.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Quake" width="60" height="60">
+    </div>
+    <div class="str">
+      <img src="static/Assault.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Assault" width="60" height="60">
+    </div>
+  </div>
+
+  <div class="strbox">
+    <div class="AbilType" style="background-color: var(--strColor);">Ultimate</div>
+    <div class="str">
+      <img src="static/Berserk.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Berserk" width="60" height="60">
+    </div>
+    <div class="str">
+      <img src="static/Pulverise.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Pulverise" width="60" height="60">
+    </div>
+    <div class="str">
+      <img src="static/Frenzy.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Frenzy" width="60" height="60">
+    </div>
+  </div>
+
+  <div class="strbox">
+    <div class="AbilType" style="background-color: var(--strColor);">Lesser</div>
+    <div class="str">
+      <img src="static/Lesser_Dismember.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Lesser_Dismember" width="60" height="60">
+    </div>
+  </div>
+</div>
+
+<div id="magabils" class="content AbilBlock" style="background-color: #00008B;">
+  <div class="magbox">
+    <div class="AbilType" style="background-color: var(--magColor); color: #FFFFFF">Basic</div>
+    <div class="mag">
+      <img src="static/Wrack.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Wrack" width="60" height="60">
+    </div>
+    <div class="mag">
+      <img src="static/Impact.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Impact" width="60" height="60">
+    </div>
+    <div class="mag">
+      <img src="static/Dragon_Breath.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Dragon_Breath" width="60" height="60">
+    </div>
+    <div class="mag">
+      <img src="static/Sonic_Wave.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Sonic_Wave" width="60" height="60">
+    </div>
+    <div class="mag">
+      <img src="static/Shock.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Shock" width="60" height="60">
+    </div>
+    <div class="mag">
+      <img src="static/Concentrated_Blast.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Concentrated_Blast" width="60" height="60">
+    </div>
+    <div class="mag">
+      <img src="static/Combust.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Combust" width="60" height="60">
+    </div>
+    <div class="mag">
+      <img src="static/Surge.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Surge" width="60" height="60">
+    </div>
+    <div class="mag">
+      <img src="static/Chain.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Chain" width="60" height="60">
+    </div>
+    <div class="mag">
+      <img src="static/Corruption_Blast.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Corruption_Blast" width="60" height="60">
+    </div>
+  </div>
+
+  <div class="magbox">
+    <div class="AbilType" style="background-color: var(--magColor); color: #FFFFFF">Threshold</div>
+    <div class="mag">
+      <img src="static/Asphyxiate.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Asphyxiate" width="60" height="60">
+    </div>
+    <div class="mag">
+      <img src="static/Deep_Impact.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Deep_Impact" width="60" height="60">
+    </div>
+    <div class="mag">
+      <img src="static/Horror.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Horror" width="60" height="60">
+    </div>
+    <div class="mag">
+      <img src="static/Detonate.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Detonate" width="60" height="60">
+    </div>
+    <div class="mag">
+      <img src="static/Wild_Magic.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Wild_Magic" width="60" height="60">
+    </div>
+    <div class="mag">
+      <img src="static/Smoke_Tendrils.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Smoke_Tendrils" width="60" height="60">
+    </div>
+  </div>
+
+  <div class="magbox">
+    <div class="AbilType" style="background-color: var(--magColor); color: #FFFFFF">Ultimate</div>
+    <div class="mag">
+      <img src="static/Omnipower.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Omnipower" width="60" height="60">
+    </div>
+    <div class="mag">
+      <img src="static/Metamorphosis.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Metamorphosis" width="60" height="60">
+    </div>
+    <div class="mag">
+      <img src="static/Tsunami.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Tsunami" width="60" height="60">
+    </div>
+    <div class="mag">
+      <img src="static/Sunshine.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Sunshine" width="60" height="60">
+    </div>
+  </div>
+
+  <div class="magbox">
+    <div class="AbilType" style="background-color: var(--magColor); color: #FFFFFF">Lesser</div>
+    <div class="mag">
+      <img src="static/Lesser_Dragon_Breath.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Lesser_Dragon_Breath" width="60" height="60">
+    </div>
+    <div class="mag">
+      <img src="static/Lesser_Sonic_Wave.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Lesser_Sonic_Wave" width="60" height="60">
+    </div>
+    <div class="mag">
+      <img src="static/Lesser_Concentrated_Blast.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Lesser_Concentrated_Blast" width="60" height="60">
+    </div>
+    <div class="mag">
+      <img src="static/Lesser_Combust.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Lesser_Combust" width="60" height="60">
+    </div>
+  </div>
+</div>
+
+<div id="ranabils" class="content AbilBlock" style="background-color: #006400;">
+  <div class="ranbox">
+    <div class="AbilType" style="background-color: var(--ranColor); color: #FFFFFF">Basic</div>
+    <div class="ran">
+      <img src="static/Piercing_Shot.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Piercing_Shot" width="60" height="60">
+    </div>
+    <div class="ran">
+      <img src="static/Binding_Shot.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Binding_Shot" width="60" height="60">
+    </div>
+    <div class="ran">
+      <img src="static/Snipe.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Snipe" width="60" height="60">
+    </div>
+    <div class="ran">
+      <img src="static/Dazing_Shot.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Dazing_Shot" width="60" height="60">
+    </div>
+    <div class="ran">
+      <img src="static/Greater_Dazing_Shot.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Greater_Dazing_Shot" width="60" height="60">
+    </div>
+    <div class="ran">
+      <img src="static/Demoralise.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Demoralise" width="60" height="60">
+    </div>
+    <div class="ran">
+      <img src="static/Needle_Strike.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Needle_Strike" width="60" height="60">
+    </div>
+    <div class="ran">
+      <img src="static/Fragmentation_Shot.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Fragmentation_Shot" width="60" height="60">
+    </div>
+    <div class="ran">
+      <img src="static/Escape.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Escape" width="60" height="60">
+    </div>
+    <div class="ran">
+      <img src="static/Ricochet.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Ricochet" width="60" height="60">
+    </div>
+    <div class="ran">
+      <img src="static/Corruption_Shot.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Corruption_Shot" width="60" height="60">
+    </div>
+  </div>
+
+  <div class="ranbox">
+    <div class="AbilType" style="background-color: var(--ranColor); color: #FFFFFF">Threshold</div>
+    <div class="ran">
+      <img src="static/Snap_Shot.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Snap_Shot" width="60" height="60">
+    </div>
+    <div class="ran">
+      <img src="static/Tight_Bindings.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Tight_Bindings" width="60" height="60">
+    </div>
+    <div class="ran">
+      <img src="static/Rout.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Rout" width="60" height="60">
+    </div>
+    <div class="ran">
+      <img src="static/Rapid_Fire.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Rapid_Fire" width="60" height="60">
+    </div>
+    <div class="ran">
+      <img src="static/Bombardment.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Bombardment" width="60" height="60">
+    </div>
+    <div class="ran">
+      <img src="static/Salt_the_Wound.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Salt_the_Wound" width="60" height="60">
+    </div>
+    <div class="ran">
+      <img src="static/Shadow_Tendrils.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Shadow_Tendrils" width="60" height="60">
+    </div>
+  </div>
+
+  <div class="ranbox">
+    <div class="AbilType" style="background-color: var(--ranColor); color: #FFFFFF">Ultimate</div>
+    <div class="ran">
+      <img src="static/Deadshot.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Deadshot" width="60" height="60">
+    </div>
+    <div class="ran">
+      <img src="static/Incendiary_Shot.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Incendiary_Shot" width="60" height="60">
+    </div>
+    <div class="ran">
+      <img src="static/Unload.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Unload" width="60" height="60">
+    </div>
+    <div class="ran">
+      <img src="static/Death's_Swiftness.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Death's_Swiftness" width="60" height="60">
+    </div>
+  </div>
+
+  <div class="ranbox">
+    <div class="AbilType" style="background-color: var(--ranColor); color: #FFFFFF">Lesser</div>
+    <div class="ran">
+      <img src="static/Lesser_Snipe.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Lesser_Snipe" width="60" height="60">
+    </div>
+    <div class="ran">
+      <img src="static/Lesser_Dazing_Shot.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Lesser_Dazing_Shot" width="60" height="60">
+    </div>
+    <div class="ran">
+      <img src="static/Lesser_Needle_Strike.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Lesser_Needle_Strike" width="60" height="60">
+    </div>
+    <div class="ran">
+      <img src="static/Lesser_Fragmentation_Shot.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Lesser_Fragmentation_Shot" width="60" height="60">
+    </div>
+  </div>
+</div>
+
+<div id="conabils" class="content AbilBlock" style="background-color: #DE0219;">
+  <div class="conbox">
+    <div class="AbilType" style="background-color: var(--conColor); color: #FFFFFF">Basic</div>
+    <div class="con">
+      <img src="static/Sacrifice.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Sacrifice" width="60" height="60">
+    </div>
+    <div class="con">
+      <img src="static/Tuska's_Wrath.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Tuska's_Wrath" width="60" height="60">
+    </div>
+  </div>
+
+  <div class="conbox">
+    <div class="AbilType" style="background-color: var(--conColor); color: #FFFFFF">Threshold</div>
+  </div>
+
+  <div class="conbox">
+    <div class="AbilType" style="background-color: var(--conColor); color: #FFFFFF">Ultimate</div>
+  </div>
+
+  <div class="conbox">
+    <div class="AbilType" style="background-color: var(--conColor); color: #FFFFFF">Lesser</div>
+  </div>
+</div>
+
+<div id="defabils" class="content AbilBlock" style="background-color: #4B4B4B;">
+  <div class="defbox">
+    <div class="AbilType" style="background-color: var(--defColor); color: #FFFFFF">Basic</div>
+    <div class="def">
+      <img src="static/Bash.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Bash" width="60" height="60">
+    </div>
+  </div>
+
+  <div class="defbox">
+    <div class="AbilType" style="background-color: var(--defColor); color: #FFFFFF">Threshold</div>
+    <div class="def">
+      <img src="static/Debilitate.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Debilitate" width="60" height="60">
+    </div>
+  </div>
+
+  <div class="defbox">
+    <div class="AbilType" style="background-color: var(--defColor); color: #FFFFFF">Ultimate</div>
+  </div>
+
+  <div class="defbox">
+    <div class="AbilType" style="background-color: var(--defColor); color: #FFFFFF">Lesser</div>
+  </div>
+</div>
+
+
+
+<div id="RevolutionBar">
+  <div id="revo1" class="RevoBar" ondrop="drop(event)" ondragover="allowDrop(event)" style="border-left: 0px; width: 61px;"></div>
+  <div id="revo2" class="RevoBar" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+  <div id="revo3" class="RevoBar" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+  <div id="revo4" class="RevoBar" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+  <div id="revo5" class="RevoBar" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+  <div id="revo6" class="RevoBar" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+  <div id="revo7" class="RevoBar" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+  <div id="revo8" class="RevoBar" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+  <div id="revo9" class="RevoBar" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+  <div id="revo10" class="RevoBar" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+  <div id="revo11" class="RevoBar" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+  <div id="revo12" class="RevoBar" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+  <div id="revo13" class="RevoBar" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+  <div id="revo14" class="RevoBar" ondrop="drop(event)" ondragover="allowDrop(event)" style="border-right: 0px; width: 61px"></div>
+</div>
+
+<div style="text-align: center;">
+  <div class="btn-group">
+    <button id="clearbutton" type="button" style="padding: 1px 20px; margin-top: 15px">clear bar</button>
+  </div>
+</div>
+
+<div style="text-align: center;">
+  <div class="btn-group">
+    <button id="calcbutton" type="button" style="padding: 10px 40px; margin-top: 50px; margin-bottom: 20px;">FIGHT!</button>
+  </div>
+</div>
+
+<div id="DPTbox" class="content">
+  <div class="outputNote">
+    <p id="DPT"></p>
+  </div>
+</div>
+
+<div id="VerifyBox" class="notecontent">
+  <div class="RotationVerifierNote">
+    <p id="DPTprint"></p>
+  </div>
+</div>
+
+<script src="static/bar.js"></script>
+
+{% endblock %}
