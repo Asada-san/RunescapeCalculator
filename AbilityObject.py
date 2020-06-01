@@ -112,25 +112,21 @@ class Ability:
                 Max = self.SideTargetMax.copy()
                 Min = self.SideTargetMin.copy()
 
-        N = len(Max)  # Amount of averages to calculate
-
         # If the user selected the Flanking Perk, set stun abilities
         if player.PerkFlanking:
             if self.Name in {'Backhand', 'Impact', 'Binding Shot'}:
                 self.Stun = False  # Abilities above lose their stun effect
 
                 for i in range(0, self.nS):  # Increase min by 8% per rank, max by 40% per rank
-                    self.DamMin[i] += 0.08 * player.Fr * player.BaseDamage
-                    self.DamMax[i] += 0.4 * player.Fr * player.BaseDamage
+                    Max[i] += 0.4 * player.Fr
+                    Min[i] += 0.08 * player.Fr
 
             if self.Name in {'Forceful Backhand', 'Deep Impact', 'Tight Bindings'}:
                 self.Stun = False  # Abilities above lose their stun effect
 
                 for i in range(0, self.nS):  # Increase min by 6% per rank, max by 30% per rank
-                    self.DamMin[i] += 0.06 * player.Fr * player.BaseDamage
-                    self.DamMax[i] += 0.3 * player.Fr * player.BaseDamage
-
-        Avg = []
+                    Max[i] += 0.3 * player.Fr
+                    Min[i] += 0.06 * player.Fr
 
         if self.Name != 'Bash':  # Bash ability has its own base damage
             Max = Max * player.BaseDamageEffective
@@ -143,9 +139,11 @@ class Ability:
         Max += 8 * player.LevelBoost
         Min += 4 * player.LevelBoost
 
+        Avg = []
         CritCap = player.CritCap    # Critical hit damage cap
         DmgCap = 10000              # Normal hit damage cap
-        for i in range(0, N):  # For N hits
+        # For all hits
+        for i in range(0, len(Max)):
 
             # If the user selected the Precise perk
             if player.PerkPrecise:
@@ -233,6 +231,15 @@ class Ability:
 
         nExtend = 0  # Variable used for bleed extensions
 
+        # If the user selected the Lunging Perk, set bleeds
+        if player.PerkLunging and self.Name in {'Dismember', 'Combust', 'Fragmentation Shot'}:
+            # Bleeds of Combust and Fragmentation Shot are multiplied by 1.5 upon walking instead of 2
+            if self.Name != 'Dismember':
+                self.BleedOnMove = 1.5
+
+            # Increase max hit by 0.2 for every rank
+            Max[0] += 0.2 * player.Lr
+
         # If the player has a boost from berserker or w/e, the aura boost is replaced by the ability boost
         if player.Boost:  # If the player has a damage boost
             Max *= player.BaseDamage
@@ -266,15 +273,6 @@ class Ability:
 
             if Do.HTMLwrite:
                 Do.Text += f'<li style="color: {Do.init_color};">Ability change: Extended {self.Name} by 2 hits</li>'
-
-        # If the user selected the Lunging Perk, set bleeds
-        if player.PerkLunging and self.Name in {'Dismember', 'Combust', 'Fragmentation Shot'}:
-            # Bleeds of Combust and Fragmentation Shot are multiplied by 1.5 upon walking instead of 2
-            if self.Name != 'Dismember':
-                self.BleedOnMove = 1.5
-
-            # Increase max hit by 0.2 for every rank
-            self.DoTMax[0] += 0.2 * player.Lr * player.BaseDamage
 
         ##############################################################
         ################## Calculate averages ########################

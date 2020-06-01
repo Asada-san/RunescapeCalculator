@@ -2,7 +2,7 @@ import time
 import pprint
 import numpy as np
 import CombatChecks as CC
-import AttackingPhase as Attack
+import AttackCycle as Attack
 import CycleChecker as Cycle
 import LoopObjects
 import DummyObject
@@ -178,7 +178,8 @@ def fight_dummy(user_input, AbilityBook):
     loop.CycleDamage += loop.CyclePunctureDamage
 
     Results = {  # The output of main
-        'AADPT': round(loop.CycleDamage / (loop.CycleTime / tick) / player.BaseDamage * 100, 3),
+        'AADPTPercentage': round(loop.CycleDamage / (loop.CycleTime / tick) / player.BaseDamage * 100, 3),
+        'AADPT': round(loop.CycleDamage / (loop.CycleTime / tick), 3),
         'BaseDamage': player.BaseDamage,
         'SimulationTime': int(loop.n),
         'CycleTime': round(loop.CycleTime, 1),

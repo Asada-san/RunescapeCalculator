@@ -303,10 +303,9 @@ def DummyDamage(bar, dummy, player, Do, loop):
 
             # If cause is a bleed and the dummy is able to move and there are no stuns/binds active on the dummy
             if dummy.PHits[i].Type == 3 and dummy.Movement and not any([dummy.Stun, dummy.Bind]):
-                if dummy.PHits[i].Name == 'Slaughter':
-                    dummy.PHits[i].Damage *= 3
-                elif dummy.PHits[i].Name in {'Combust', 'Fragmentation Shot'}:
-                    dummy.PHits[i].Damage *= 2
+                IDX = bar.AbilNames.index(dummy.PHits[i].Name)
+
+                dummy.PHits[i].Damage *= bar.Rotation[IDX].BleedOnMove
 
             ##############################################################
             ############### Determine average hit damage #################

@@ -1,6 +1,6 @@
 import pprint
 import numpy as np
-import AttackingPhase as Attack
+import AttackCycle as Attack
 import LoopObjects
 import DummyObject
 import BarObject
@@ -191,7 +191,7 @@ def AbilityBar_verifier(user_input, AbilityBook, bar, dummy, player, Do, loop):
 
         player.LevelBoost = player.MagicLevelBoost
 
-    elif bar.Style == 'Typless':
+    elif bar.Style == 'Typeless':
         player.BaseDamageEffective *= max(player.StrengthPrayerBoost, player.RangedPrayerBoost, player.MagicPrayerBoost)
 
         if player.Aura in {'Berserker', 'Maniacal', 'Reckless'}:

@@ -6,104 +6,135 @@
 {% block content %}
 
 <div class="note">
-  <h2 style="text-align: center; margin-bottom: 15px; margin-top: 15px;">Revolution Bar</h2>
+  <h2 style="text-align: center; margin-bottom: 15px; margin-top: 15px;">Revolution Bar <span style="font-size:small;">V1.03</span></h2>
   <button id="guide-button" class="note-button">General Info</button>
   <div id="Bar-guide" class="content note-collapsible">
     <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;">
-      Calculate the Average Ability Damage Per Tick (AADPT) as a percentage of the base damage of a revolution
-      bar by simply dragging and dropping abilities onto the bar below followed by pressing the "FIGHT!" button. <br><br>
+      Look through the combat sections for the abilities you want to put on the bar. If you want more information
+      about a certain ability, click on it and it will link you to its RS3 wiki page. <br><br>
 
-      Upon the press a fight between a player and a dummy is simulated. If so
-      desired, it is also possible to see more information by clicking
-      on the resulting DPT number (the script output is cut off after 3 min). Even more
-      information can be seen by checking the "Print more info" option under Python Script.<br><br>
+      Constructing the revolution bar is as simple as dragging abilities onto it. Deleting an ability from the bar is
+      done by clicking on it, deleting the entire bar at once is done by clicking the "clear bar" button. You can also
+      switch around abilities already on the bar. It is also possible to set certain options in the options
+      section. <br><br>
 
-      Clicking on an ability links to the ability's RS3 wiki page.</p>
+      When you've got your desired bar, click on the FIGHT! button. A fight between a player and a dummy
+      will be simulated resulting in an Average Ability Damage Per Tick (AADPT) (in both a number and a percentage
+      of the base ability damage as calculated
+      <a href="https://runescape.wiki/w/Ability_damage#Calculating_ability_damage" target="_blank" style="color: #4CAF50"><strong>here</strong></a>).
+      Clicking on this resulting number will allow you to view some more interesting information.<br><br>
+
+      If anything is wrong or if you have any suggestions please let me know by sending an email to:
+      <a style="color: #4CAF50" href="mailto:RS-RevolutionCalc@outlook.com">RS-RevolutionCalc@outlook.com</a>.
+    </p>
   </div>
   <button id="notes-button" class="note-button">Important Notes</button>
   <div id="Bar-notes" class="content note-collapsible">
     <ul style="margin-top: 10px; margin-right: 15px;">
-      <li>For every situation, average ability damages are used</li>
+      <li>Average ability damages are used for the calculating the AADPT </li>
       <li>Tuska's Wrath does its normal damage only. When fighting slayer creatures, please
-      don't let revolution activate this ability and instead activate it manually once every
+      don't let revolution activate this ability, but instead activate it manually once every
       2 minutes</li>
-      <li>As the name A --> Ability <-- DPT suggests, auto attacks are not taken into account</li>
+      <li>As the resulting A --> Ability <-- DPT suggests, auto attacks are not taken into account</li>
       <li>All ability information used to determine the AADPT can be viewed <a href="https://docs.google.com/spreadsheets/d/1RMa8fUcd_zgWi6WbCBz3xHjzrdCuumzlVF6y9aPkrgM/edit#gid=0" target="_blank" style="color: #4CAF50"><strong>here</strong></a></li>
+      <li>The code can be viewed <a href="https://github.com/Asada-san/RunescapeCalculator" target="_blank" style="color: #4CAF50"><strong>here</strong></a></li>
       <li>All ability images were yoinked from the RS3 wiki</li>
     </ul>
   </div>
-    <button id="options-button" class="note-button">Options Info</button>
-<!--  <div id="Option-guide" class="content note-collapsible">-->
-<!--    <ul style="margin-top: 10px; margin-right: 15px;">-->
-<!--      <li><strong>Efficient:</strong><br>-->
-<!--        When activated, the player cancels channeling abilities such that all damage is-->
-<!--        still applied (except for the third hit of Concentrated Blast)-->
-<!--        causing the next ability to be activated earlier.<br><br></li>-->
-<!--      <li><strong>Switcher:</strong><br>-->
-<!--        When activated, the player is allowed to have both dual and 2h abilities on the bar.-->
-<!--        <br><br></li>-->
-<!--      <li><strong>Base Damage:</strong><br>-->
-<!--        The weapon damage of the player (default 1000; min 0; max 10000).-->
-<!--        <br><br></li>-->
-<!--      <li><strong>Stationary:</strong><br>-->
-<!--        When activated, the dummy is not allowed to move such that bleed ability damage cannot-->
-<!--        be doubled/tripled.<br><br></li>-->
-<!--      <li><strong>Stun&Bind Immune:</strong><br>-->
-<!--        When activated, the dummy is immune to stun and binds.<br><br></li>-->
-<!--      <li><strong>Targets:</strong><br>-->
-<!--        Determines the number of dummies within range up to a max of 5.<br><br></li>-->
-<!--      <li><strong>Python Script Simulation Time and Starting Adrenaline:</strong><br>-->
-<!--        Setting a value for both the simulation time (in seconds; min 1; max 3600) and-->
-<!--        the starting adrenaline (min 0; max 100), the script won't detect cycles but instead-->
-<!--        calculates the Damage Per Tick in the given simulation time.<br><br></li>-->
-<!--    </ul>-->
-<!--  </div>-->
+  <button id="changelog-button" class="note-button">Changelog</button>
+  <div id="Changelog-notes" class="content note-collapsible">
+    <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.03</strong></p>
+    <ul style="margin-top: 10px; margin-right: 15px;">
+      <li>All average ability damages are now calculated properly within the code instead of reading
+        values from an excel sheet</li>
+      <li>Added Precise, Equilibrium, Biting, Flanking and Lunging perks</li>
+      <li>Moved the options block and increased its size</li>
+      <li>Rewrote code so all player equipment related options are now assigned to the player object instead of them
+        being all over the place</li>
+      <li>Added Concentrated Blast, Fury and Greater Fury effects related to critical hits</li>
+      <li>Added a fourth condition for the cycle finder: Forced critical hit boost has to be equal too</li>
+      <li>Added Meteor Strike, Sunshine and Incendiary adrenaline boosting effect due to crits --- might be wonky</li>
+      <li>Added the aftershock perk and therefore also added the base damage back, and this time properly!</li>
+      <li>Added level 20 gear option and Erethdor's Grimoire</li>
+      <li>Added 2 defensive abilities: Debilitate and Bash</li>
+      <li>Base Ability Damage Boosts are now applied properly and in the right place</li>
+      <li>Added Equilibrium aura and made the average hit calculator more accurate</li>
+      <li>Widened certain blocks</li>
+      <li>Added Berserker, Maniacal and Reckless aura's</li>
+      <li>Added Damage boosts from level increasing boosts like the aura's above or potions</li>
+      <li>Added Prayer boosts</li>
+      <li>Added print more info button in options for python script</li>
+      <li>Rewrote code resulting in a slight decrease in python script runtime but increasing the readability of the
+        script</li>
+      <li>Made it so ability info is read from excel only once upon startup instead of every time the FIGHT! button is
+        pressed resulting in a significant decrease in execution time, especially for bars with
+        small cycle times</li>
+      <li>Moved host from DigitalOcean (paid) to Heroku (free)</li>
+      <li>Added Options Info section</li>
+    </ul>
+    <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.02 and earlier; no info</strong></p>
+  </div>
 </div>
 
 <div class="centering">
   <div class="btn-group">
-    <button id="OptBtn">Options</button>
+    <button id="OptBtn" class="Options">Options</button>
+    <button id="OptInfoBtn" class="Options">Options Info</button>
   </div>
 </div>
 
-<div id="optblock" class="content OptionBlock" style="background-color: #DGDGDG; margin-top: 20px;">
+<div id="optBlock" class="content OptionBlock" style="background-color: #DGDGDG; margin-top: 20px;">
   <form id="optmenu" name="optmenu" action="/action_page.php" method="get">
     <div class="optsect" style="width: 50px;"></div>
 
     <div id="AbilityOptions1" class="optsect">
-      <p style="margin-left: 15px; margin-top: 15px; text-align: center; font-weight: bold; color: var(--textColor2);">Equipment</p>
-      <label class="SingleOpt" for="StrengthCape" style="margin-left: 20px;">Strength Cape
-        <input id="StrengthCape" type="checkbox" value="true">
-        <span class="tickbox"></span>
+      <p style="margin-left: 15px; margin-top: 15px; text-align: center; font-weight: bold; color: var(--textColor2);">Strength Boost</p>
+      <label class="OptText" for="StrengthBoost">Level Boost:
+        <input type="number" id="StrengthBoost" name="fname" min="0" max="60" value="0" style="width: 50px;"><br>
       </label>
-      <label class="SingleOpt" for="RoV" style="margin-left: 20px;">Ring of Vigour
-        <input id="RoV" type="checkbox" value="true">
-        <span class="tickbox"></span>
-      </label>
-      <label class="SingleOpt" for="MSoA" style="margin-left: 20px;">MS of Annihilation
-        <input id="MSoA" type="checkbox" value="true">
-        <span class="tickbox"></span>
-      </label>
-      <label class="SingleOpt" for="Grimoire" style="margin-left: 20px;">Erethdor's Grimoire
-        <input id="Grimoire" type="checkbox" value="true">
-        <span class="tickbox"></span>
-      </label>
-      <label class="OptSelect" for="Aura" style="margin-left: 15px; margin-right: 15px;">
-        <select id="Aura" style="float: center; width: 100%;" >
-          <option value="None" disabled selected hidden>Aura</option>
-          <option value="None">None</option>
-          <option value="Equilibrium">Equilibrium</option>
-          <option value="Berserker">Berserker</option>
-          <option value="Maniacal">Maniacal</option>
-          <option value="Reckless">Reckless</option>
+      <label class="OptSelect" for="StrengthPrayer" style="margin-left: 15px; margin-right: 15px;">
+        <select id="StrengthPrayer" style="float: center; width: 100%;" >
+          <option value="1" disabled selected hidden>Strength Prayer</option>
+          <option value="1">None</option>
+          <option value="1.02">Burst of Strength</option>
+          <option value="1.04">Superhuman Strength</option>
+          <option value="1.06">Ultimate Strength</option>
+          <option value="1.08">Piety</option>
+          <option value="1.10">Turmoil</option>
+          <option value="1.12">Malevolence</option>
         </select>
       </label>
-      <p style="margin-left: 15px; margin-top: 15px; text-align: center; font-weight: bold; color: var(--textColor2);">Bash Ability</p>
-      <label class="OptText" for="DefenceLevel">Defence Level:
-        <input type="number" id="DefenceLevel" name="fname" min="0" max="200" value="99" style="width: 50px;"><br>
+      <p style="margin-left: 15px; margin-top: 15px; text-align: center; font-weight: bold; color: var(--textColor2);">Magic Boost</p>
+      <label class="OptText" for="MagicBoost">Level Boost:
+        <input type="number" id="MagicBoost" name="fname" min="0" max="60" value="0" style="width: 50px;"><br>
       </label>
-      <label class="OptText" for="ShieldArmourValue">Shield Armour:
-        <input type="number" id="ShieldArmourValue" name="fname" min="0" max="1000" value="491" style="width: 50px;"><br>
+      <label class="OptSelect" for="MagicPrayer" style="margin-left: 15px; margin-right: 15px;">
+        <select id="MagicPrayer" style="float: center; width: 100%;" >
+          <option value="1" disabled selected hidden>Magic Prayer</option>
+          <option value="1">None</option>
+          <option value="1.02">Charge</option>
+          <option value="1.04">Super Charge</option>
+          <option value="1.06">Overcharge</option>
+          <option value="1.08">Augury</option>
+          <option value="1.10">Torment</option>
+          <option value="1.12">Affliction</option>
+        </select>
+      </label>
+      <p style="margin-left: 15px; margin-top: 15px; text-align: center; font-weight: bold; color: var(--textColor2);">Ranged Boost</p>
+      <label class="OptText" for="RangedBoost">Level Boost:
+        <input type="number" id="RangedBoost" name="fname" min="0" max="60" value="0" style="width: 50px;"><br>
+      </label>
+      <label class="OptSelect" for="RangedPrayer" style="margin-left: 15px; margin-right: 15px;">
+        <select id="RangedPrayer" style="float: center; width: 100%;" >
+          <option value="1" disabled selected hidden>Ranged Prayer</option>
+          <option value="1">None</option>
+          <option value="1.02">Unstoppable Force</option>
+          <option value="1.04">Unrelenting Force</option>
+          <option value="1.06">Overpowering Force</option>
+          <option value="1.08">Rigour</option>
+          <option value="1.10">Anguish</option>
+          <option value="1.12">Desolation</option>
+        </select>
       </label>
     </div>
 
@@ -182,6 +213,44 @@
     </div>
 
     <div id="PlayerOptions" class="optsect">
+      <p style="margin-left: 15px; margin-top: 15px; text-align: center; font-weight: bold; color: var(--textColor2);">Equipment</p>
+      <label class="SingleOpt" for="StrengthCape" style="margin-left: 20px;">Strength Cape
+        <input id="StrengthCape" type="checkbox" value="true">
+        <span class="tickbox"></span>
+      </label>
+      <label class="SingleOpt" for="RoV" style="margin-left: 20px;">Ring of Vigour
+        <input id="RoV" type="checkbox" value="true">
+        <span class="tickbox"></span>
+      </label>
+      <label class="SingleOpt" for="MSoA" style="margin-left: 20px;">MS of Annihilation
+        <input id="MSoA" type="checkbox" value="true">
+        <span class="tickbox"></span>
+      </label>
+      <label class="SingleOpt" for="Grimoire" style="margin-left: 20px;">Erethdor's Grimoire
+        <input id="Grimoire" type="checkbox" value="true">
+        <span class="tickbox"></span>
+      </label>
+      <label class="OptSelect" for="Aura" style="margin-left: 15px; margin-right: 15px;">
+        <select id="Aura" style="float: center; width: 100%;" >
+          <option value="None" disabled selected hidden>Aura</option>
+          <option value="None">None</option>
+          <option value="Equilibrium">Equilibrium</option>
+          <option value="Berserker">Berserker</option>
+          <option value="Maniacal">Maniacal</option>
+          <option value="Reckless">Reckless</option>
+        </select>
+      </label>
+      <p style="margin-left: 15px; margin-top: 15px; text-align: center; font-weight: bold; color: var(--textColor2);">Bash Ability</p>
+      <label class="OptText" for="DefenceLevel">Defence Level:
+        <input type="number" id="DefenceLevel" name="fname" min="0" max="200" value="99" style="width: 50px;"><br>
+      </label>
+      <label class="OptText" for="ShieldArmourValue">Shield Armour:
+        <input type="number" id="ShieldArmourValue" name="fname" min="0" max="1000" value="491" style="width: 50px;"><br>
+      </label>
+    </div>
+
+
+    <div id="DummyOptions" class="optsect">
       <p style="margin-left: 15px; margin-top: 15px; text-align: center; font-weight: bold; color: var(--textColor2);">Player</p>
       <label class="SingleOpt" for="afkStatus" style="margin-left: 20px;">Efficient
         <input id="afkStatus" type="checkbox" value="true">
@@ -191,61 +260,9 @@
         <input id="switchStatus" type="checkbox" value="true">
         <span class="tickbox"></span>
       </label>
-      <label class="OptText" for="baseDamage">Base Damage:
+      <label class="OptText" for="baseDamage">Ability Damage:
         <input type="number" id="baseDamage" name="fname" min="0" max="10000" value="1000"><br>
       </label>
-      <p style="margin-left: 15px; margin-top: 5px; text-align: center; font-weight: bold; color: var(--textColor2);">Strength Boost</p>
-      <label class="OptText" for="StrengthBoost">Level Boost:
-        <input type="number" id="StrengthBoost" name="fname" min="0" max="60" value="0" style="width: 50px;"><br>
-      </label>
-      <label class="OptSelect" for="StrengthPrayer" style="margin-left: 15px; margin-right: 15px;">
-        <select id="StrengthPrayer" style="float: center; width: 100%;" >
-          <option value="1" disabled selected hidden>Strength Prayer</option>
-          <option value="1">None</option>
-          <option value="1.02">Burst of Strength</option>
-          <option value="1.04">Superhuman Strength</option>
-          <option value="1.06">Ultimate Strength</option>
-          <option value="1.08">Piety</option>
-          <option value="1.10">Turmoil</option>
-          <option value="1.12">Malevolence</option>
-        </select>
-      </label>
-      <p style="margin-left: 15px; margin-top: 5px; text-align: center; font-weight: bold; color: var(--textColor2);">Magic Boost</p>
-      <label class="OptText" for="MagicBoost">Level Boost:
-        <input type="number" id="MagicBoost" name="fname" min="0" max="60" value="0" style="width: 50px;"><br>
-      </label>
-      <label class="OptSelect" for="MagicPrayer" style="margin-left: 15px; margin-right: 15px;">
-        <select id="MagicPrayer" style="float: center; width: 100%;" >
-          <option value="1" disabled selected hidden>Magic Prayer</option>
-          <option value="1">None</option>
-          <option value="1.02">Charge</option>
-          <option value="1.04">Super Charge</option>
-          <option value="1.06">Overcharge</option>
-          <option value="1.08">Augury</option>
-          <option value="1.10">Torment</option>
-          <option value="1.12">Affliction</option>
-        </select>
-      </label>
-      <p style="margin-left: 15px; margin-top: 5px; text-align: center; font-weight: bold; color: var(--textColor2);">Ranged Boost</p>
-      <label class="OptText" for="RangedBoost">Level Boost:
-        <input type="number" id="RangedBoost" name="fname" min="0" max="60" value="0" style="width: 50px;"><br>
-      </label>
-      <label class="OptSelect" for="RangedPrayer" style="margin-left: 15px; margin-right: 15px;">
-        <select id="RangedPrayer" style="float: center; width: 100%;" >
-          <option value="1" disabled selected hidden>Ranged Prayer</option>
-          <option value="1">None</option>
-          <option value="1.02">Unstoppable Force</option>
-          <option value="1.04">Unrelenting Force</option>
-          <option value="1.06">Overpowering Force</option>
-          <option value="1.08">Rigour</option>
-          <option value="1.10">Anguish</option>
-          <option value="1.12">Desolation</option>
-        </select>
-      </label>
-    </div>
-
-
-    <div id="DummyOptions" class="optsect">
       <p style="margin-top: 15px; text-align: center; font-weight: bold; color: var(--textColor2);">Dummy</p>
       <label class="SingleOpt" for="movementStatus" style="margin-left: 20px;">Stationary
         <input id="movementStatus" type="checkbox" value="true" checked>
@@ -284,6 +301,42 @@
   </form>
 </div>
 
+<div id="optInfoBlock" class="content OptionBlock" style="background-color: #DGDGDG;">
+  <div class="optsect" style="width: 50px;"></div>
+  <div id="AbilityInfo1" class="optsect" style="width: 500px;">
+    <p style="margin-left: 15px; margin-top: 15px; color: var(--textColor2);">
+      <strong>Level Boost:</strong> The amount of boosted levels (above your base level) due to
+      potions and/or aura's (min:0, max:60).<br><br>
+      <strong>Level 20 Gear:</strong> Assumes the equipment levels of all augmented items are equal to
+      level 20.<br><br>
+      <strong>Flanking Perk:</strong> Assumes the target (the dummy) is not facing you at all times.<br><br>
+      <strong>Efficient:</strong> Assumes the player breaks channeling abilities such that they still
+      do all their damage (except for Concentrated Blast which cuts off after 2 hits) but the next
+      ability is activated earlier.<br><br>
+      <strong>Switcher:</strong> Assumes the player switches between 2h/dual/shield whenever required
+      for the next available ability.<br><br>
+      <strong>Ability Damage:</strong> The ability damage as calculated in the
+      <a href="https://runescape.wiki/w/Ability_damage#Calculating_ability_damage" target="_blank" style="color: blue">"Calculating ability damage"</a>
+      section on the RS3 wiki.<br><br>
+    </p>
+  </div>
+  <div id="AbilityInfo2" class="optsect" style="width: 500px;">
+    <p style="margin-left: 15px; margin-top: 15px; color: var(--textColor2);">
+      <strong>Stationary:</strong> Assumes the dummy is stuck in place, meaning bleed damage won't
+      be multiplied. When not ticked, bleed damage is multiplied for all hits (unless the dummy is
+      stunned and/or bound).<br><br>
+      <strong>Stun&Bind Immune:</strong> Assumes the dummy is immune to stuns and binds from abilities.<br><br>
+      <strong>Targets:</strong> Number of targets within reach for all AoE abilities.<br><br>
+      <strong>Simulation T(s) and Start Adrenaline</strong> When a value has been set for both the
+      Simulation Time (s) (min: 1, max: 3600) and the Starting Adrenaline (min:0, max:100), the Python
+      script won't detect cycles but instead runs for the given simulation time and determines the
+      Damage Per Tick (DPT) in that time.<br><br>
+      <strong>Print more info:</strong> When ticked, up to the first 3 minutes of the simulation time can
+      be verified upon clicking the resulting AADPT number.<br><br>
+    </p>
+  </div>
+  <div class="optsect" style="width: 50px;"></div>
+</div>
 
 <div class="centering">
   <div class="btn-group">
@@ -296,7 +349,6 @@
   </div>
 </div>
 
-<!--length: n*70+5+200-->
 <div id="attabils" class="content AbilBlock" style="background-color: #FFD700; margin-top: 20px;">
   <div class="attbox">
     <div class="AbilType">Basic</div>

@@ -73,31 +73,62 @@ for (var i = 0; i < coll.length; i++) { // for every collapsible button
     });
 }
 
+////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+// OPTIONS CONTENT ROLL OUT/IN /////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
 
-var optContent = document.getElementById("optblock")
+// Get all collapsible buttons in an array
+var optBtns = document.getElementsByClassName("Options");
 
-// buttons used within a note block
-var optButton = document.getElementById("OptBtn");
+// Get all the content corresponding to the collapsible buttons in an array
+var optContent = [
+    Options = document.getElementById("optBlock"),
+    OptionsInfo = document.getElementById("optInfoBlock")
+];
 
-optButton.addEventListener("click", function(ev) {
-    this.classList.toggle("active");
+var LastBtnIdx = null; // The previous button the user clicked on
 
-//        // depending on which button has been clicked on set index
-//        if (srcId.id == "guide-button") {
-//            var ScrollIdx = 0;
-//        } else if (srcId.id == "notes-button") {
-//            var ScrollIdx = 1;
-//        } else if (srcId.id == "options-button") {
-//            var ScrollIdx = 2;
-//        }
+for (var i = 0; i < optBtns.length; i++) { // for every collapsible button
+    // If the button is clicked on
+    optBtns[i].addEventListener("click", function(ev) {
+//        this.classList.toggle("active"); // toggle this class active
+        // get button element which has been clicked on
+        var srcId = document.getElementById(ev.srcElement.id)
 
-    // if the content is already showing
-    if (optContent.style.maxHeight){
-        optContent.style.maxHeight = null;
-    } else { // else ScrollOut the content
-        optContent.style.maxHeight = optContent.scrollHeight + "px";
-    }
-});
+        // depending on which button has been clicked on set index
+        if (srcId.id == "OptBtn") {
+            var ScrollBtnIdx = 0;
+        } else if (srcId.id == "OptInfoBtn") {
+            var ScrollBtnIdx = 1;
+        }
+
+        // if the content is already showing
+        if (optContent[ScrollBtnIdx].style.maxHeight){
+            optContent[ScrollBtnIdx].style.maxHeight = null;
+            ScrollOut = false;
+        } else { // else ScrollOut the content
+            optContent[ScrollBtnIdx].style.maxHeight = optContent[ScrollBtnIdx].scrollHeight + "px";
+            ScrollOut = true;
+        }
+
+        // depending on the action in the previous if-else statement:
+        // if this is not the first button being clicked on and its not the same
+        // button as last time
+        if (LastBtnIdx !== null && LastBtnIdx !== ScrollBtnIdx) {
+            // basically do the opposite for the previous content compared to the new content
+            if (ScrollOut) {
+                optContent[LastBtnIdx].style.maxHeight = null;
+            } else {
+                optContent[LastBtnIdx].style.maxHeight = optContent[LastBtnIdx].scrollHeight + "px";
+            }
+        }
+
+        // update the button which has previously been clicked on
+        LastBtnIdx = ScrollBtnIdx;
+    });
+}
 
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
@@ -356,7 +387,7 @@ calcDPT.addEventListener("click", async function(ev) {
             }
 
             // create a link using the DPT number, links to test page
-            var linkStr = `<span class="DPTprintButton" onclick="DPTprint()" style="color: #4CAF50;"><strong>${data['AADPT']}%</strong></span>`;
+            var linkStr = `<span class="DPTprintButton" onclick="DPTprint()" style="color: #4CAF50;"><strong>${data['AADPT']} (${data['AADPTPercentage']}%)</strong></span>`;
 
             // CREATE A MESSAGE TO SHOW THE (AA)DPT
             if (data['CycleRotation'].length !== 0) {
@@ -442,7 +473,7 @@ var button = document.getElementsByClassName("note-button");
 var noteContent = [
     guide = document.getElementById("Bar-guide"),
     notes = document.getElementById("Bar-notes"),
-    options = document.getElementById("Option-guide"),
+    options = document.getElementById("Changelog-notes"),
 ];
 
 for (var i = 0; i < button.length; i++) { // for every note button
@@ -456,7 +487,7 @@ for (var i = 0; i < button.length; i++) { // for every note button
             var ScrollIdx = 0;
         } else if (srcId.id == "notes-button") {
             var ScrollIdx = 1;
-        } else if (srcId.id == "options-button") {
+        } else if (srcId.id == "changelog-button") {
             var ScrollIdx = 2;
         }
 

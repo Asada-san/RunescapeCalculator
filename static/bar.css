@@ -8,7 +8,7 @@
     display: block;
     overflow: hidden;
     max-height: 0;
-    transition: max-height 0.2s ease-out;
+    transition: max-height 0.3s ease-out;
 }
 
 /* note at the top of the screen */
@@ -17,7 +17,7 @@
     margin: auto;
     margin-top: 20px;
     text-align: left;
-    width: 600px;
+    width: 700px;
     box-shadow: var(--note-border);
     background-color: var(--note-bg-color);
     line-height: normal;
@@ -30,12 +30,12 @@
 .note-collapsible {
     color: var(--textColor1);
     background-color: var(--note-bg-color);
-    width: 600px;
+    width: 700px;
 }
 
 .note-button {
     display: inline-block;
-    width: 600px;
+    width: 700px;
     height: 30px;
     margin-top: 0px;
     background-color: var(--note-button-bg-color);
@@ -313,7 +313,7 @@
     float: left;
     margin: auto;
     width: 200px;
-    height: 600px;
+    height: 500px;
     color: var(--textColor2);
 }
 

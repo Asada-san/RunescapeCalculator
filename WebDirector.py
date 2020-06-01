@@ -6,7 +6,7 @@ import json
 import pprint
 import Revolution_main as calcMain
 import CombatChecks as CC
-import AttackingPhase as Attack
+import AttackCycle as Attack
 import LoopObjects as CO
 import AbilityObject
 import pandas as pd
