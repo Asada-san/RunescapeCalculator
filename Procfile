@@ -1,1 +1,1 @@
-web: WebDirector --log-file=-
+web: gunicorn WebDirector:app
