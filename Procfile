@@ -1,1 +1,1 @@
-web: WebDirector:app --log-file=-
+web: WebDirector --log-file=-
