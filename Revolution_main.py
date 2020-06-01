@@ -178,7 +178,7 @@ def fight_dummy(user_input, AbilityBook):
     loop.CycleDamage += loop.CyclePunctureDamage
 
     Results = {  # The output of main
-        'AADPT': round(loop.CycleDamage / ((loop.CycleTime + .6) / tick) / player.BaseDamage * 100, 3),
+        'AADPT': round(loop.CycleDamage / (loop.CycleTime / tick) / player.BaseDamage * 100, 3),
         'BaseDamage': player.BaseDamage,
         'SimulationTime': int(loop.n),
         'CycleTime': round(loop.CycleTime, 1),

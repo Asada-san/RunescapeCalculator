@@ -111,7 +111,7 @@ class Ability:
             else:
                 Max = self.SideTargetMax.copy()
                 Min = self.SideTargetMin.copy()
-        print(Max, Min)
+
         N = len(Max)  # Amount of averages to calculate
 
         # If the user selected the Flanking Perk, set stun abilities

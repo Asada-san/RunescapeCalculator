@@ -10,6 +10,7 @@ import AttackingPhase as Attack
 import LoopObjects as CO
 import AbilityObject
 import pandas as pd
+from AbilityBook import AbilityBook
 import time
 
 app = Flask(__name__)
@@ -79,33 +80,6 @@ def calc():
 
 
 if __name__ == '__main__':
-
-    ##############################################################
-    ################ Create ability objects once #################
-    ##############################################################
-
-    # Get table from excel file WITH ALL ABILITY INFORMATION
-    tab_excel = pd.read_excel('AbilityInfo.xlsx')
-    rows, columns = tab_excel.shape  # Shape of excel table
-
-    AbilityBook = {}
-    rowIDX = 0
-    nTables = 6  # There are 6 tables each corresponding to a different cb skill
-
-    # For every table in the excel file
-    for i in range(0, nTables):
-
-        # Store the name and the corresponding row in a dict
-        while rowIDX <= rows - 1 and str(tab_excel.iloc[rowIDX][0]) != 'nan':
-
-            # Create the ability object
-            ability = AbilityObject.Ability(tab_excel.iloc[rowIDX])
-
-            AbilityBook.update({ability.Name: ability})
-
-            rowIDX += 1
-
-        rowIDX += 2  # Skip NaN row and headers
 
     ##############################################################
     ###################### Run the webapp ########################
