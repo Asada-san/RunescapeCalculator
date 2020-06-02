@@ -112,10 +112,10 @@ def AttackDummy(bar, player, dummy, Do, loop):
             dummy.PHits[dummy.nPH: dummy.nPH + FA.nS] = deepcopy(FA.HitsStunBind)
 
         if any([FA.Bleed, FA.Puncture]):  # If standard ability also has an effect
-            EffectCheck(dummy, FA, Do)
+            EffectCheck(bar, dummy, player, FA, Do)
     # Elif the ability has an effect
     elif FA.Bleed:
-        EffectCheck(dummy, FA, Do)
+        EffectCheck(bar, dummy, player, FA, Do)
     # Else the ability doesn't do any damage: end this function
     else:
         return FA
@@ -147,7 +147,7 @@ def AttackDummy(bar, player, dummy, Do, loop):
     return FA
 
 
-def EffectCheck(dummy, FA, Do):
+def EffectCheck(bar, dummy, player, FA, Do):
 
     ##############################################################
     ### Determine whether ability has bleed or puncture effect ###
@@ -181,10 +181,16 @@ def EffectCheck(dummy, FA, Do):
         ##############################################################
 
         if FA.Name == 'Salt the Wound':
-            # Min = 0,036   Max = 0,18  Avg = 0,108
-            dummy.PHits[dummy.nPH + FA.nS].Damage += 0.108 * dummy.nPuncture
+            IDX = bar.AbilNames.index(FA.Name)  # Spot of the ability on the bar
 
-            dummy.nPuncture = 0
+            Hit = deepcopy(FA.Hits[0])  # Copy the hit from the ability to fire
+
+            # Calculate its new average
+            Hit.Damage = bar.Rotation[IDX].StandardChannelDamAvgCalc(player, Do, 'Salt the Wound', FA.Hits[0].Index, dummy.nPuncture)[0]
+
+            dummy.PHits[dummy.nPH] = Hit  # Put the hit with the new average in the pending hits
+
+            dummy.nPuncture = 0  # Reset stack
 
             return None
 
@@ -195,7 +201,7 @@ def EffectCheck(dummy, FA, Do):
         if dummy.nPuncture < 10:  # Stacks are capped at 10
             dummy.nPuncture += 1
 
-        dummy.PHits[dummy.nPH + FA.nS: dummy.nPH + FA.nT] = FA.DoTHits
+        dummy.PHits[dummy.nPH + FA.nS: dummy.nPH + FA.nT] = deepcopy(FA.DoTHits)
 
     return None
 

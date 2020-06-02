@@ -309,7 +309,7 @@
       potions and/or aura's (min:0, max:60).<br><br>
       <strong>Level 20 Gear:</strong> Assumes the equipment levels of all augmented items are equal to
       level 20.<br><br>
-      <strong>Flanking Perk:</strong> Assumes the target (the dummy) is not facing you at all times.<br><br>
+      <strong>Flanking Perk:</strong> Assumes the target is not facing you at all times.<br><br>
       <strong>Efficient:</strong> Assumes the player breaks channeling abilities such that they still
       do all their damage (except for Concentrated Blast which cuts off after 2 hits) but the next
       ability is activated earlier.<br><br>
@@ -317,7 +317,7 @@
       for the next available ability.<br><br>
       <strong>Ability Damage:</strong> The ability damage as calculated in the
       <a href="https://runescape.wiki/w/Ability_damage#Calculating_ability_damage" target="_blank" style="color: blue">"Calculating ability damage"</a>
-      section on the RS3 wiki.<br><br>
+      section on the RS3 wiki (Min:1, Max:10000).<br><br>
     </p>
   </div>
   <div id="AbilityInfo2" class="optsect" style="width: 500px;">
@@ -328,7 +328,7 @@
       <strong>Stun&Bind Immune:</strong> Assumes the dummy is immune to stuns and binds from abilities.<br><br>
       <strong>Targets:</strong> Number of targets within reach for all AoE abilities.<br><br>
       <strong>Simulation T(s) and Start Adrenaline</strong> When a value has been set for both the
-      Simulation Time (s) (min: 1, max: 3600) and the Starting Adrenaline (min:0, max:100), the Python
+      Simulation Time (in seconds, min:1, max:3600) and the Starting Adrenaline (min:0, max:100), the Python
       script won't detect cycles but instead runs for the given simulation time and determines the
       Damage Per Tick (DPT) in that time.<br><br>
       <strong>Print more info:</strong> When ticked, up to the first 3 minutes of the simulation time can

@@ -83,7 +83,7 @@ class Player:
                        f'<li style="color: {Do.init_color};">User select: Flanking Perk {self.PerkFlanking}, {self.Fr}</li>' \
                        f'<li style="color: {Do.init_color};">User select: Lunging Perk {self.PerkLunging}, {self.Lr}</li>' \
                        f'<li style="color: {Do.init_color};">User select: Aftershock Perk {self.PerkAftershock}, {self.Ar}</li>' \
-                       f'<li style="color: {Do.init_color};">User select: Planted Feet Perk {self.PerkPlantedFeet}</li>'\
+                       f'<li style="color: {Do.init_color};">User select: Planted Feet Perk {self.PerkPlantedFeet}</li>'
 
         ##############################################################
         ########## Set various base damage related stuff #############

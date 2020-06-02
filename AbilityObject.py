@@ -97,7 +97,7 @@ class Ability:
     ########## Calculate Averages of Standard/Channels ###########
     ##############################################################
 
-    def StandardChannelDamAvgCalc(self, player, Do, Type=None, IDX=None):
+    def StandardChannelDamAvgCalc(self, player, Do, Type=None, IDX=None, PunctureStack=0):
         if IDX is None:
             Max = self.DamMax.copy()
             Min = self.DamMin.copy()
@@ -108,9 +108,17 @@ class Ability:
             elif Type == 'StunBind':
                 Max = self.StunBindDamMax.copy()
                 Min = self.StunBindDamMin.copy()
+            elif Type == 'Salt the Wound':  # Min = 0.036   Max = 0.18  Avg = 0.108
+                Max = self.DamMax.copy() + 0.18 * PunctureStack
+                Min = self.DamMin.copy() + 0.036 * PunctureStack
             else:
                 Max = self.SideTargetMax.copy()
                 Min = self.SideTargetMin.copy()
+
+        # Manually calculate the Max and Min of Shadow Tendrils
+        if self.Name in {'Shadow Tendrils'}:
+            Max[0] = 0.1 * Max[0] * 2 + 0.18 * Max[0] * 3 + 0.216 * Max[0] * 4 + 0.504 * Max[0] * 5
+            Min[0] = 0.1 * Min[0] * 2 + 0.18 * Min[0] * 3 + 0.216 * Min[0] * 4 + 0.504 * Min[0] * 5
 
         # If the user selected the Flanking Perk, set stun abilities
         if player.PerkFlanking:
@@ -212,10 +220,6 @@ class Ability:
 
             if Do.HTMLwrite:
                 Do.Text += f'<li style="color: {Do.init_color};">Ability Calculation: Avg hit of {self.Name} to {round(Avg[i], 2)}, pForced: {round(pForcedCrit, 4)}, pNat: {round(pNatCrit, 4)}</li>'
-
-        # Manually calculate the average of Shadow Tendrils
-        if self.Name in {'Shadow Tendrils'}:
-            Avg[0] = 0.1 * Avg[0] * 2 + 0.18 * Avg[0] * 3 + 0.216 * Avg[0] * 4 + 0.504 * Avg[0] * 5
 
         return Avg
 
