@@ -1,4 +1,5 @@
 import numpy as np
+import AttackCycle as Attack
 
 
 # The AbilityBar class: Used for activating abilities
@@ -68,7 +69,7 @@ class AbilityBar:
                     Do.Text += f'<li style="color: {Do.nor_color};">Global cooldown ended</li>\n'
 
     # CHECK IF AN ABILITY IS ALLOWED TO FIRE
-    def AdrenalineStatus(self, Type, player):
+    def AdrenalineStatus(self, Type):
         if Type == 'Basic':  # If type is Basic add 8 adrenaline to the ability bar
             self.Adrenaline += self.Basic
 

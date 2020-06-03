@@ -34,7 +34,7 @@ def Attack_main(bar, player, dummy, Do, loop):
             # If the ability is not on cooldown
             if not bar.Rotation[i].cdStatus:
                 # Check if the ability is allowed to fire according to its type and current adrenaline
-                bar.AdrenalineStatus(bar.Rotation[i].Type, player)
+                bar.AdrenalineStatus(bar.Rotation[i].Type)
 
                 # If the ability is allowed to fire
                 if bar.FireStatus:

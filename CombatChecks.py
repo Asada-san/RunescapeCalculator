@@ -169,6 +169,7 @@ def AbilityBar_verifier(user_input, AbilityBook, bar, dummy, player, Do, loop):
 
     if bar.Style == 'Melee':
         player.BaseDamageEffective *= player.StrengthPrayerBoost
+        player.BashBaseDamage *= player.StrengthPrayerBoost
 
         if player.Aura == 'Berserker':
             player.BaseBoost = 1.1
@@ -177,6 +178,7 @@ def AbilityBar_verifier(user_input, AbilityBook, bar, dummy, player, Do, loop):
 
     elif bar.Style == 'Ranged':
         player.BaseDamageEffective *= player.RangedPrayerBoost
+        player.BashBaseDamage *= player.RangedPrayerBoost
 
         if player.Aura == 'Reckless':
             player.BaseBoost = 1.1
@@ -185,6 +187,7 @@ def AbilityBar_verifier(user_input, AbilityBook, bar, dummy, player, Do, loop):
 
     elif bar.Style == 'Magic':
         player.BaseDamageEffective *= player.MagicPrayerBoost
+        player.BashBaseDamage *= player.MagicPrayerBoost
 
         if player.Aura == 'Maniacal':
             player.BaseBoost = 1.1
@@ -193,6 +196,7 @@ def AbilityBar_verifier(user_input, AbilityBook, bar, dummy, player, Do, loop):
 
     elif bar.Style == 'Typeless':
         player.BaseDamageEffective *= max(player.StrengthPrayerBoost, player.RangedPrayerBoost, player.MagicPrayerBoost)
+        player.BashBaseDamage *= max(player.StrengthPrayerBoost, player.RangedPrayerBoost, player.MagicPrayerBoost)
 
         if player.Aura in {'Berserker', 'Maniacal', 'Reckless'}:
             player.BaseBoost = 1.1
