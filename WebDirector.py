@@ -1,5 +1,5 @@
+from PythonRevolution import Revolution_main as RevoMain
 from PythonRevolution.AbilityBook import AbilityBook
-import PythonRevolution.Revolution_main as RevoMain
 from flask import Flask, redirect, render_template, url_for, render_template, request
 from flask import make_response, jsonify
 import os

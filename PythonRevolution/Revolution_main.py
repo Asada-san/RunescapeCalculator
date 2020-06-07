@@ -1,10 +1,10 @@
-import PythonRevolution.CombatChecks as CombatChecks
-import PythonRevolution.AttackCycle as Attack
-import PythonRevolution.CycleChecker as Cycle
-import PythonRevolution.Objects.Loop as Loop
-import PythonRevolution.Objects.Dummy as Dummy
-import PythonRevolution.Objects.Bar as Bar
-import PythonRevolution.Objects.Player as Player
+from PythonRevolution import CombatChecks
+from PythonRevolution import AttackCycle as Attack
+from PythonRevolution import CycleChecker as Cycle
+from PythonRevolution.Objects import Loop
+from PythonRevolution.Objects import Dummy
+from PythonRevolution.Objects import Bar
+from PythonRevolution.Objects import Player
 import time
 import pprint
 import numpy as np

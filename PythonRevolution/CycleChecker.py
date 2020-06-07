@@ -1,4 +1,4 @@
-import PythonRevolution.CombatChecks as CombatChecks
+from PythonRevolution import CombatChecks
 import numpy as np
 
 

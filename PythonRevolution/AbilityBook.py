@@ -1,4 +1,4 @@
-import PythonRevolution.Objects.Ability as Ability
+from PythonRevolution.Objects import Ability
 import pandas as pd
 
 ##############################################################

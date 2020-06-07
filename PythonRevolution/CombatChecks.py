@@ -1,4 +1,4 @@
-import PythonRevolution.AttackCycle as Attack
+from PythonRevolution import AttackCycle as Attack
 import pprint
 import numpy as np
 import pandas as pd

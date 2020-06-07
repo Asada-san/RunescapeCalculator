@@ -1,4 +1,4 @@
-import PythonRevolution.CycleChecker as Cycle
+from PythonRevolution import CycleChecker as Cycle
 import pprint
 import numpy as np
 from copy import deepcopy
