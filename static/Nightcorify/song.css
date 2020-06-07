@@ -1,0 +1,85 @@
+/* Output note */
+#BarWaveBox {
+    position: relative;
+    margin: auto;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    width: 800px;
+    height: 800px;
+    background-color: var(--note-bg-color);
+    line-height: normal;
+    mc-auto-number-format: '{b}Note: {/b}';
+    color: var(--textColor1);
+    font-size: 18px;
+    text-align: center;
+    display: flex;
+    box-shadow: var(--note-border);
+}
+
+#StartSongButton {
+    width: 100px;
+    height: 50px;
+    position: absolute;
+    left:350px;
+    top:365px;
+    padding: 0 0 0 0;
+    margin:auto;
+}
+
+input[type="file"] {
+    display: none;
+}
+.custom-file-upload {
+    display: block;
+    margin: auto;
+    width: 200px;
+    margin-top: 50px;
+    background-color: var(--button-bg-color);
+    border: 1px solid var(--border-color);
+    color: var(--button-text-color); /* White text */
+    cursor: pointer; /* Pointer/hand icon */
+    transition: 0.3s;
+}
+/* Add a background color on hover */
+.custom-file-upload:hover {
+    background-color: var(--button-bg-color-hover);
+}
+
+.slidecontainer {
+    width: 600px;
+    margin: auto;
+}
+
+.slider {
+    -webkit-appearance: none;
+    background: var(--button-text-color);
+    width: 600px;
+    height: 15px;
+    border-radius: 5px;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+}
+
+.slider:hover {
+    opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 75%;
+    background: var(--button-bg-color);
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    border-radius: 75%;
+    background: var(--button-bg-color);
+    cursor: pointer;
+}

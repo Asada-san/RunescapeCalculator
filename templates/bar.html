@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% block head %}
-  <link rel="stylesheet" type="text/css" href="static/bar.css">
+  <link rel="stylesheet" type="text/css" href="static/Revolution/bar.css">
 {% endblock %}
 {% block title %}Revolution{% endblock %}
 {% block content %}
 
 <div class="note">
-  <h2 style="text-align: center; margin-bottom: 15px; margin-top: 15px;">Revolution Bar <span style="font-size:small;">V1.03</span></h2>
+  <h2 style="text-align: center; margin-bottom: 15px; margin-top: 15px;">Revolution Bar <span style="font-size:small;">V1.03.1</span></h2>
   <button id="guide-button" class="note-button">General Info</button>
   <div id="Bar-guide" class="content note-collapsible">
     <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;">
@@ -43,7 +43,12 @@
   </div>
   <button id="changelog-button" class="note-button">Changelog</button>
   <div id="Changelog-notes" class="content note-collapsible">
-    <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.03</strong></p>
+    <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.03.1</strong></p>
+    <ul style="margin-top: 10px; margin-right: 15px;">
+      <li>Cleaned out/changed/created several directories</li>
+      <li>Added Hurricane + Destroy to the shared ability cooldown list</li>
+    </ul>
+    <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.03.0</strong></p>
     <ul style="margin-top: 10px; margin-right: 15px;">
       <li>All average ability damages are now calculated properly within the code instead of reading
         values from an excel sheet</li>
@@ -353,79 +358,79 @@
   <div class="attbox">
     <div class="AbilType">Basic</div>
     <div class="att">
-      <img src="static/Slice.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Slice" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Slice.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Slice" width="60" height="60">
     </div>
     <div class="att">
-      <img src="static/Backhand.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Backhand" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Backhand.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Backhand" width="60" height="60">
     </div>
     <div class="att">
-      <img src="static/Havoc.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Havoc" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Havoc.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Havoc" width="60" height="60">
     </div>
     <div class="att">
-      <img src="static/Smash.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Smash" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Smash.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Smash" width="60" height="60">
     </div>
     <div class="att">
-      <img src="static/Barge.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Barge" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Barge.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Barge" width="60" height="60">
     </div>
     <div class="att">
-      <img src="static/Greater_Barge.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Greater_Barge" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Greater_Barge.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Greater_Barge" width="60" height="60">
     </div>
     <div class="att">
-      <img src="static/Sever.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Sever" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Sever.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Sever" width="60" height="60">
     </div>
     <div class="att">
-      <img src="static/Bladed_Dive.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Bladed_Dive" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Bladed_Dive.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Bladed_Dive" width="60" height="60">
     </div>
   </div>
 
   <div class="attbox">
     <div class="AbilType">Threshold</div>
     <div class="att">
-      <img src="static/Slaughter.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Slaughter" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Slaughter.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Slaughter" width="60" height="60">
     </div>
     <div class="att">
-      <img src="static/Forceful_Backhand.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Forceful_Backhand" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Forceful_Backhand.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Forceful_Backhand" width="60" height="60">
     </div>
     <div class="att">
-      <img src="static/Flurry.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Flurry" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Flurry.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Flurry" width="60" height="60">
     </div>
     <div class="att">
-      <img src="static/Greater_Flurry.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Greater_Flurry" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Greater_Flurry.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Greater_Flurry" width="60" height="60">
     </div>
     <div class="att">
-      <img src="static/Hurricane.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Hurricane" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Hurricane.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Hurricane" width="60" height="60">
     </div>
     <div class="att">
-      <img src="static/Blood_Tendrils.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Blood_Tendrils" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Blood_Tendrils.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Blood_Tendrils" width="60" height="60">
     </div>
   </div>
 
   <div class="attbox">
     <div class="AbilType">Ultimate</div>
     <div class="att">
-      <img src="static/Overpower.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Overpower" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Overpower.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Overpower" width="60" height="60">
     </div>
     <div class="att">
-      <img src="static/Massacre.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Massacre" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Massacre.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Massacre" width="60" height="60">
     </div>
     <div class="att">
-      <img src="static/Meteor_Strike.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Meteor_Strike" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Meteor_Strike.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Meteor_Strike" width="60" height="60">
     </div>
     <div class="att">
-      <img src="static/Balanced_Strike.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Balanced_Strike" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Balanced_Strike.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Balanced_Strike" width="60" height="60">
     </div>
   </div>
 
   <div class="attbox">
     <div class="AbilType">Lesser</div>
     <div class="att">
-      <img src="static/Lesser_Havoc.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Lesser_Havoc" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Lesser_Havoc.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Lesser_Havoc" width="60" height="60">
     </div>
     <div class="att">
-      <img src="static/Lesser_Smash.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Lesser_Smash" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Lesser_Smash.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Lesser_Smash" width="60" height="60">
     </div>
     <div class="att">
-      <img src="static/Lesser_Sever.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Lesser_Sever" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Lesser_Sever.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Lesser_Sever" width="60" height="60">
     </div>
   </div>
 </div>
@@ -434,61 +439,61 @@
   <div class="strbox">
     <div class="AbilType" style="background-color: var(--strColor);">Basic</div>
     <div class="str">
-      <img src="static/Kick.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Kick" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Kick.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Kick" width="60" height="60">
     </div>
     <div class="str">
-      <img src="static/Punish.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Punish" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Punish.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Punish" width="60" height="60">
     </div>
     <div class="str">
-      <img src="static/Dismember.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Dismember" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Dismember.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Dismember" width="60" height="60">
     </div>
     <div class="str">
-      <img src="static/Fury.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Fury" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Fury.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Fury" width="60" height="60">
     </div>
     <div class="str">
-      <img src="static/Greater_Fury.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Greater_Fury" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Greater_Fury.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Greater_Fury" width="60" height="60">
     </div>
     <div class="str">
-      <img src="static/Cleave.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Cleave" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Cleave.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Cleave" width="60" height="60">
     </div>
     <div class="str">
-      <img src="static/Decimate.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Decimate" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Decimate.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Decimate" width="60" height="60">
     </div>
   </div>
 
   <div class="strbox">
     <div class="AbilType" style="background-color: var(--strColor);">Threshold</div>
     <div class="str">
-      <img src="static/Stomp.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Stomp" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Stomp.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Stomp" width="60" height="60">
     </div>
     <div class="str">
-      <img src="static/Destroy.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Destroy" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Destroy.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Destroy" width="60" height="60">
     </div>
     <div class="str">
-      <img src="static/Quake.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Quake" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Quake.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Quake" width="60" height="60">
     </div>
     <div class="str">
-      <img src="static/Assault.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Assault" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Assault.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Assault" width="60" height="60">
     </div>
   </div>
 
   <div class="strbox">
     <div class="AbilType" style="background-color: var(--strColor);">Ultimate</div>
     <div class="str">
-      <img src="static/Berserk.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Berserk" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Berserk.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Berserk" width="60" height="60">
     </div>
     <div class="str">
-      <img src="static/Pulverise.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Pulverise" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Pulverise.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Pulverise" width="60" height="60">
     </div>
     <div class="str">
-      <img src="static/Frenzy.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Frenzy" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Frenzy.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Frenzy" width="60" height="60">
     </div>
   </div>
 
   <div class="strbox">
     <div class="AbilType" style="background-color: var(--strColor);">Lesser</div>
     <div class="str">
-      <img src="static/Lesser_Dismember.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Lesser_Dismember" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Lesser_Dismember.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Lesser_Dismember" width="60" height="60">
     </div>
   </div>
 </div>
@@ -497,88 +502,88 @@
   <div class="magbox">
     <div class="AbilType" style="background-color: var(--magColor); color: #FFFFFF">Basic</div>
     <div class="mag">
-      <img src="static/Wrack.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Wrack" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Wrack.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Wrack" width="60" height="60">
     </div>
     <div class="mag">
-      <img src="static/Impact.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Impact" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Impact.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Impact" width="60" height="60">
     </div>
     <div class="mag">
-      <img src="static/Dragon_Breath.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Dragon_Breath" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Dragon_Breath.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Dragon_Breath" width="60" height="60">
     </div>
     <div class="mag">
-      <img src="static/Sonic_Wave.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Sonic_Wave" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Sonic_Wave.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Sonic_Wave" width="60" height="60">
     </div>
     <div class="mag">
-      <img src="static/Shock.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Shock" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Shock.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Shock" width="60" height="60">
     </div>
     <div class="mag">
-      <img src="static/Concentrated_Blast.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Concentrated_Blast" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Concentrated_Blast.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Concentrated_Blast" width="60" height="60">
     </div>
     <div class="mag">
-      <img src="static/Combust.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Combust" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Combust.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Combust" width="60" height="60">
     </div>
     <div class="mag">
-      <img src="static/Surge.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Surge" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Surge.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Surge" width="60" height="60">
     </div>
     <div class="mag">
-      <img src="static/Chain.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Chain" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Chain.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Chain" width="60" height="60">
     </div>
     <div class="mag">
-      <img src="static/Corruption_Blast.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Corruption_Blast" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Corruption_Blast.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Corruption_Blast" width="60" height="60">
     </div>
   </div>
 
   <div class="magbox">
     <div class="AbilType" style="background-color: var(--magColor); color: #FFFFFF">Threshold</div>
     <div class="mag">
-      <img src="static/Asphyxiate.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Asphyxiate" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Asphyxiate.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Asphyxiate" width="60" height="60">
     </div>
     <div class="mag">
-      <img src="static/Deep_Impact.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Deep_Impact" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Deep_Impact.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Deep_Impact" width="60" height="60">
     </div>
     <div class="mag">
-      <img src="static/Horror.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Horror" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Horror.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Horror" width="60" height="60">
     </div>
     <div class="mag">
-      <img src="static/Detonate.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Detonate" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Detonate.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Detonate" width="60" height="60">
     </div>
     <div class="mag">
-      <img src="static/Wild_Magic.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Wild_Magic" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Wild_Magic.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Wild_Magic" width="60" height="60">
     </div>
     <div class="mag">
-      <img src="static/Smoke_Tendrils.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Smoke_Tendrils" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Smoke_Tendrils.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Smoke_Tendrils" width="60" height="60">
     </div>
   </div>
 
   <div class="magbox">
     <div class="AbilType" style="background-color: var(--magColor); color: #FFFFFF">Ultimate</div>
     <div class="mag">
-      <img src="static/Omnipower.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Omnipower" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Omnipower.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Omnipower" width="60" height="60">
     </div>
     <div class="mag">
-      <img src="static/Metamorphosis.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Metamorphosis" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Metamorphosis.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Metamorphosis" width="60" height="60">
     </div>
     <div class="mag">
-      <img src="static/Tsunami.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Tsunami" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Tsunami.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Tsunami" width="60" height="60">
     </div>
     <div class="mag">
-      <img src="static/Sunshine.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Sunshine" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Sunshine.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Sunshine" width="60" height="60">
     </div>
   </div>
 
   <div class="magbox">
     <div class="AbilType" style="background-color: var(--magColor); color: #FFFFFF">Lesser</div>
     <div class="mag">
-      <img src="static/Lesser_Dragon_Breath.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Lesser_Dragon_Breath" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Lesser_Dragon_Breath.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Lesser_Dragon_Breath" width="60" height="60">
     </div>
     <div class="mag">
-      <img src="static/Lesser_Sonic_Wave.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Lesser_Sonic_Wave" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Lesser_Sonic_Wave.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Lesser_Sonic_Wave" width="60" height="60">
     </div>
     <div class="mag">
-      <img src="static/Lesser_Concentrated_Blast.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Lesser_Concentrated_Blast" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Lesser_Concentrated_Blast.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Lesser_Concentrated_Blast" width="60" height="60">
     </div>
     <div class="mag">
-      <img src="static/Lesser_Combust.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Lesser_Combust" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Lesser_Combust.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Lesser_Combust" width="60" height="60">
     </div>
   </div>
 </div>
@@ -587,94 +592,94 @@
   <div class="ranbox">
     <div class="AbilType" style="background-color: var(--ranColor); color: #FFFFFF">Basic</div>
     <div class="ran">
-      <img src="static/Piercing_Shot.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Piercing_Shot" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Piercing_Shot.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Piercing_Shot" width="60" height="60">
     </div>
     <div class="ran">
-      <img src="static/Binding_Shot.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Binding_Shot" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Binding_Shot.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Binding_Shot" width="60" height="60">
     </div>
     <div class="ran">
-      <img src="static/Snipe.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Snipe" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Snipe.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Snipe" width="60" height="60">
     </div>
     <div class="ran">
-      <img src="static/Dazing_Shot.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Dazing_Shot" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Dazing_Shot.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Dazing_Shot" width="60" height="60">
     </div>
     <div class="ran">
-      <img src="static/Greater_Dazing_Shot.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Greater_Dazing_Shot" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Greater_Dazing_Shot.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Greater_Dazing_Shot" width="60" height="60">
     </div>
     <div class="ran">
-      <img src="static/Demoralise.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Demoralise" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Demoralise.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Demoralise" width="60" height="60">
     </div>
     <div class="ran">
-      <img src="static/Needle_Strike.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Needle_Strike" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Needle_Strike.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Needle_Strike" width="60" height="60">
     </div>
     <div class="ran">
-      <img src="static/Fragmentation_Shot.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Fragmentation_Shot" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Fragmentation_Shot.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Fragmentation_Shot" width="60" height="60">
     </div>
     <div class="ran">
-      <img src="static/Escape.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Escape" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Escape.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Escape" width="60" height="60">
     </div>
     <div class="ran">
-      <img src="static/Ricochet.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Ricochet" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Ricochet.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Ricochet" width="60" height="60">
     </div>
     <div class="ran">
-      <img src="static/Corruption_Shot.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Corruption_Shot" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Corruption_Shot.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Corruption_Shot" width="60" height="60">
     </div>
   </div>
 
   <div class="ranbox">
     <div class="AbilType" style="background-color: var(--ranColor); color: #FFFFFF">Threshold</div>
     <div class="ran">
-      <img src="static/Snap_Shot.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Snap_Shot" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Snap_Shot.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Snap_Shot" width="60" height="60">
     </div>
     <div class="ran">
-      <img src="static/Tight_Bindings.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Tight_Bindings" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Tight_Bindings.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Tight_Bindings" width="60" height="60">
     </div>
     <div class="ran">
-      <img src="static/Rout.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Rout" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Rout.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Rout" width="60" height="60">
     </div>
     <div class="ran">
-      <img src="static/Rapid_Fire.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Rapid_Fire" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Rapid_Fire.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Rapid_Fire" width="60" height="60">
     </div>
     <div class="ran">
-      <img src="static/Bombardment.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Bombardment" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Bombardment.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Bombardment" width="60" height="60">
     </div>
     <div class="ran">
-      <img src="static/Salt_the_Wound.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Salt_the_Wound" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Salt_the_Wound.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Salt_the_Wound" width="60" height="60">
     </div>
     <div class="ran">
-      <img src="static/Shadow_Tendrils.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Shadow_Tendrils" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Shadow_Tendrils.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Shadow_Tendrils" width="60" height="60">
     </div>
   </div>
 
   <div class="ranbox">
     <div class="AbilType" style="background-color: var(--ranColor); color: #FFFFFF">Ultimate</div>
     <div class="ran">
-      <img src="static/Deadshot.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Deadshot" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Deadshot.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Deadshot" width="60" height="60">
     </div>
     <div class="ran">
-      <img src="static/Incendiary_Shot.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Incendiary_Shot" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Incendiary_Shot.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Incendiary_Shot" width="60" height="60">
     </div>
     <div class="ran">
-      <img src="static/Unload.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Unload" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Unload.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Unload" width="60" height="60">
     </div>
     <div class="ran">
-      <img src="static/Death's_Swiftness.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Death's_Swiftness" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Death's_Swiftness.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Death's_Swiftness" width="60" height="60">
     </div>
   </div>
 
   <div class="ranbox">
     <div class="AbilType" style="background-color: var(--ranColor); color: #FFFFFF">Lesser</div>
     <div class="ran">
-      <img src="static/Lesser_Snipe.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Lesser_Snipe" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Lesser_Snipe.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Lesser_Snipe" width="60" height="60">
     </div>
     <div class="ran">
-      <img src="static/Lesser_Dazing_Shot.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Lesser_Dazing_Shot" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Lesser_Dazing_Shot.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Lesser_Dazing_Shot" width="60" height="60">
     </div>
     <div class="ran">
-      <img src="static/Lesser_Needle_Strike.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Lesser_Needle_Strike" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Lesser_Needle_Strike.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Lesser_Needle_Strike" width="60" height="60">
     </div>
     <div class="ran">
-      <img src="static/Lesser_Fragmentation_Shot.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Lesser_Fragmentation_Shot" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Lesser_Fragmentation_Shot.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Lesser_Fragmentation_Shot" width="60" height="60">
     </div>
   </div>
 </div>
@@ -683,10 +688,10 @@
   <div class="conbox">
     <div class="AbilType" style="background-color: var(--conColor); color: #FFFFFF">Basic</div>
     <div class="con">
-      <img src="static/Sacrifice.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Sacrifice" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Sacrifice.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Sacrifice" width="60" height="60">
     </div>
     <div class="con">
-      <img src="static/Tuska's_Wrath.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Tuska's_Wrath" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Tuska's_Wrath.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Tuska's_Wrath" width="60" height="60">
     </div>
   </div>
 
@@ -707,14 +712,14 @@
   <div class="defbox">
     <div class="AbilType" style="background-color: var(--defColor); color: #FFFFFF">Basic</div>
     <div class="def">
-      <img src="static/Bash.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Bash" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Bash.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Bash" width="60" height="60">
     </div>
   </div>
 
   <div class="defbox">
     <div class="AbilType" style="background-color: var(--defColor); color: #FFFFFF">Threshold</div>
     <div class="def">
-      <img src="static/Debilitate.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Debilitate" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Debilitate.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Debilitate" width="60" height="60">
     </div>
   </div>
 
@@ -770,6 +775,6 @@
   </div>
 </div>
 
-<script src="static/bar.js"></script>
+<script src="static/Revolution/bar.js"></script>
 
 {% endblock %}

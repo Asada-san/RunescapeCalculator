@@ -1,16 +1,11 @@
-import flask
+from PythonRevolution.AbilityBook import AbilityBook
+import PythonRevolution.Revolution_main as RevoMain
 from flask import Flask, redirect, render_template, url_for, render_template, request
 from flask import make_response, jsonify
 import os
 import json
 import pprint
-import Revolution_main as calcMain
-import CombatChecks as CC
-import AttackCycle as Attack
-import LoopObjects as CO
-import AbilityObject
 import pandas as pd
-from AbilityBook import AbilityBook
 import time
 
 app = Flask(__name__)
@@ -24,6 +19,11 @@ def home():
 @app.route("/bar")
 def bar():
     return render_template("bar.html")
+
+
+@app.route("/song")
+def song():
+    return render_template("song.html")
 
 
 @app.route("/home")
@@ -60,7 +60,7 @@ def calc():
 
     start_loop = time.time()
 
-    CalcResults, warning, error_message = calcMain.fight_dummy(user_input, AbilityBook)
+    CalcResults, warning, error_message = RevoMain.fight_dummy(user_input, AbilityBook)
 
     end_loop = time.time()
 
