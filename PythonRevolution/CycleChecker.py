@@ -1,4 +1,4 @@
-import PythonRevolution.CombatChecks as CC
+import PythonRevolution.CombatChecks as CombatChecks
 import numpy as np
 
 
@@ -53,7 +53,7 @@ def CycleRotation(bar, player, dummy, Do, loop):
     if loop.Cycle1More < 0.01:
 
         # !!! important for accurate results, check 1 more time for possible bleeds/punctures
-        CC.TimerStatuses(bar, player, dummy, Do, loop)
+        CombatChecks.TimerStatuses(bar, player, dummy, Do, loop)
 
         # Check for redundant abilities (abilities which do not occur in the rotation)
         for j in range(0, bar.N):

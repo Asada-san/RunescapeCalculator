@@ -1,4 +1,4 @@
-import PythonRevolution.CombatChecks as CC
+import PythonRevolution.CombatChecks as CombatChecks
 import PythonRevolution.AttackCycle as Attack
 import PythonRevolution.CycleChecker as Cycle
 import PythonRevolution.Objects.Loop as Loop
@@ -98,9 +98,9 @@ def fight_dummy(user_input, AbilityBook):
                 f'<li style="color: {Do.init_color};">User select: Adrenaline: {user_input["Adrenaline"]}</li>')
 
     # Check for correct abilities and initialise the ability bar
-    error, error_mes, warning = CC.AbilityBar_verifier(user_input, AbilityBook, bar, dummy, player, Do, loop)
+    error, error_mes, warning = CombatChecks.AbilityBar_verifier(user_input, AbilityBook, bar, dummy, player, Do, loop)
 
-    # If an error occurred in the Ability Bar verifier, return that error
+    # If an error oCombatChecksurred in the Ability Bar verifier, return that error
     if error:
         return {}, warning, error_mes
 
@@ -119,7 +119,7 @@ def fight_dummy(user_input, AbilityBook):
 
         # --------- PRE ATTACKING PHASE -----------------------
         # Status checks
-        CC.TimerStatuses(bar, player, dummy, Do, loop)
+        CombatChecks.TimerStatuses(bar, player, dummy, Do, loop)
         # -----------------------------------------------------
 
         # --------- ATTACKING PHASE ---------------------------
@@ -130,10 +130,10 @@ def fight_dummy(user_input, AbilityBook):
         # --------- POST ATTACKING PHASE ----------------------
         # Check special cooldown phenomena involving FireAbility
         if bar.FireStatus:
-            CC.PostAttackStatuses(bar, player, dummy, FireAbility, Do)
+            CombatChecks.PostAttackStatuses(bar, player, dummy, FireAbility, Do)
 
         # Check for other ability phenomena
-        CC.PostAttackCleanUp(bar, player, dummy, Do)
+        CombatChecks.PostAttackCleanUp(bar, player, dummy, Do)
         # -----------------------------------------------------
 
         # ---------- LOOP SHENANIGANS -------------------------
