@@ -3,6 +3,8 @@ var SongLength;
 var Loading = true;
 var SelectedASong = false;
 
+var songNameText = document.getElementById('songName');
+
 var SongButton = document.getElementById('StartSongButton');
 var StuffHider = document.getElementsByClassName('StuffHider');
 var BarWaveBox = document.getElementById('BarWaveBox');
@@ -55,6 +57,9 @@ function setup() {
 
         // load in the mp3 file
         song = loadSound(URL.createObjectURL(this.files[0]), loaded);
+
+        // show the name of the uploaded file
+        songNameText.innerHTML = this.files[0]['name'];
 
         // the user selected a song!
         SelectedASong = true;

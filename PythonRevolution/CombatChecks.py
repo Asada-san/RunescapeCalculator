@@ -245,7 +245,7 @@ def PostAttackStatuses(bar, player, dummy, FireAbility, Do):
     player.Cooldown.append(FireAbility)
 
     # Check for abilities on the bar which have a shared cooldown
-    bar.SharedCooldowns(FireAbility, Do)
+    bar.SharedCooldowns(FireAbility, player, Do)
 
     if Do.HTMLwrite:
         Do.Text += f'<li style="color: {Do.nor_color};">{FireAbility.Name} went on cooldown</li>\n'

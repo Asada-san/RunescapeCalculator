@@ -94,7 +94,7 @@ class AbilityBar:
             self.FireStatus = False  # Not allowed to fire
 
     # CHECK IF LINKED ABILITIES HAVE TO GO ON COOLDOWN OR NOT
-    def SharedCooldowns(self, FireAbility, Do):
+    def SharedCooldowns(self, FireAbility, player, Do):
         for i in range(0, len(self.SharedCDs)):  # For all shared cooldown groups
             if FireAbility.Name in self.SharedCDs[i]:  # If the already fired ability is in such a group
                 # Get the index of the ability in that specific list
@@ -114,6 +114,8 @@ class AbilityBar:
                         # Activate ability cooldown
                         self.Rotation[idx].cdStatus = True
                         self.Rotation[idx].cdTime = self.Rotation[idx].cdMax
+
+                        player.Cooldown.append(self.Rotation[idx])
 
                         if Do.HTMLwrite:
                             Do.Text += f'<li style="color: {Do.nor_color};">{self.Rotation[idx].Name} went on cooldown</li>\n'
