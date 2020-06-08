@@ -1,5 +1,4 @@
 var song;
-var SongLength;
 var Loading = true;
 var SelectedASong = false;
 
@@ -45,6 +44,11 @@ function setup() {
 
     // When the user puts in an mp3 file
     mp3File.oninput = function() {
+
+        // display certain elements for the user to interact with
+        for (var i = 0; i < StuffHider.length; i++) {
+            StuffHider[i].style.display = 'none';
+        }
 
         // If a song is playing or the user already uploaded a song before
         if (SelectedASong && song.isPlaying()) {
@@ -102,7 +106,7 @@ function loaded() {
         StuffHider[i].style.display = 'block';
     }
 
-    SongLength = song.duration();
+    var SongLength = song.duration();
 
     // construct slider for setting the timestamp of the mp3 file
     sliderTime.min = 0;             // min value 0
@@ -139,53 +143,55 @@ function loaded() {
 
 // this function runs at the fps of the user window
 function draw() {
-    background('#484848'); // set background color
-
-    var spectrum = fft.analyze(); // get the spectrum at the current time
-
-    translate(NoteWidth/2, NoteHeight/2);
-    var Radius = 100;
-
-    nLoop++; // increment nLoop by 1
-    circleSpeed = nLoop / 5; // value determining the speed with which the visualizer circles around
-
-    // for every frequency band calculate 4 points used for drawing a shape
-    for (var i = 0; i < spectrum.length; i++) {
-        var rad = (-90 + circleSpeed) % 360;
-
-        var angle1 = map(i, 0, spectrum.length, rad, rad + 360);
-        var angle2 = map(i + 1, 0, spectrum.length, rad, rad + 360);
-
-        var amp = spectrum[i];
-        var r = map(amp, 0, 255, Radius, Radius + 250);
-        var x1 = Radius * cos(angle1);
-        var y1 = Radius * sin(angle1);
-        var x2 = Radius * cos(angle2);
-        var y2 = Radius * sin(angle2);
-
-        var x3 = r * cos(angle1);
-        var y3 = r * sin(angle1);
-        var x4 = r * cos(angle2);
-        var y4 = r * sin(angle2);
-
-        // stroke((255 / nFrequency) * i, 255, 255);
-        fill((360 / nFrequency) * ((i + circleSpeed) % nFrequency), 255, 255);
-
-        // draw a 'rectangle'
-        beginShape();
-        // arc(0, 0, 200, 200, angle1, angle2 - angle1);
-        vertex(x1, y1);
-        vertex(x3, y3);
-        vertex(x4, y4);
-        vertex(x2, y2);
-        endShape(CLOSE);
-    }
-
-    // when the song is done loading, set the song sample rate depending on the rate slider value
     if (!Loading) {
-        song.rate(sliderRate.value);
+        background('#484848'); // set background color
+
+        var spectrum = fft.analyze(); // get the spectrum at the current time
+
+        translate(NoteWidth/2, NoteHeight/2);
+        var Radius = 100;
+
+        nLoop++; // increment nLoop by 1
+        circleSpeed = nLoop / 5; // value determining the speed with which the visualizer circles around
+
+        // for every frequency band calculate 4 points used for drawing a shape
+        for (var i = 0; i < spectrum.length; i++) {
+            var rad = (-90 + circleSpeed) % 360;
+
+            var angle1 = map(i, 0, spectrum.length, rad, rad + 360);
+            var angle2 = map(i + 1, 0, spectrum.length, rad, rad + 360);
+
+            var amp = spectrum[i];
+            var r = map(amp, 0, 255, Radius, Radius + 250);
+            var x1 = Radius * cos(angle1);
+            var y1 = Radius * sin(angle1);
+            var x2 = Radius * cos(angle2);
+            var y2 = Radius * sin(angle2);
+
+            var x3 = r * cos(angle1);
+            var y3 = r * sin(angle1);
+            var x4 = r * cos(angle2);
+            var y4 = r * sin(angle2);
+
+            // stroke((255 / nFrequency) * i, 255, 255);
+            fill((360 / nFrequency) * ((i + circleSpeed) % nFrequency), 255, 255);
+
+            // draw a 'rectangle'
+            beginShape();
+            // arc(0, 0, 200, 200, angle1, angle2 - angle1);
+            vertex(x1, y1);
+            vertex(x3, y3);
+            vertex(x4, y4);
+            vertex(x2, y2);
+            endShape(CLOSE);
+        }
+
+        // when the song is done loading, set the song sample rate depending on the rate slider value
+        if (!Loading) {
+            song.rate(sliderRate.value);
+        }
     }
-};
+}
 
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
