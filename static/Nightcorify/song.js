@@ -65,17 +65,13 @@ function setup() {
         // show the name of the uploaded file
         songNameText.innerHTML = this.files[0]['name'];
 
-        this.files[0] = '';
-
+        localStorage.removeItem(this);
         // the user selected a song!
         SelectedASong = true;
     };
 
     // set P5 FFT values (smoothing - number of frequency bands)
     fft = new p5.FFT(.6, nFrequency);
-
-    // When the song button is pressed go to checkPlayStatus function
-    SongButton.addEventListener("click", checkPlayStatus);
 
     // construct slider for setting the sample rate of the mp3 file
     sliderRate.min = 1;     // min value 1 <-- normal speed/pitch
@@ -102,6 +98,9 @@ function loaded() {
     SongButton.innerHTML = 'Start'; // user can now start the song
 
     song.setVolume(1); // default loudness of the song
+
+    // When the song button is pressed go to checkPlayStatus function
+    SongButton.addEventListener("click", checkPlayStatus);
 
     // display certain elements for the user to interact with
     for (var i = 0; i < StuffHider.length; i++) {
@@ -145,6 +144,7 @@ function loaded() {
 
 // this function runs at the fps of the user window
 function draw() {
+    // when the song is done loading
     if (!Loading) {
         background('#484848'); // set background color
 
@@ -188,10 +188,8 @@ function draw() {
             endShape(CLOSE);
         }
 
-        // when the song is done loading, set the song sample rate depending on the rate slider value
-        if (!Loading) {
-            song.rate(sliderRate.value);
-        }
+        // set the song sample rate depending on the rate slider value
+        song.rate(sliderRate.value);
     }
 }
 

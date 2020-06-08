@@ -19,7 +19,10 @@
       for 5 minutes and making a few bucks from it... Even decent visuals can't make it less of a scummy move.<br><br>
 
       Try it for yourself. Upload any mp3 file, wait for the start button to appear, click on it and move the
-      rate slider. VOILA, YOU MADE NIGHTCORE!
+      rate slider. VOILA, YOU MADE NIGHTCORE! <br><br>
+
+      For if you were wondering why it doesn't work anymore and you're using Chrome:
+      <a href="https://github.com/processing/p5.js-sound/issues/409" style="color: var(--button-bg-color);">This is the reason.</a>
     </p>
   </div>
 </div>
@@ -29,8 +32,10 @@
     <input id="MP3input" type="file" accept=".mp3"/>
     Upload .mp3 file
   </label>
-  <div class="slidecontainer">
-    <div><p id="songName" style="margin-top: 5px; color: var(--textColor1);"></p></div>
+  <div class="StuffHider" style="text-align: center; display: none;">
+    <div class="slidecontainer">
+      <div><p id="songName" style="margin-top: 5px; color: var(--textColor1);"></p></div>
+    </div>
   </div>
 </div>
 
