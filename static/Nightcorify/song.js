@@ -60,7 +60,7 @@ function setup() {
         nLoop = 0; // reset nLoop
 
         // load in the mp3 file
-        song = loadSound(URL.createObjectURL(this.files[0]), loaded);
+        song = loadSound(this.files[0], loaded);
 
         // show the name of the uploaded file
         songNameText.innerHTML = this.files[0]['name'];
