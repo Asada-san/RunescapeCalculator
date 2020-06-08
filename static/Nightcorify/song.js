@@ -65,6 +65,8 @@ function setup() {
         // show the name of the uploaded file
         songNameText.innerHTML = this.files[0]['name'];
 
+        this.files[0] = '';
+
         // the user selected a song!
         SelectedASong = true;
     };
