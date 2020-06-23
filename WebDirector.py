@@ -26,21 +26,20 @@ def get_tradeable_itemIDs():
             url = f"http://services.runescape.com/m=itemdb_rs/catalogue?cat={i}&page={j}"
             # Get the html code of the page
             r = requests.get(url)
+            # tables = pd.read_html(url)
 
             # Clean that shit up
             soup = BeautifulSoup(r.text, 'html.parser')
-            # Find all the table rows
+            # Find all the html lines in the item table with img in it
+            # These line have both the item name and id in it (but not all!!!)
             rows = soup.find('table').find('tbody').find_all('tr')
 
             for row in rows:
-                # The item name and id are both in a img element within a table row
                 img_element = row.find('td').find('a').find('img')
                 item = img_element['title']
-                # The id is buried a bit deeper within the source link of the image
                 link = img_element['src']
                 id = link.split('=')[-1]
 
-                # Verify if all items in the category are checked
                 if id in item_list:
                     end_loop = True
                     break
@@ -49,6 +48,12 @@ def get_tradeable_itemIDs():
 
             if end_loop:
                 break
+
+            # Don't overload the rs page
+            time.sleep(3)
+
+        # To keep track of program status when running it
+        print(i)
 
     # Save the list
     with open('itemIDs.json', 'w') as file:
