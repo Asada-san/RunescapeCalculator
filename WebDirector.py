@@ -47,6 +47,8 @@ def get_tradeable_itemIDs():
                 else:
                     item_list.update({id: item})
 
+            time.sleep(1)
+
             if end_loop:
                 break
 
