@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block head %}
-  <link rel="stylesheet" type="text/css" href="static/Revolution/bar.css">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='Revolution/bar.css') }}">
 {% endblock %}
 {% block title %}Revolution{% endblock %}
 {% block content %}
@@ -43,6 +43,13 @@
   </div>
   <button id="changelog-button" class="note-button">Changelog</button>
   <div id="Changelog-notes" class="content note-collapsible">
+    <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.04.0</strong></p>
+    <ul style="margin-top: 10px; margin-right: 15px;">
+      <li>Added Caroming, Ruthless (as a flat damage bonus) and Reflexes perk</li>
+      <li>Increased maximum amount of targets to 10</li>
+      <li>Added Freedom and Anticipation abilities</li>
+      <li>Fixed an issue where planted feet wasn't working</li>
+    </ul>
     <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.03.1</strong></p>
     <ul style="margin-top: 10px; margin-right: 15px;">
       <li>Cleaned out/changed/created several directories</li>
@@ -154,6 +161,10 @@
         <input id="PlantedFeet" type="checkbox" value="true">
         <span class="tickbox"></span>
       </label>
+      <label class="SingleOpt" for="Reflexes" style="margin-left: 20px;">Reflexes
+        <input id="Reflexes" type="checkbox" value="true">
+        <span class="tickbox"></span>
+      </label>
       <label class="OptSelect" for="Precise" style="margin-left: 15px; margin-right: 15px;">
         <select id="Precise" style="float: center; width: 100%;" >
           <option value="0" disabled selected hidden>Precise Perk</option>
@@ -204,6 +215,25 @@
           <option value="2">Lunging 2</option>
           <option value="3">Lunging 3</option>
           <option value="4">Lunging 4</option>
+        </select>
+      </label>
+      <label class="OptSelect" for="Caroming" style="margin-left: 15px; margin-right: 15px;">
+        <select id="Caroming" style="float: center; width: 100%;" >
+          <option value="0" disabled selected hidden>Caroming Perk</option>
+          <option value="0">None</option>
+          <option value="1">Caroming 1</option>
+          <option value="2">Caroming 2</option>
+          <option value="3">Caroming 3</option>
+          <option value="4">Caroming 4</option>
+        </select>
+      </label>
+      <label class="OptSelect" for="Ruthless" style="margin-left: 15px; margin-right: 15px;">
+        <select id="Ruthless" style="float: center; width: 100%; color: red;" >
+          <option value="0" disabled selected hidden>Ruthless Perk</option>
+          <option value="0">None</option>
+          <option value="1">Ruthless 1</option>
+          <option value="2">Ruthless 2</option>
+          <option value="3">Ruthless 3</option>
         </select>
       </label>
       <label class="OptSelect" for="Aftershock" style="margin-left: 15px; margin-right: 15px;">
@@ -285,6 +315,11 @@
           <option value="3">3</option>
           <option value="4">4</option>
           <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+          <option value="10">10</option>
         </select>
       </label>
     </div>
@@ -316,6 +351,8 @@
       <strong>Level 20 Gear:</strong> Assumes the equipment levels of all augmented items are equal to
       level 20.<br><br>
       <strong>Flanking Perk:</strong> Assumes the target is not facing you at all times.<br><br>
+      <strong style="color: red;">Ruthless Perk:</strong> Assumes the player starts attacking with a full stack (5)
+      and the stack is never reset.<br><br>
       <strong>Efficient:</strong> Assumes the player breaks channeling abilities such that they still
       do all their damage (except for Concentrated Blast which cuts off after 2 hits) but the next
       ability is activated earlier.<br><br>
@@ -338,7 +375,7 @@
       script won't detect cycles but instead runs for the given simulation time and determines the
       Damage Per Tick (DPT) in that time.<br><br>
       <strong>Print more info:</strong> When ticked, up to the first 3 minutes of the simulation time can
-      be verified upon clicking the resulting AADPT number.<br><br>
+      be verified upon clicking the resulting AADPT number (mostly used for debugging purposes).<br><br>
     </p>
   </div>
   <div class="optsect" style="width: 50px;"></div>
@@ -713,7 +750,13 @@
   <div class="defbox">
     <div class="AbilType" style="background-color: var(--defColor); color: #FFFFFF">Basic</div>
     <div class="def">
+      <img src="static/Revolution/AbilityImages/Anticipation.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Anticipation" width="60" height="60">
+    </div>
+    <div class="def">
       <img src="static/Revolution/AbilityImages/Bash.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Bash" width="60" height="60">
+    </div>
+    <div class="def">
+      <img src="static/Revolution/AbilityImages/Freedom.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Freedom" width="60" height="60">
     </div>
   </div>
 
@@ -776,6 +819,6 @@
   </div>
 </div>
 
-<script src="static/Revolution/bar.js"></script>
+<script src="{{ url_for('static', filename='Revolution/bar.js') }}"></script>
 
 {% endblock %}

@@ -70,10 +70,18 @@ class Player:
         self.Lr = opt['Lunging']                # Lunging rank
         self.PerkLunging = self.Lr > 0          # True if the user selected the Lunging perk
 
+        self.Cr = opt['Caroming']               # Caroming rank
+        self.PerkCaroming = self.Cr > 0         # True if the user selected the Caroming perk
+
+        self.Rr = opt['Ruthless']               # Ruthless rank
+        self.PerkRuthless = self.Rr > 0         # True if the user selected the Ruthless perk
+
         self.Ar = opt['Aftershock']             # Aftershock rank
         self.PerkAftershock = self.Ar > 0       # True if the user selected the Aftershock perk
 
         self.PerkPlantedFeet = opt['PlantedFeet']   # True if the user selected the Planted Feet perk
+
+        self.PerkReflexes = opt['Reflexes']         # True if the user selected the Reflexes Feet perk
 
         if Do.HTMLwrite:
             Do.Text += f'<li style="color: {Do.init_color};">User select: Precise Perk {self.PerkPrecise}, {self.Pr}</li>' \
@@ -82,8 +90,11 @@ class Player:
                        f'<li style="color: {Do.init_color};">User select: CritBuff {round(self.ForcedCritBuff, 3)}</li>' \
                        f'<li style="color: {Do.init_color};">User select: Flanking Perk {self.PerkFlanking}, {self.Fr}</li>' \
                        f'<li style="color: {Do.init_color};">User select: Lunging Perk {self.PerkLunging}, {self.Lr}</li>' \
+                       f'<li style="color: {Do.init_color};">User select: Caroming Perk {self.PerkCaroming}, {self.Ar}</li>'\
+                       f'<li style="color: {Do.init_color};">User select: Ruthless Perk {self.PerkRuthless}, {self.Ar}</li>' \
                        f'<li style="color: {Do.init_color};">User select: Aftershock Perk {self.PerkAftershock}, {self.Ar}</li>' \
-                       f'<li style="color: {Do.init_color};">User select: Planted Feet Perk {self.PerkPlantedFeet}</li>'
+                       f'<li style="color: {Do.init_color};">User select: Planted Feet Perk {self.PerkPlantedFeet}</li>' \
+                       f'<li style="color: {Do.init_color};">User select: Reflexes Perk {self.PerkReflexes}</li>'
 
         ##############################################################
         ########## Set various base damage related stuff #############

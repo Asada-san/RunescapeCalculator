@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% block head %}
-  <link rel="stylesheet" type="text/css" href="static/Nightcorify/song.css">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='Nightcorify/song.css') }}">
 {% endblock %}
 {% block title %}Nightcorify{% endblock %}
 {% block content %}
-<script src="static/p5/p5.js"></script>
-<script src="static/p5/addons/p5.sound.js"></script>
-<script src="static/p5/empty-example/sketch.js"></script>
+<script src="{{ url_for('static', filename='p5/p5.js') }}"></script>
+<script src="{{ url_for('static', filename='p5/p5.sound.js') }}"></script>
+<script src="{{ url_for('static', filename='p5/sketch.js') }}"></script>
 
 <div class="note">
   <h2 style="text-align: center; margin-bottom: 15px; margin-top: 15px;">Nightcorifier <span style="font-size:small;">V1.00.0</span></h2>
@@ -56,6 +56,6 @@
   </div>
 </div>
 
-<script src="static/Nightcorify/song.js"></script>
+<script src="{{ url_for('static', filename='Nightcorify/song.js') }}"></script>
 
 {% endblock %}

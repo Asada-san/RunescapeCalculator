@@ -137,11 +137,11 @@ class Ability:
                     Min[i] += 0.06 * player.Fr
 
         if self.Name != 'Bash':  # Bash ability has its own base damage
-            Max = Max * player.BaseDamageEffective
-            Min = Min * player.BaseDamageEffective
+            Max = Max * player.BaseDamageEffective * (1 + player.Rr * 0.025)
+            Min = Min * player.BaseDamageEffective * (1 + player.Rr * 0.025)
         else:
-            Max *= player.BashBaseDamage
-            Min *= player.BashBaseDamage
+            Max *= player.BashBaseDamage * (1 + player.Rr * 0.025)
+            Min *= player.BashBaseDamage * (1 + player.Rr * 0.025)
 
         # Level boost due to potions/aura's
         Max += 8 * player.LevelBoost
@@ -300,18 +300,10 @@ class Ability:
         # Elif Death's Swiftness and Sunshine, max and min or total damage from 16 hits
         elif self.Name in {'Death\'s Swiftness', 'Sunshine'}:
 
-            # If the user selected the Planted Feet weapon perk, remove the bleed and increase duration
-            if not player.PerkPlantedFeet:
-                Avg = [(Max[0] / self.nD + Min[0] / self.nD) / 2] * self.nD
+            Avg = [(Max[0] / self.nD + Min[0] / self.nD) / 2] * self.nD
 
-                if Do.HTMLwrite:
-                    Do.Text += f'<li style="color: {Do.init_color};">Ability Calculation: Avg hit of {self.Name} to {self.nD}x {round(Avg[0], 2)}</li>'
-            else:
-                self.Bleed = False
-                self.BoostTime = 37.8
-
-                if Do.HTMLwrite:
-                    Do.Text += f'<li style="color: {Do.init_color};">Ability change: Extended {self.Name} boost time to {self.BoostTime} hits</li>'
+            if Do.HTMLwrite:
+                Do.Text += f'<li style="color: {Do.init_color};">Ability Calculation: Avg hit of {self.Name} to {self.nD}x {round(Avg[0], 2)}</li>'
 
         else:  # Else the bleed is 1/max + ((max-1)/max) * (1+(max-1)/2)) / amount of hits
             Avg = [(Min[0] / Max[0] * Min[0] + ((Max[0] - Min[0]) / Max[0]) * (Min[0] + (Max[0] - Min[0]) / 2)) / self.nD] * (self.nD + nExtend)
@@ -355,6 +347,9 @@ class Ability:
     ##############################################################
 
     def ConstructHitObject(self, player, Do):
+        if self.Name == 'Anticipation' and player.PerkReflexes:
+            self.cdMax = 12
+
         # If the ability is a standard or channeled ability
         if self.Standard or self.Channeled:
             DamAvg = self.StandardChannelDamAvgCalc(player, Do)
@@ -385,6 +380,13 @@ class Ability:
 
         # If the ability has a bleed effect
         if self.Bleed:
+            # If the user selected the Planted Feet weapon perk, remove the bleed and increase duration
+            if player.PerkPlantedFeet:
+                self.Bleed = False
+                self.BoostTime = 37.8
+
+                return
+
             DoTAvg = self.BleedDamAvgCalc(player, Do)
 
             for i in range(0, self.nD):  # For every DoT hit

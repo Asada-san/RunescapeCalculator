@@ -35,7 +35,7 @@ p5.sound extends p5.js with Web Audio functionality including audio input, playb
 
 This is an empty example of a website. The folder includes the file for the website, index.html, the p5.js library, other related p5.js libraries, and a template starting point for your p5.js sketch, called sketch.js.
 
-### index.html
+### home.html
 
 index.html is a template for an HTML file. This index.html first imports the libraries included in the folder (p5.js, p5.sound.js) then loads and executes the file sketch.js which is where you can write your own code.
 

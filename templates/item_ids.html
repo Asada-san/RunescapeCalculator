@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block head %}
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='Nightcorify/song.css') }}">
+{% endblock %}
+{% block title %}Item id's{% endblock %}
+{% block content %}
+
+<div style="text-align: center;">
+  <div class="btn-group">
+    <button id="calcbutton" type="button" onclick="location.href = '{{ url_for('downloadJSON') }}';" style="padding: 10px 40px; margin-top: 50px; margin-bottom: 20px;">Download .json</button>
+  </div>
+</div>
+
+<div class="note" style="width: 500px;">
+    <pre id="json" style="color: var(--textColor1); margin-left: 10px; margin-top: 10px"></pre>
+</div>
+
+<script>
+  var json = JSON.parse('{{ item_list | tojson | safe}}');
+  document.getElementById("json").innerHTML = JSON.stringify(json, null, 2);
+</script>
+
+{% endblock %}

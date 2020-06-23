@@ -1,19 +1,71 @@
 from PythonRevolution import Revolution_main as RevoMain
 from PythonRevolution.AbilityBook import AbilityBook
-from flask import Flask, redirect, render_template, url_for, render_template, request
-from flask import make_response, jsonify
+from flask import Flask, redirect, url_for, render_template, request
+from flask import make_response, jsonify, send_file
 import os
+import requests
+from bs4 import BeautifulSoup
 import json
-import pprint
-import pandas as pd
 import time
 
 app = Flask(__name__)
 
 
+def get_tradeable_itemIDs():
+    item_list = {}
+    number_of_categories = 42
+    max_amount_of_pages = 20
+
+    # For every category on the Grand Exchange catalogue page starting at 0
+    for i in range(0, number_of_categories):
+        end_loop = False
+
+        # For every page in a given category (make sure the pages don't go over 10) starting at 1
+        for j in range(1, max_amount_of_pages + 1):
+            # The url of category i and page j
+            url = f"http://services.runescape.com/m=itemdb_rs/catalogue?cat={i}&page={j}"
+            # Get the html code of the page
+            r = requests.get(url)
+            # tables = pd.read_html(url)
+
+            # Clean that shit up
+            soup = BeautifulSoup(r.text, 'html.parser')
+            # Find all the html lines in the item table with img in it
+            # These line have both the item name and id in it (but not all!!!)
+            rows = soup.find('table').find('tbody').find_all('tr')
+
+            for row in rows:
+                img_element = row.find('td').find('a').find('img')
+                item = img_element['title']
+                link = img_element['src']
+                id = link.split('=')[-1]
+
+                if id in item_list:
+                    end_loop = True
+                    break
+                else:
+                    item_list.update({id: item})
+
+            if end_loop:
+                break
+
+            # Don't overload the rs page
+            time.sleep(3)
+
+        # To keep track of program status when running it
+        print(i)
+
+    # Save the list
+    with open('itemIDs.json', 'w') as file:
+        json.dump(item_list, file)
+
+    return None
+
+
 @app.route("/")
+@app.route("/home")
 def home():
-    return render_template("index.html")
+    return render_template("home.html")
 
 
 @app.route("/bar")
@@ -21,14 +73,28 @@ def bar():
     return render_template("bar.html")
 
 
+@app.route("/item_ids")
+def item_ids():
+    with open('itemIDs.json', 'r') as file:
+        item_list = json.load(file)
+    return render_template("item_ids.html", item_list=item_list)
+
+
+@app.route('/download', methods=['GET', 'POST'])
+def downloadJSON():
+    path = "itemIDs.json"
+    return send_file(path, as_attachment=True)
+
+
+@app.route("/get_item_ids", methods=['GET', 'POST'])
+def get_item_ids():
+    get_tradeable_itemIDs()
+    return redirect(url_for('item_ids'))
+
+
 @app.route("/song")
 def song():
     return render_template("song.html")
-
-
-@app.route("/home")
-def ge():
-    return render_template("index.html")
 
 
 @app.route("/calc", methods=['POST'])

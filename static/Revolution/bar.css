@@ -225,7 +225,7 @@
 .OptionBlock {
     margin: auto;
     width: 1100px; /* 989 */
-    height: 500px; /* 314 */
+    height: 550px; /* 314 */
 }
 
 
@@ -237,7 +237,7 @@
     float: left;
     margin: auto;
     width: 200px;
-    height: 500px;
+    height: 550px;
     color: var(--textColor2);
 }
 

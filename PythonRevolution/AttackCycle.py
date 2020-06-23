@@ -258,8 +258,8 @@ def AoECheck(bar, dummy, player, FA, Do):
     elif FA.Name in {'Chain', 'Ricochet'}:
         # Ricochet and Chain only hit up to 3 targets
 
-        if nDT > 3:  # If number of damageable targets is larger than 3, set nDT to 3.
-            nDT = 3
+        if nDT > 3 + player.Cr:  # If number of damageable targets is larger than 3, set nDT to 3.
+            nDT = int(3 + player.Cr)
 
         N = FA.nT
 
