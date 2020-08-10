@@ -5,6 +5,11 @@
 {% block title %}Item id's{% endblock %}
 {% block content %}
 
+<div class="note">
+  <h2 style="text-align: center; margin-bottom: 15px; margin-top: 15px;">Item IDs (tradeable)</h2>
+  <p style="text-align:center;">Last updated: 10-8-2020</p>
+</div>
+
 <div style="text-align: center;">
   <div class="btn-group">
     <button id="calcbutton" type="button" onclick="location.href = '{{ url_for('downloadJSON') }}';" style="padding: 10px 40px; margin-top: 50px; margin-bottom: 20px;">Download .json</button>

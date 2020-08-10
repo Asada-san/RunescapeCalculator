@@ -1,8 +1,10 @@
 import numpy as np
 
 
-# The Dummy class: A dummy mimics a (stationary) monster
 class Dummy:
+    """
+    The Dummy class. A dummy mimics a (stationary) monster.
+    """
 
     def __init__(self, opt, Do):
         self.Damage = 0                 # The amount of damage done - puncture damage
@@ -17,10 +19,6 @@ class Dummy:
         self.nPH = 0                    # Amount of Pending Hits
         self.nPuncture = 0              # Amount of puncture stacks on dummy
 
-        ##############################################################
-        ################# Set various user inputs ####################
-        ##############################################################
-
         self.nTarget = int(opt['nTargets'])             # Number of targets
         self.Movement = not opt['movementStatus']       # True if the dummy can move
         self.StunBindImmune = opt['stunbindStatus']     # True if the dummy is Stun and Bind immune
@@ -30,30 +28,25 @@ class Dummy:
                        f'<li style="color: {Do.init_color};">User select: Stun&Bind Immune {self.StunBindImmune}</li>' \
                        f'<li style="color: {Do.init_color};">User select: Number of targets: {int(opt["nTargets"])}</li>'
 
-    ##############################################################
-    ################## Check for Stuns&Binds #####################
-    ##############################################################
-
     def TimerCheck(self, Do):
+        """
+        Check the Bind and Stun status of the dummy.
+        :param Do: the DoList object.
+        """
 
-        # If the dummy has been stunned
         if self.Stun:
-            self.StunTime -= .6  # Subtract tick time
+            self.StunTime -= 1
 
-            # If the StunTime reached zero
-            if self.StunTime <= 0.01:
-                self.StunTime = 0
+            if self.StunTime == 0:
                 self.Stun = False
 
                 if Do.HTMLwrite:
                     Do.Text += f'<li style="color: {Do.stat_color};">Dummy no longer stunned</li>\n'
 
-        # If the dummy has been bound
         if self.Bind:
-            self.BindTime -= .6  # Subtract tick time
+            self.BindTime -= 1
 
-            # If the BindTime reached zero: set its status to False
-            if self.BindTime <= 0.01:
+            if self.BindTime == 0:
                 self.Bind = False
 
                 if Do.HTMLwrite:

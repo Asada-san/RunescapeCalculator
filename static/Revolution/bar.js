@@ -254,7 +254,7 @@ for (var k=0; k<RevolutionBar.length; k++) {
 
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
-// LINK TO RSWIKI ON CLICK /////////////////////////////////////////////////////////
+// PUT ABILITY ON BAR WITH LEFT CLICK AND LINK TO RS WIKI WHEN HOLDING CTRL ////////
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -269,12 +269,27 @@ for (var k=0; k<AbilityColl.length; k++) {
         var element = document.getElementById(ev.target.id);
 
         // if element is of type img and its not on the RevoBar
-        if (element.nodeName == 'IMG' && element.parentNode.classList.value !== 'RevoBar') {
+        if (element.nodeName == 'IMG' && element.parentNode.classList.value !== 'RevoBar' && !BarAbilities.includes(element.id) ) {
+            var currentBar = document.getElementById('RevolutionBar')
+
+            BarAbilities.push(element.id)
+
+            for (var l=0; l<14; l++) {
+                if (currentBar.childNodes[l * 2 + 1].firstChild == null) {
+                    var nodeCopy = document.getElementById(element.id).cloneNode(true);
+                    // Assign a new id to the copied ability revo(i) + _name
+                    nodeCopy.id = currentBar.childNodes[l * 2 + 1].id + "_" + element.id;
+                    // Assign a name to the copied ability (which is the name of the ability)
+                    nodeCopy.name = element.id
+                    // put the ability on the new spot
+                    currentBar.childNodes[l * 2 + 1].appendChild(nodeCopy);
+                    break;
+                }
+            }
+        } else if (window.event.ctrlKey && element.nodeName == 'IMG' && element.parentNode.classList.value !== 'RevoBar') {
             url = "http://runescape.wiki/w/" + element.id;
             // open rs wiki page for the ability
             window.open(url, "_blank");
-        } else { // else do nothing
-            return;
         }
     })
 }
@@ -309,7 +324,7 @@ DeleteBar.addEventListener("click", function() {
 
     if (DPTNote.style.maxHeight) {
         DPTNote.style.maxHeight = null;
-        document.getElementById('DPTprint').innerHTML = null;
+        document.getElementById('DPTprint').innerHTML = "";
     }
 });
 
@@ -323,6 +338,7 @@ DeleteBar.addEventListener("click", function() {
 var calcDPT = document.getElementById("calcbutton");
 var LoopText;
 var CycleText;
+var AbilityTable;
 
 // check if the calc button is being clicked on
 calcDPT.addEventListener("click", async function(ev) {
@@ -436,14 +452,48 @@ calcDPT.addEventListener("click", async function(ev) {
                 CycleText += '<span style="color: #FF3333;">Cycle Time: </span> ' + data['CycleTime'] + "s --> " + (parseFloat(data['CycleTime']) / 0.6).toFixed(0) + " ticks";
                 CycleText += '<br><br><span style="color: #FF3333;">Cycle Convergence Time: </span> ' + data['CycleConvergenceTime'] + "s --> " + (parseFloat(data['CycleConvergenceTime']) / 0.6).toFixed(0) + " ticks";
                 CycleText += '<br><br><span style="color: #FF3333;">Cycle Damage: </span> ' + data['CycleDamage'] + ' <span style="color: #707070;">Base Damage: ' + data['BaseDamage'] + '</span>';
-                CycleText += '<br><br><span style="color: #FF3333;">Cycle Rotation: </span> ' + RotationString + "<br><br>";
+                CycleText += '<br><br><span style="color: #FF3333;">Cycle Rotation: </span> ' + RotationString + '<br><br>';
             }
 
             if (data['CycleRedundant'].length > 0) {
                 CycleText += '<span style="color: #FF3333;">Redundant abilities: </span> ' + RedundantAbilities.replace(/,/g, ', ') + "<br><br>";
             }
 
-            CycleText += '<br><span style="color: #FF3333; font-size: medium;">Python Script Execution Time: </span> ' + data['ExecutionTime'] + "s<br>";
+            function tableCreate() {
+                tt = '<table style="">';
+                headText = ['Source', 'activations', 'damage', '% of total damage'];
+                for(var i = 0; i < Object.keys(data['AbilityInfo']).length + 1; i++){
+                    tt += '<tr>';
+                    if (i !== 0) {
+                        key = Object.keys(data['AbilityInfo'])[i-1];
+                    }
+                    for(var j = 0; j < 4; j++){
+                        if (i == 0) {
+                            tt += '<th style="border: 1px solid #999999;">' + headText[j] + '</th>';
+                        } else {
+                            if (j == 0) {
+                                tt += '<td style="border: 1px solid #999999;">' + key + '</td>';
+                            } else if (j == 1) {
+                                tt += '<td style="border: 1px solid #999999;">' + '<span style="float: right;">' + data['AbilityInfo'][key]['activations'] + '</span>' + '</td>';
+                            } else if (j == 2) {
+                                tt += '<td style="border: 1px solid #999999;">' + '<span style="float: right;">' + parseFloat(data['AbilityInfo'][key]['damage']).toFixed(2) + '</span>' + '</td>';
+                            } else if (j == 3) {
+                                tt += '<td style="border: 1px solid #999999;">' + '<span style="float: right;">' + parseFloat(data['AbilityInfo'][key]['shared%']).toFixed(2) + '</span>' + '</td>';
+                            }
+                        }
+                    }
+                    tt += '</tr>';
+                }
+                tt += '</table>';
+                return tt;
+            }
+            AbilityTable = tableCreate();
+
+            CycleText += '<span style="color: #FF3333;">Cycle Ability Information: </span> <br><br>'
+
+            CycleText += AbilityTable;
+
+            CycleText += '<br><br><br><span style="color: #FF3333; font-size: medium;">Python Script Execution Time: </span> ' + data['ExecutionTime'] + "s<br>";
             CycleText += '<span style="color: #FF3333; font-size: medium;">Simulation Time: </span>' + (parseFloat(data['SimulationTime']) * 0.6).toFixed(1) + "s --> " + data['SimulationTime'] + ' ticks<br>';
 
             // the loop text which shows what happens for each tick

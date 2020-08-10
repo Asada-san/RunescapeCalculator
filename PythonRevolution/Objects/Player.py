@@ -1,10 +1,13 @@
 import numpy as np
 
 
-# The Player class: A player attacks the dummy
 class Player:
+    """
+    The Player class. A player attacks the dummy.
+    """
 
     def __init__(self, opt, Do):
+        self.AbilInfo = {}               # Dict with total damage contribution per ability
         self.Cooldown = []                  # List of abilities which are currently on cooldown
         self.ChanAbil = False               # When True, the player used a channeled ability
         self.ChanTime = 0                   # Duration of the channeled ability
@@ -22,16 +25,13 @@ class Player:
         self.CritAdrenalineBuffTime = 0     # Timer for adrenaline buff due to the above ^
         self.BasicAdrenalineGain = 0        # Adrenaline boost for basic abilities due to the above ^
 
-        ##############################################################
-        ############ Set various user selected options ###############
-        ##############################################################
-
         self.Switcher = opt['switchStatus']         # True if the user want to use both 2h and dual weapons
         self.Afk = not opt['afkStatus']             # True if the player intends to afk
         self.StrengthCape = opt['StrengthCape']     # True if the user selected the Strength Cape
         self.RoV = opt['RoV']                       # True if the user selected the Ring of Vigour
         self.MSoA = opt['MSoA']                     # True if the user selected the Masterwork Spear of Annihilation
         self.Aura = opt['Aura']                     # Aura selected by the user
+
 
         if Do.HTMLwrite:
             Do.Text += f'<li style="color: {Do.init_color};">User select: Switcher {self.Switcher}</li>' \
@@ -41,9 +41,17 @@ class Player:
                        f'<li style="color: {Do.init_color};">User select: MSoA {self.MSoA}</li>' \
                        f'<li style="color: {Do.init_color};">User select: Aura {self.Aura}</li>'
 
-        ##############################################################
-        ##### Set various perk and critical hit related stuff ########
-        ##############################################################
+        self.MaxAdrenaline = 110 if opt['HeightenedSenses'] else 100  # Maximum amount of adrenaline
+        self.CoE = opt['CoE']       # True if the user selected the Conservation of Energy Relic
+
+        if opt['BerserkersFury'] != '' and 0 <= opt['BerserkersFury'] <= 5.5:
+            self.BerserkersFury = 1 + opt['BerserkersFury'] / 100
+        else:
+            self.BerserkersFury = 1
+
+        if Do.HTMLwrite:
+            Do.Text += f'<li style="color: {Do.init_color};">User select: MaxAdrenaline {self.MaxAdrenaline}</li>' \
+                       f'<li style="color: {Do.init_color};">User select: CoE {self.CoE}</li>'
 
         self.Pr = opt['Precise']                # Precise rank
         self.PerkPrecise = self.Pr > 0          # True if user selected the Precise perk
@@ -79,6 +87,9 @@ class Player:
         self.Ar = opt['Aftershock']             # Aftershock rank
         self.PerkAftershock = self.Ar > 0       # True if the user selected the Aftershock perk
 
+        self.SBr = opt['ShieldBashing']         # Shield Bashing rank
+        self.PerkShieldBashing = self.SBr > 0   # True if the user selected the Shield Bashing perk
+
         self.PerkPlantedFeet = opt['PlantedFeet']   # True if the user selected the Planted Feet perk
 
         self.PerkReflexes = opt['Reflexes']         # True if the user selected the Reflexes Feet perk
@@ -96,13 +107,9 @@ class Player:
                        f'<li style="color: {Do.init_color};">User select: Planted Feet Perk {self.PerkPlantedFeet}</li>' \
                        f'<li style="color: {Do.init_color};">User select: Reflexes Perk {self.PerkReflexes}</li>'
 
-        ##############################################################
-        ########## Set various base damage related stuff #############
-        ##############################################################
-
         # Determine Base Damage of the player
         if opt['baseDamage'] != '' and 0 <= opt['baseDamage'] <= 10000:
-            self.BaseDamage = opt['baseDamage']     # Base weapon damage of the player
+            self.BaseDamage = opt['baseDamage']  # Base weapon damage of the player
         else:
             self.BaseDamage = 1000
 
@@ -126,33 +133,24 @@ class Player:
             Do.Text += f'<li style="color: {Do.init_color};">User select: Base Damage: {self.BaseDamage}</li>' \
                        f'<li style="color: {Do.init_color};">User select: Bash Base Damage: {self.BashBaseDamage}</li>'
 
-        ##############################################################
-        ############# Set various boost related stuff ################
-        ##############################################################
-
-        # Strength Boosts
         if opt['StrengthBoost'] != '' and 0 <= opt['StrengthBoost'] <= 60:
             self.StrengthLevelBoost = opt['StrengthBoost']  # Strength Boost of the player in levels
         else:
             self.StrengthLevelBoost = 0
 
-        self.StrengthPrayerBoost = opt['StrengthPrayer']
-
-        # Ranged Boosts
         if opt['RangedBoost'] != '' and 0 <= opt['RangedBoost'] <= 60:
             self.RangedLevelBoost = opt['RangedBoost']  # Ranged Boost of the player in levels
         else:
             self.RangedLevelBoost = 0
 
-        self.RangedPrayerBoost = opt['RangedPrayer']
-
-        # Magic Boosts
         if opt['MagicBoost'] != '' and 0 <= opt['MagicBoost'] <= 60:
             self.MagicLevelBoost = opt['MagicBoost']  # Magic Boost of the player in levels
         else:
             self.MagicLevelBoost = 0
 
-        self.MagicPrayerBoost = opt['MagicPrayer']
+        self.StrengthPrayerBoost = opt['StrengthPrayer']    # Boost due to melee prayers
+        self.RangedPrayerBoost = opt['RangedPrayer']        # Boost due to ranged prayers
+        self.MagicPrayerBoost = opt['MagicPrayer']          # Boost due to magic prayers
 
         if Do.HTMLwrite:
             Do.Text += f'<li style="color: {Do.init_color};">User select: Strength Level Boost: {self.StrengthLevelBoost}</li>' \
@@ -163,16 +161,16 @@ class Player:
                        f'<li style="color: {Do.init_color};">User select: Magic Prayer Boost: {self.MagicPrayerBoost}</li>'
 
     def TimerCheck(self, Do):
-
-        ############### Check ability cooldowns ######################
+        """
+        Checks the ability cooldowns, adrenaline buffs, boosts and channeling status.
+        :param Do: The DoList object.
+        """
 
         # For all abilities currently on cooldown
         for i in range(len(self.Cooldown) - 1, -1, -1):
-            self.Cooldown[i].cdTime -= .6  # Subtract tick time
+            self.Cooldown[i].cdTime -= 1
 
-            # If the cooldown reached zero: reset
-            if self.Cooldown[i].cdTime <= 0.01:
-                self.Cooldown[i].cdTime = 0
+            if self.Cooldown[i].cdTime == 0:
                 self.Cooldown[i].cdStatus = False
 
                 if Do.HTMLwrite:
@@ -180,43 +178,31 @@ class Player:
 
                 self.Cooldown.pop(i)  # Delete it from the cooldown list
 
-        ########### Check player adrenaline buff status ##############
-
         # If the player has an adrenaline buff going
         if self.CritAdrenalineBuffTime:
-            self.CritAdrenalineBuffTime -= .6  # Subtract tick time
+            self.CritAdrenalineBuffTime -= 1
 
-            # If the adrenaline buff time reached zero: reset
-            if self.CritAdrenalineBuffTime <= 0.01:
-                self.CritAdrenalineBuffTime = 0
+            if self.CritAdrenalineBuffTime == 0:
                 self.CritAdrenalineBuff = False
 
                 if Do.HTMLwrite:
                     Do.Text += f'<li style="color: {Do.nor_color};">Player adrenaline gain buff has worn out</li>\n'
 
-        ############# Check player channeling status #################
-
         # If the player used a channeled ability and its still active
         if self.ChanAbil:
-            self.ChanTime -= .6  # Subtract tick time
+            self.ChanTime -= 1
 
-            # If the channeled ability time reached zero: reset
-            if self.ChanTime <= 0.01:
-                self.ChanTime = 0
+            if self.ChanTime == 0:
                 self.ChanAbil = False
 
                 if Do.HTMLwrite:
                     Do.Text += f'<li style="color: {Do.nor_color};">Player is no longer performing a channeled ability</li>\n'
 
-        ################ Check player boost status ###################
-
         # If the player has a boost going on
         if self.Boost:
-            self.BoostTime -= .6  # Subtract tick time
+            self.BoostTime -= 1
 
-            # If the channeled ability time reached zero: reset
-            if self.BoostTime <= 0.01:
-                self.BoostTime = 0
+            if self.BoostTime == 0:
                 self.Boost = False
                 self.BoostX = 1
 

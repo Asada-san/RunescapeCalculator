@@ -2,17 +2,24 @@ from PythonRevolution import CombatChecks
 import numpy as np
 
 
-# Checks for a cycle in the current revolution bar
 def CycleCheck(bar, player, dummy, Do, loop):
-    loop.nAC += 1  # Number of times the loop has initiated an attack cycle
+    """
+    Checks for repeating cycles.
 
-    # Array containing all names of the abilities currently on cooldown
+    :param bar: The Bar object.
+    :param dummy:  The Dummy object.
+    :param player: The Player object.
+    :param Do: The DoList object.
+    :param loop: The Loop object.
+    """
+
+    loop.nAC += 1
     cdNames = [ability.Name for ability in player.Cooldown]
 
-    for i in range(0, bar.N):  # For every ability on the bar
+    for i in range(0, bar.N):
 
         # Construct the cooldown array for the current attack cycle
-        if bar.Rotation[i].Name in cdNames:  # If ability i is on cooldown
+        if bar.Rotation[i].Name in cdNames:
             loop.cdTimes[i] = player.Cooldown[cdNames.index(bar.Rotation[i].Name)].cdTime
         else:
             loop.cdTimes[i] = 0
@@ -30,39 +37,39 @@ def CycleCheck(bar, player, dummy, Do, loop):
                 if loop.ConditionList[i][2] == loop.ConditionList[-1][2]:
                     # CONDITION 3: If the critical hit boost is equal
                     if loop.ConditionList[i][3] == loop.ConditionList[-1][3]:
-
                         loop.CycleFound = True  # A cycle has been found!
-
                         loop.CycleTime = loop.ConditionList[-1][4] - loop.ConditionList[i][4]  # The cycle time
-
                         loop.Cycle1More = loop.CycleTime    # Set the time for the next cycle
                         loop.CycleStart = loop.n * .6       # Starting time of the next cycle
-
                         loop.CycleConvergenceTime = loop.CycleStart - loop.CycleTime  # Convergence time
 
                         if Do.HTMLwrite:
                             Do.Text += f'<li style="color: {Do.cycle_color};">CYCLE FOUND, EXTENDING RUN BY 1x CYCLETIME: {round(loop.CycleTime, 1)}s</li>\n'
 
-    return None
-
 
 def CycleRotation(bar, player, dummy, Do, loop):
-    loop.Cycle1More -= .6  # Subtract tick time
+    """
+    Checks if the verification cycle has to end or not.
 
-    # If Cycle1More reached 0 then cycle is no more
+    :param bar: The Bar object.
+    :param dummy:  The Dummy object.
+    :param player: The Player object.
+    :param Do: The DoList object.
+    :param loop: The Loop object.
+    """
+
+    loop.Cycle1More -= .6
+
     if loop.Cycle1More < 0.01:
-
         # !!! important for accurate results, check 1 more time for possible bleeds/punctures
         CombatChecks.TimerStatuses(bar, player, dummy, Do, loop)
 
         # Check for redundant abilities (abilities which do not occur in the rotation)
         for j in range(0, bar.N):
-
             # If an ability has not been fired during the cycle verification
             if not loop.nFA[j]:
                 loop.Redundant.extend([bar.Rotation[j].Name])
 
-        # End the while loop prematurely
         loop.runLoop = False
 
         if Do.HTMLwrite:

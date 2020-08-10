@@ -11,60 +11,70 @@ import numpy as np
 import cProfile
 
 
-# user_input is a dict containing the following:
-#
-#   PLAYER OBJECT RELATED
-#
-#   Abilities: array[string]
-#
-#   afkStatus: boolean
-#   switchStatus: boolean
-#   baseDamage: float
-#   ShieldArmourValue: float
-#   DefenceLevel: float
-#   StrengthBoost: float
-#   MagicBoost: float
-#   RangedBoost: float
-#   StrengthPrayer: float
-#   MagicPrayer: float
-#   RangedPrayer: float
-#
-#   StrengthCape: boolean
-#   RoV: boolean                --> Ring of Vigour
-#   MSoA: boolean               --> Masterwork Spear of Annihilation
-#   Aura: string
-#   Level20Gear: boolean
-#   Grimoire: boolean
-#   Precise: float
-#   Equilibrium: float
-#   Biting: float
-#   Flanking: float
-#   Lunging: float
-#   Aftershock: float
-#   PlantedFeet: boolean
-#
-#   DUMMY OBJECT RELATED
-#
-#   movementStatus: boolean
-#   stunbindStatus: boolean
-#   nTargets: float
-#
-#   SCRIPT RELATED
-#
-#   simulationTime: string
-#   adrenaline: string
-#   HTMLwrite: boolean
-#
-
 def fight_dummy(user_input, AbilityBook):
+    """
+    Initialises and simulates the player vs dummy fight.
+
+    :param user_input: A dict containing the following:
+
+        PLAYER OBJECT RELATED
+
+        Abilities: array[string]
+
+        afkStatus: boolean
+        switchStatus: boolean
+        baseDamage: float
+        ShieldArmourValue: float
+        DefenceLevel: float
+        StrengthBoost: float
+        MagicBoost: float
+        RangedBoost: float
+        StrengthPrayer: float
+        MagicPrayer: float
+        RangedPrayer: float
+
+        HeightenedSenses: boolean
+        FotS: boolean               --> Fury of the Small
+        CoE: boolean                --> Conservation of Energy
+        BerserkersFury: float
+        StrengthCape: boolean
+        RoV: boolean                --> Ring of Vigour
+        MSoA: boolean               --> Masterwork Spear of Annihilation
+        Aura: string
+        Level20Gear: boolean
+        Grimoire: boolean
+        Precise: float
+        Equilibrium: float
+        Biting: float
+        Flanking: float
+        Lunging: float
+        Caroming: float
+        Ruthless: float
+        Aftershock: float
+        ShieldBashing: float
+        Reflexes: boolean
+        PlantedFeet: boolean
+
+        DUMMY OBJECT RELATED
+
+        movementStatus: boolean
+        stunbindStatus: boolean
+        nTargets: float
+
+        SCRIPT RELATED
+
+        simulationTime: string
+        adrenaline: string
+        HTMLwrite: boolean
+
+    :param AbilityBook: Book containing every ability.
+    :return: Results, warnings and error messages.
+    """
 
     # cp = cProfile.Profile()
     # cp.enable()
 
-    # Tick rate of RuneScape in seconds
-    tick = .6
-
-    # Create object used for printing (maybe other stuff)
+    tick = .6  # Tick rate of RuneScape in seconds
     Do = Loop.DoList(user_input)
 
     # Start writing HTML text
@@ -100,7 +110,7 @@ def fight_dummy(user_input, AbilityBook):
     # Check for correct abilities and initialise the ability bar
     error, error_mes, warning = CombatChecks.AbilityBar_verifier(user_input, AbilityBook, bar, dummy, player, Do, loop)
 
-    # If an error oCombatChecksurred in the Ability Bar verifier, return that error
+    # If an error occurred in the Ability Bar verifier, return that error
     if error:
         return {}, warning, error_mes
 
@@ -112,9 +122,9 @@ def fight_dummy(user_input, AbilityBook):
                     f'<span style="float: right; margin-right: 18px;">Time: 0</span></li><br>')
 
     # The revolution loop
-    while loop.runLoop and loop.n < loop.nMax + (loop.CycleTime / .6):
+    while loop.runLoop and loop.n < loop.nMax + loop.CycleTime:
 
-        if loop.SimulationTime > 180 - 0.001:
+        if loop.SimulationTime > 300:
             Do.HTMLwrite = False
 
         # --------- PRE ATTACKING PHASE -----------------------
@@ -138,7 +148,7 @@ def fight_dummy(user_input, AbilityBook):
 
         # ---------- LOOP SHENANIGANS -------------------------
         # Increase the current simulation time of the rotation by a tick
-        loop.SimulationTime += tick
+        loop.SimulationTime += 1
 
         loop.n += 1
         loop.nCheck += 1
@@ -152,9 +162,9 @@ def fight_dummy(user_input, AbilityBook):
             if Do.HTMLwrite:
                 Do.Text +=(f'<br>\n<li style="color: {Do.loop_color}; white-space: pre-wrap;">'
                            f'Total damage: {round(dummy.Damage + dummy.PunctureDamage, 3)}'
-                           f'<span style="float: right; margin-right: 18px;">Time: {round(loop.SimulationTime, 1)}</span></li><br>\n')
+                           f'<span style="float: right; margin-right: 18px;">Time: {round(loop.SimulationTime * .6, 1)}</span></li><br>\n')
         else:
-            loop.CycleLoopTime += tick  # Add tick time
+            loop.CycleLoopTime += .6  # Add tick time
 
             if Do.HTMLwrite:
                 Do.Text += (f'<br>\n<li style="color: {Do.cycle_color}; white-space: pre-wrap;">'
@@ -167,15 +177,16 @@ def fight_dummy(user_input, AbilityBook):
         loop.CycleDamage = dummy.Damage
         loop.CyclePunctureDamage = dummy.PunctureDamage
 
-    # If the user selected the Aftershock Perk, recalculate Cycle Damage
     if player.PerkAftershock:
         # Increase max by 0.396 per rank and min 0.24 per rank
         AS_DamAvg = (0.396 * player.Ar + 0.24 * player.Ar) / 2 * player.BaseDamageEffective
-
-        # Calculate true Cycle Damage
         loop.CycleDamage += (loop.CycleDamage * AS_DamAvg / 50000) * dummy.nTarget
 
     loop.CycleDamage += loop.CyclePunctureDamage
+
+    if loop.CycleDamage != 0:
+        for entry in player.AbilInfo:
+            player.AbilInfo[entry]['shared%'] = round(player.AbilInfo[entry]['damage'] / loop.CycleDamage * 100, 2)
 
     Results = {  # The output of main
         'AADPTPercentage': round(loop.CycleDamage / (loop.CycleTime / tick) / player.BaseDamage * 100, 3),
@@ -188,6 +199,7 @@ def fight_dummy(user_input, AbilityBook):
         'CycleRotation': loop.Rotation,
         'CycleRedundant': loop.Redundant,
         'CycleBar': bar.AbilNames,
+        'AbilityInfo': player.AbilInfo,
         'LoopText': Do.Text
     }
 

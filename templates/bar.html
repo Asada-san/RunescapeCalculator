@@ -6,43 +6,68 @@
 {% block content %}
 
 <div class="note">
-  <h2 style="text-align: center; margin-bottom: 15px; margin-top: 15px;">Revolution Bar <span style="font-size:small;">V1.04.0</span></h2>
+  <h2 style="text-align: center; margin-bottom: 15px; margin-top: 15px;">Revolution Bar <span style="font-size:small;">V1.05.0</span></h2>
   <button id="guide-button" class="note-button">General Info</button>
   <div id="Bar-guide" class="content note-collapsible">
     <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;">
       Look through the combat sections for the abilities you want to put on the bar. If you want more information
-      about a certain ability, click on it and it will link you to its RS3 wiki page. <br><br>
+      about a certain ability, hold CTRL and click on it, this will open up its RS3 wiki page. <br><br>
 
-      Constructing the revolution bar is as simple as dragging abilities onto it. Deleting an ability from the bar is
-      done by clicking on it, deleting the entire bar at once is done by clicking the "clear bar" button. You can also
-      switch around abilities already on the bar. Lastly, have a look at the options section for perks, boosts
-      and much more.<br><br>
+      Constructing the revolution bar is as simple as:</p>
+      <ul>
+        <li>Clicking on abilities to make them appear in the first available slot on the bar.</li>
+        <li>Dragging them onto a slot.</li>
+        <li>Left clicking on an ability on the bar removes it.</li>
+        <li>The "clear bar" button removes all abilities from the bar.</li>
+        <li>Switching abilities on the bar can be done by dragging and dropping.</li>
+      </ul>
+    <p style="margin-left: 15px; margin-right: 15px;">
+      Also, have a look at the options section for perks, boosts and much more.<br><br>
 
-      When you've got your desired bar, click on the FIGHT! button. A fight between a player and a dummy
-      will be simulated resulting in an Average Ability Damage Per Tick (AADPT) output (in both a number and a percentage
+      When you've set up your desired bar with the proper options, you should click on the FIGHT! button. A fight between a player and
+      a dummy will now be simulated resulting in an Average Ability Damage Per Tick (AADPT) output (in both a number and a percentage
       of the base ability damage as calculated
-      <a href="https://runescape.wiki/w/Ability_damage#Calculating_ability_damage" target="_blank" style="color: #4CAF50"><strong>here</strong></a>).
+      <a href="https://runescape.wiki/w/Ability_damage#Calculating_ability_damage" target="_blank" style="color: #4CAF50"><strong>on the rs3 wiki</strong></a>).
       Clicking on this resulting number will allow you to view some more interesting information.<br><br>
 
-      If anything is wrong or if you have any suggestions please let me know by sending an email to:
-      <a style="color: #4CAF50" href="mailto:RS-RevolutionCalc@outlook.com">RS-RevolutionCalc@outlook.com</a>.
+      If anything is wrong or if you have any suggestions please let me know by contacting me on
+      reddit: <a style="color: #4CAF50" href="https://www.reddit.com/user/ftwmickywtf"><strong>u/FTWmickyWTF</strong></a> or ingame:
+      <a style="color: #4CAF50" href="https://apps.runescape.com/runemetrics/app/overview/player/asada-san"><strong>Asada-san</strong></a>.
+
+      {# sending an email to:
+      <a style="color: #4CAF50" href="mailto:RS-RevolutionCalc@outlook.com">RS-RevolutionCalc@outlook.com</a>.#}
     </p>
   </div>
   <button id="notes-button" class="note-button">Important Notes</button>
   <div id="Bar-notes" class="content note-collapsible">
     <ul style="margin-top: 10px; margin-right: 15px;">
-      <li>Average ability damages are used for the calculating the AADPT </li>
+      <li style="color: red;">The more damage boosting options are used, the more probable it is the output damage is wrong due to orders in which
+      these are applied. If you notice any errors, please let me know! (see general info for places to contact me)</li>
+      <li>Average ability damages are used for the calculating the AADPT.</li>
       <li>Tuska's Wrath does its normal damage only. When fighting slayer creatures, please
       don't let revolution activate this ability, but instead activate it manually once every
-      2 minutes</li>
-      <li>As the resulting A --> Ability <-- DPT suggests, auto attacks are not taken into account</li>
-      <li>All ability information used to determine the AADPT can be viewed <a href="https://docs.google.com/spreadsheets/d/1RMa8fUcd_zgWi6WbCBz3xHjzrdCuumzlVF6y9aPkrgM/edit#gid=0" target="_blank" style="color: #4CAF50"><strong>here</strong></a></li>
-      <li>The code can be viewed <a href="https://github.com/Asada-san/RunescapeCalculator" target="_blank" style="color: #4CAF50"><strong>here</strong></a></li>
-      <li>All ability images were yoinked from the RS3 wiki</li>
+      2 minutes.</li>
+      <li>As the resulting A --> Ability <-- DPT suggests, auto attacks are not taken into account.</li>
+      <li>All ability information used to determine the AADPT is summarized on a <a href="https://docs.google.com/spreadsheets/d/1RMa8fUcd_zgWi6WbCBz3xHjzrdCuumzlVF6y9aPkrgM/edit#gid=0" target="_blank" style="color: #4CAF50"><strong>spreadsheet</strong></a>.</li>
+      <li>The code (including html, js, css and python files) have been uploaded to <a href="https://github.com/Asada-san/RunescapeCalculator" target="_blank" style="color: #4CAF50"><strong>Github</strong></a>. You're free to use it however you want.</li>
+      <li>All ability images were yoinked from the RS3 wiki.</li>
     </ul>
   </div>
   <button id="changelog-button" class="note-button">Changelog</button>
   <div id="Changelog-notes" class="content note-collapsible">
+    <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.05.0 - 11-8-2020</strong></p>
+    <ul style="margin-top: 10px; margin-right: 15px;">
+      <li>Left clicking on abilities in their respective sections now puts them in the first
+        available slot on the bar</li>
+      <li>Left clicking + CTRL now links to the ability's wiki page</li>
+      <li>Added a new ability info table which can be seen when clicked on the resulting AADPT number</li>
+      <li>Added the Archaeology relics: Heightened Senses, Fury of the Small, Conservation of
+        Energy and Berserker's Fury</li>
+      <li>Added Perks: Shield Bashing</li>
+      <li>Fixed an issue where bleed abilities would be nulled when using the Planted Feet perk</li>
+      <li>Limited AoE abilities to be able to damage max 9 targets except for corruption shot&blast</li>
+      <li>Changed seconds to ticks within the code for clarity</li>
+    </ul>
     <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.04.0</strong></p>
     <ul style="margin-top: 10px; margin-right: 15px;">
       <li>Added Caroming, Ruthless (as a flat damage bonus) and Reflexes perk</li>
@@ -56,7 +81,7 @@
       <li>Added Hurricane + Destroy to the shared ability cooldown list</li>
       <li>Fixed an issue where certain abilities would be on cooldown indefinitely</li>
     </ul>
-    <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.03.0</strong></p>
+    {# <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.03.0</strong></p>
     <ul style="margin-top: 10px; margin-right: 15px;">
       <li>All average ability damages are now calculated properly within the code instead of reading
         values from an excel sheet</li>
@@ -84,8 +109,8 @@
         small cycle times</li>
       <li>Moved host from DigitalOcean (paid) to Heroku (free)</li>
       <li>Added Options Info section</li>
-    </ul>
-    <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.02 and earlier; no info</strong></p>
+    </ul> #}
+    <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.03.0 and earlier not available</strong></p>
   </div>
 </div>
 
@@ -228,7 +253,7 @@
         </select>
       </label>
       <label class="OptSelect" for="Ruthless" style="margin-left: 15px; margin-right: 15px;">
-        <select id="Ruthless" style="float: center; width: 100%; color: red;" >
+        <select id="Ruthless" style="float: center; width: 100%;" >
           <option value="0" disabled selected hidden>Ruthless Perk</option>
           <option value="0">None</option>
           <option value="1">Ruthless 1</option>
@@ -244,6 +269,16 @@
           <option value="2">Aftershock 2</option>
           <option value="3">Aftershock 3</option>
           <option value="4">Aftershock 4</option>
+        </select>
+      </label>
+      <label class="OptSelect" for="ShieldBashing" style="margin-left: 15px; margin-right: 15px;">
+        <select id="ShieldBashing" style="float: center; width: 100%;" >
+          <option value="0" disabled selected hidden>Shield Bashing Perk</option>
+          <option value="0">None</option>
+          <option value="1">Shield Bashing 1</option>
+          <option value="2">Shield Bashing 2</option>
+          <option value="3">Shield Bashing 3</option>
+          <option value="4">Shield Bashing 4</option>
         </select>
       </label>
     </div>
@@ -285,7 +320,6 @@
       </label>
     </div>
 
-
     <div id="DummyOptions" class="optsect">
       <p style="margin-left: 15px; margin-top: 15px; text-align: center; font-weight: bold; color: var(--textColor2);">Player</p>
       <label class="SingleOpt" for="afkStatus" style="margin-left: 20px;">Efficient
@@ -324,7 +358,25 @@
       </label>
     </div>
 
-    <div id="PythonScriptOptions" class="optsect">
+    <div id="Relics&PythonScriptOptions" class="optsect">
+      <p style="margin-top: 15px; text-align: center; font-weight: bold; color: var(--textColor2);">Archaeology Relics</p>
+      <label class="SingleOpt" for="HeightenedSenses" style="margin-left: 20px;">Heightened Senses
+        <input id="HeightenedSenses" type="checkbox" value="true">
+        <span class="tickbox"></span>
+      </label>
+      <label class="SingleOpt" for="FotS" style="margin-left: 20px;">Fury of the Small
+        <input id="FotS" type="checkbox" value="true">
+        <span class="tickbox"></span>
+      </label>
+      <label class="SingleOpt" for="CoE" style="margin-left: 20px;">Conserv. of Energy
+        <input id="CoE" type="checkbox" value="true">
+        <span class="tickbox"></span>
+      </label>
+      </label>
+        <label class="OptText" for="BerserkersFury">Berserker's Fury:
+        <input style="width: 60px;" type="number" step="0.1" id="BerserkersFury" name="fname" min="0" max="5.5" value="0"><br>
+      </label>
+
       <p style="margin-top: 15px; text-align: center; font-weight: bold; color: var(--textColor2);">Python Script</p>
       <label class="OptText" for="simulationTime">Simulation T(s):
         <input type="number" id="simulationTime" name="fname" min="0" max="3600" value="0" style="float: right;"><br>
@@ -351,7 +403,7 @@
       <strong>Level 20 Gear:</strong> Assumes the equipment levels of all augmented items are equal to
       level 20.<br><br>
       <strong>Flanking Perk:</strong> Assumes the target is not facing you at all times.<br><br>
-      <strong style="color: red;">Ruthless Perk:</strong> Assumes the player starts attacking with a full stack (5)
+      <strong>Ruthless Perk:</strong> Assumes the player starts attacking with a full stack (5)
       and the stack is never reset.<br><br>
       <strong>Efficient:</strong> Assumes the player breaks channeling abilities such that they still
       do all their damage (except for Concentrated Blast which cuts off after 2 hits) but the next
@@ -814,7 +866,7 @@
 </div>
 
 <div id="VerifyBox" class="notecontent">
-  <div class="RotationVerifierNote">
+  <div id="RVN" class="RotationVerifierNote">
     <p id="DPTprint"></p>
   </div>
 </div>

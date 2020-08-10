@@ -6,36 +6,41 @@ from copy import deepcopy
 
 
 def AbilityBar_verifier(user_input, AbilityBook, bar, dummy, player, Do, loop):
+    """
+    Verifies the user inputted bar and sets certain properties according.
+
+    :param user_input: All options as provided by the user.
+    :param AbilityBook: Book containing all existing abilities.
+    :param bar: The Bar object.
+    :param dummy:  The Dummy object.
+    :param player: The Player object.
+    :param Do: The DoList object.
+    :param loop: The Loop object.
+    :return: Error with message and warning.
+    """
+
     error = False
     error_mes = None
     warning = []
 
-    ##############################################################
-    ############## Check user ability bar input ##################
-    ##############################################################
-
+    # Check user ability bar input
     nAbils = len(user_input['Abilities'])  # Number of user inputted abilities
 
-    # If the user didn't input any abilities for ability bar, return error
     if nAbils == 0:
         error = True
         error_mes = f'0 abilities in rotation, please select at least 1'
 
         return error, error_mes, warning
 
-    ##############################################################
-    ############ Put user abilities on the bar object ############
-    ##############################################################
-
-    # Create an ability object for every ability in the rotation
+    # Put user abilities on the bar object
     for user_ability in user_input['Abilities']:
-
-        # Create the ability object
         ability = deepcopy(AbilityBook[user_ability])
 
-        # If revolution activates the ability and the player is semi afk
+        player.AbilInfo.update({ability.Name: {'damage': 0,
+                                               'activations': 0,
+                                               'shared%': 0}})
+
         if ability.Revolution or not player.Afk:
-            # Put the ability on the bar object
             bar.Rotation.append(ability)
 
             if ability.Name in {'Surge', 'Escape', 'Balanced Strike'}:
@@ -43,15 +48,17 @@ def AbilityBar_verifier(user_input, AbilityBook, bar, dummy, player, Do, loop):
 
                 if Do.HTMLwrite:
                     Do.Text += f'<br>\n<li style="color: {Do.dam_color};">WARNING: {ability.Name} should not be used with revolution</li>\n'
-        # Else print a warning
+
         else:
             warning.append(f'{ability.Name} is not activated by revolution \n')
-
-            # Add the ability to the redundant abilities (not used in cycle)
             loop.Redundant.extend([ability.Name])
 
             if Do.HTMLwrite:
                 Do.Text += f'<br>\n<li style="color: {Do.dam_color};">WARNING: {ability.Name} is not activated by revolution</li>\n'
+
+    player.AbilInfo.update({'Boosted': {'damage': 0,
+                                        'activations': 'NA',
+                                        'shared%': 0}})
 
     # Create a list of ability names which are on the bar and their required weapon types and styles
     bar.AbilNames = [ability.Name for ability in bar.Rotation]
@@ -61,31 +68,21 @@ def AbilityBar_verifier(user_input, AbilityBook, bar, dummy, player, Do, loop):
     # Sets the amount of abilities on the ability bar
     bar.N = len(bar.Rotation)
 
-    ##############################################################
-    ########### Check for duplicates and nonallowables ###########
-    ##############################################################
-
-    # For every ability in the rotation
+    # Check for duplicates and nonallowables
     for i in range(0, bar.N):
         InvalidIDX = None
 
-        # For all disallowed ability groupings
         for j in range(0, len(bar.Invalid)):
-
-            # If ability i is in a list save the index of that list
             if bar.Rotation[i].Name in bar.Invalid[j]:
                 InvalidIDX = j
                 break
 
-        # Compare it with all other abilities
-        for j in range(0, bar.N):
-
-            # If ability j equals ability i, continue with next iteration (same ability --> meaningless)
-            if j == i:
+        for j in range(0, bar.N):  # Compare it with all other abilities
+            if j == i:  # (same ability --> meaningless)
                 continue
 
             # USE THIS CODE IF USER IS ALLOWED TO PUT IN DUPLICATE ABILITIES
-            # if bar.Rotation[i].Name == bar.Rotation[j].Name:  # If the name is the same, return error
+            # if bar.Rotation[i].Name == bar.Rotation[j].Name:
             #     error = True
             #     error_mes = f'{bar.Rotation[i].Name} has multiple appearances on the ability bar'
             #
@@ -98,10 +95,7 @@ def AbilityBar_verifier(user_input, AbilityBook, bar, dummy, player, Do, loop):
 
                 return error, error_mes, warning
 
-    ##############################################################
-    #### Check ability compatibility according to equipment ######
-    ##############################################################
-
+    # Check ability compatibility according to equipment
     if not player.Switcher and all(equipment in bar.AbilEquipment for equipment in ['2h', 'dual', 'shield']):
         error = True
         error_mes = f'The ability bar consists of 2h, dual and shield abilities'
@@ -137,10 +131,7 @@ def AbilityBar_verifier(user_input, AbilityBook, bar, dummy, player, Do, loop):
     else:
         weapon = 'anything'
 
-    ##############################################################
-    ##### Check ability compatibility according to cb style ######
-    ##############################################################
-
+    # Check ability compatibility according to cb style
     if all(styles in ['Constitution', 'Defence', 'ANY'] for styles in bar.AbilStyles):
         bar.Style = 'Typeless'
     elif all(styles in ['Magic', 'Constitution', 'Defence', 'ANY'] for styles in bar.AbilStyles):
@@ -158,10 +149,7 @@ def AbilityBar_verifier(user_input, AbilityBook, bar, dummy, player, Do, loop):
     if Do.HTMLwrite:
         Do.Text += f'<li style="color: {Do.init_color};">Ability bar consists of {bar.Style} abilities and can be used with {weapon}</li>'
 
-    ##############################################################
-    ##### Set various player values depending on bar style #######
-    ##############################################################
-
+    # Set various player values depending on bar style
     if bar.Style == 'Melee':
         player.BaseDamageEffective *= player.StrengthPrayerBoost
         player.BashBaseDamage *= player.StrengthPrayerBoost
@@ -198,10 +186,7 @@ def AbilityBar_verifier(user_input, AbilityBook, bar, dummy, player, Do, loop):
 
         player.LevelBoost = max(player.StrengthLevelBoost, player.RangedLevelBoost, player.MagicLevelBoost)
 
-    ##############################################################
-    ######## Calculate average damages for each ability ##########
-    ##############################################################
-
+    # Calculate average damages for each ability
     for ability in bar.Rotation:
         ability.ConstructHitObject(player, Do)
 
@@ -209,76 +194,73 @@ def AbilityBar_verifier(user_input, AbilityBook, bar, dummy, player, Do, loop):
 
 
 def TimerStatuses(bar, player, dummy, Do, loop):
+    """
+    Checks various statuses.
+
+    :param bar: The Bar object.
+    :param dummy:  The Dummy object.
+    :param player: The Player object.
+    :param Do: The DoList object.
+    :param loop: The Loop object.
+    """
 
     bar.TimerCheck(Do)      # CHECK GLOBAL COOLDOWN TIMER
-
     dummy.TimerCheck(Do)    # CHECK STUN AND BIND STATUS TIMERS
-
     player.TimerCheck(Do)   # CHECK PLAYER COOLDOWNS/BUFFS/BOOSTS/CHANNEL TIMERS
 
     # CHECK FOR ANY HITS THAT NEED TO INFLICT DAMAGE IN THE CURRENT TICK
     if dummy.PH:  # If there are any Pending Hits
         # Subtract tick time from every PH
         for i in range(0, dummy.nPH):
-            dummy.PHits[i].Time -= .6
+            dummy.PHits[i].Time -= 1
 
         Attack.DummyDamage(bar, dummy, player, Do, loop)  # Inflict damage if the time equals 0
 
-    return None
-
 
 def PostAttackStatuses(bar, player, dummy, FireAbility, Do):
+    """
+    Checks and sets various statuses.
 
-    ##############################################################
-    ############## (Global) Cooldown shenanigans #################
-    ##############################################################
+    :param bar: The Bar object.
+    :param dummy:  The Dummy object.
+    :param player: The Player object.
+    :param FireAbility: The ability activated in the current attack cycle.
+    :param Do: The DoList object.
+    """
 
+    # (Global) Cooldown shenanigans
     FireAbility.cdStatus = True
     FireAbility.cdTime = FireAbility.cdMax
-
     bar.GCDStatus = True
     bar.GCDTime = bar.GCDMax
-
     bar.FireStatus = False
-
-    # Add the fired ability to the player ability cooldown list
     player.Cooldown.append(FireAbility)
-
-    # Check for abilities on the bar which have a shared cooldown
     bar.SharedCooldowns(FireAbility, player, Do)
 
     if Do.HTMLwrite:
         Do.Text += f'<li style="color: {Do.nor_color};">{FireAbility.Name} went on cooldown</li>\n'
         Do.Text += f'<li style="color: {Do.nor_color};">GCD activated</li>\n'
 
-    ##############################################################
-    ###################### Status checks #########################
-    ##############################################################
-
+    # Status checks
     if FireAbility.Name in {'Meteor Strike', 'Tsunami', 'Incendiary Shot'}:
-        player.CritAdrenalineBuffTime = 30  # Effect lasts for 30s
+        player.CritAdrenalineBuffTime = 50
 
-    # If the fired ability is a channeling ability
     if FireAbility.Channeled:
         player.ChanAbil = True
 
-        # If the player is truly afk
         if player.Afk:
             player.ChanTime = FireAbility.TrueWaitTime
-        # Else the player is semi afk
+
         else:
             player.ChanTime = FireAbility.EfficientWaitTime
 
-    # If the FireAbility is a damage boosting ability
     if FireAbility.Boost:
         player.Boost = True
         player.BoostX = FireAbility.BoostX
         player.BoostTime = FireAbility.BoostTime
 
-    # Check for possible transmitted status effects on dummy
     if not dummy.StunBindImmune:
 
-        # If the FireAbility had a stun effect
         if FireAbility.Stun:
             dummy.Stun = True
             dummy.StunTime = FireAbility.StunDur
@@ -286,7 +268,6 @@ def PostAttackStatuses(bar, player, dummy, FireAbility, Do):
             if Do.HTMLwrite:
                 Do.Text += f'<li style="color: {Do.stat_color};">Dummy is Stunned for {dummy.StunTime}s</li>\n'
 
-        # If the FireAbility had a bind effect
         if FireAbility.Bind:
             dummy.Bind = True
             dummy.BindTime = FireAbility.BindDur
@@ -298,29 +279,25 @@ def PostAttackStatuses(bar, player, dummy, FireAbility, Do):
 
 
 def PostAttackCleanUp(bar, player, dummy, Do):
+    """
+    Check for special effects of abilities and clears the current attack cycle list.
 
-    ##############################################################
-    ############# Special effect of Greater Flurry ###############
-    ##############################################################
+    :param bar: The Bar object.
+    :param dummy:  The Dummy object.
+    :param player: The Player object.
+    :param Do: The DoList object.
+    """
 
-    # If greater flurry has done damage in the current tick and berserk is also on the bar
+    # Special effect of Greater Flurry
     if 'Greater Flurry' in dummy.DamageNames and 'Berserk' in bar.AbilNames:
-        # Get the index of the Berserk ability on the ability bar
         IDX = bar.AbilNames.index('Berserk')
 
-        if bar.Rotation[IDX].cdStatus:  # If berserk is on cooldown
-            bar.Rotation[IDX].cdTime -= 1.2
+        if bar.Rotation[IDX].cdStatus:
+            bar.Rotation[IDX].cdTime -= 2
 
-    ##############################################################
-    ############# Special effect of Needle Strike ################
-    ##############################################################
-
-    # 1.07x if next abil is standard or channeled hit
-    if 'Needle Strike' in dummy.DamageNames:  # If Needle Strike has hit the target
-        # Get the index of the Needle Strike ability on the ability bar
+    # Special effect of Needle Strike: 1.07x if next abil is standard or channeled hit
+    if 'Needle Strike' in dummy.DamageNames:
         IDX = bar.AbilNames.index('Needle Strike')
-
-        # Set boost fields
         player.Boost1 = True
         player.Boost1X = bar.Rotation[IDX].Boost1X
 

@@ -2,8 +2,10 @@ import numpy as np
 import os
 
 
-# The DoList: Used for various activities
 class DoList:
+    """
+    The DoList object. Used for printing text in HTML used for debugging.
+    """
 
     def __init__(self, opt):
         self.HTMLwrite = opt['HTMLwrite']   # When True, lots of info is printed to the HTML file
@@ -27,8 +29,10 @@ class DoList:
         }
 
 
-# The Loop: Used for finding repeating cycles
 class Loop:
+    """
+    The Loop object. Used for finding repeating cycles in the simulation loop.
+    """
 
     def __init__(self):
         self.SimulationTime = 0         # Runtime of the while loop
