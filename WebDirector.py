@@ -83,10 +83,10 @@ def downloadJSON():
     return send_file(path, as_attachment=True)
 
 
-# @app.route("/get_item_ids", methods=['GET', 'POST'])
-# def get_item_ids():
-#     get_tradeable_itemIDs()
-#     return redirect(url_for('item_ids'))
+@app.route("/get_item_ids", methods=['GET', 'POST'])
+def get_item_ids():
+    get_tradeable_itemIDs()
+    return redirect(url_for('item_ids'))
 
 
 @app.route("/song")
