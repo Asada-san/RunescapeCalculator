@@ -6,7 +6,7 @@
 {% block content %}
 
 <div class="note">
-  <h2 style="text-align: center; margin-bottom: 15px; margin-top: 15px;">Revolution Bar <span style="font-size:small;">V1.05.0</span></h2>
+  <h2 style="text-align: center; margin-bottom: 15px; margin-top: 15px;">Revolution Bar <span style="font-size:small;">V1.05.2</span></h2>
   <button id="guide-button" class="note-button">General Info</button>
   <div id="Bar-guide" class="content note-collapsible">
     <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;">
@@ -41,20 +41,26 @@
   <button id="notes-button" class="note-button">Important Notes</button>
   <div id="Bar-notes" class="content note-collapsible">
     <ul style="margin-top: 10px; margin-right: 15px;">
-      <li style="color: red;">The more damage boosting options are used, the more probable it is the output damage is wrong due to orders in which
+      <li style="color: red;">The more damage boosting options are used, the more probable it is that the output damage is wrong due to orders in which
       these are applied. If you notice any errors, please let me know! (see general info for places to contact me)</li>
       <li>Average ability damages are used for the calculating the AADPT.</li>
       <li>Tuska's Wrath does its normal damage only. When fighting slayer creatures, please
       don't let revolution activate this ability, but instead activate it manually once every
       2 minutes.</li>
       <li>As the resulting A --> Ability <-- DPT suggests, auto attacks are not taken into account.</li>
-      <li>All ability information used to determine the AADPT is summarized on a <a href="https://docs.google.com/spreadsheets/d/1RMa8fUcd_zgWi6WbCBz3xHjzrdCuumzlVF6y9aPkrgM/edit#gid=0" target="_blank" style="color: #4CAF50"><strong>spreadsheet</strong></a>.</li>
+      <li>All ability information used to determine the AADPT is summarized on a <a href="https://github.com/Asada-san/RunescapeCalculator/blob/master/AbilityInfo.xlsx" target="_blank" style="color: #4CAF50"><strong>spreadsheet</strong></a>.</li>
       <li>The code (including html, js, css and python files) have been uploaded to <a href="https://github.com/Asada-san/RunescapeCalculator" target="_blank" style="color: #4CAF50"><strong>Github</strong></a>. You're free to use it however you want.</li>
       <li>All ability images were yoinked from the RS3 wiki.</li>
     </ul>
   </div>
   <button id="changelog-button" class="note-button">Changelog</button>
   <div id="Changelog-notes" class="content note-collapsible">
+    <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.05.2 - 14-12-2020</strong></p>
+    <ul style="margin-top: 10px; margin-right: 15px;">
+      <li>Added Greater Chain and Greater Ricochet</li>
+      <li>Fixed an issue with Wild Magic</li>
+      <li>Set Dragon Breath target cap to 4 and increased its adrenaline gain to 10 when it hits 2 or more targets</li>
+    </ul>
     <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.05.1 - 18-10-2020</strong></p>
     <ul style="margin-top: 10px; margin-right: 15px;">
       <li>Added the Devotion ability</li>
@@ -623,6 +629,9 @@
       <img src="static/Revolution/AbilityImages/Chain.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Chain" width="60" height="60">
     </div>
     <div class="mag">
+      <img src="static/Revolution/AbilityImages/Greater_Chain.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Greater_Chain" width="60" height="60">
+    </div>
+    <div class="mag">
       <img src="static/Revolution/AbilityImages/Corruption_Blast.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Corruption_Blast" width="60" height="60">
     </div>
   </div>
@@ -714,6 +723,9 @@
     </div>
     <div class="ran">
       <img src="static/Revolution/AbilityImages/Ricochet.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Ricochet" width="60" height="60">
+    </div>
+    <div class="ran">
+      <img src="static/Revolution/AbilityImages/Greater_Ricochet.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Greater_Ricochet" width="60" height="60">
     </div>
     <div class="ran">
       <img src="static/Revolution/AbilityImages/Corruption_Shot.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Corruption_Shot" width="60" height="60">
@@ -819,10 +831,10 @@
   <div class="defbox">
     <div class="AbilType" style="background-color: var(--defColor); color: #FFFFFF">Threshold</div>
     <div class="def">
-      <img src="static/Revolution/AbilityImages/Debilitate.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Debilitate" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Devotion.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Devotion" width="60" height="60">
     </div>
     <div class="def">
-      <img src="static/Revolution/AbilityImages/Devotion.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Devotion" width="60" height="60">
+      <img src="static/Revolution/AbilityImages/Debilitate.png" class="Ability" draggable="true" ondragstart="drag(event)" id="Debilitate" width="60" height="60">
     </div>
   </div>
 

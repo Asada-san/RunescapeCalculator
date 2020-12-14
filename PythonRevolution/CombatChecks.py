@@ -1,4 +1,5 @@
 from PythonRevolution import AttackCycle as Attack
+from PythonRevolution import AverageDamageCalculator as AVGCalc
 import pprint
 import numpy as np
 import pandas as pd
@@ -186,9 +187,13 @@ def AbilityBar_verifier(user_input, AbilityBook, bar, dummy, player, Do, loop):
 
         player.LevelBoost = max(player.StrengthLevelBoost, player.RangedLevelBoost, player.MagicLevelBoost)
 
+    # Check for Dragon Breath effect
+    if dummy.nTarget > 1 and 'Dragon Breath' in bar.AbilNames:
+        player.DragonBreathGain = True
+
     # Calculate average damages for each ability
     for ability in bar.Rotation:
-        ability.ConstructHitObject(player, Do)
+        ability.ConstructHitObject(player, dummy, Do)
 
     return error, error_mes, warning
 
@@ -303,6 +308,22 @@ def PostAttackCleanUp(bar, player, dummy, Do):
 
         if Do.HTMLwrite:
             Do.Text += f'<li style="color: {Do.att_color};">Needle Strike boost active!</li>\n'
+
+    # Special effect of Greater Ricochet
+    if player.GreaterRicochet:
+        IDX = bar.AbilNames.index('Greater Ricochet')  # Spot of the ability on the bar
+
+        Avg = AVGCalc.StandardChannelDamAvgCalc(bar.Rotation[IDX], player, Do, 'Greater Ricochet', -1)
+        GRNew = deepcopy(bar.Rotation[IDX])
+        GRHit = GRNew.Hit(GRNew, Avg, 7, 1, 0, 0)
+        GRHit.Time += 1  # Hit on target delayed with 1 tick
+
+        for i in range(0, player.nGreaterRicochet):
+            dummy.PHits[dummy.nPH] = deepcopy(GRHit)  # Apply the hit on main target
+            dummy.nPH += 1
+
+        player.GreaterRicochet = False
+        player.nGreaterRicochet = 0
 
     # Clear the list of abilities which have inflicted damage on the dummy in the current tick
     dummy.DamageNames.clear()

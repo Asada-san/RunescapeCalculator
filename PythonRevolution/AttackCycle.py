@@ -1,4 +1,5 @@
 from PythonRevolution import CycleChecker as Cycle
+from PythonRevolution import AverageDamageCalculator as AVGCalc
 import pprint
 import numpy as np
 from copy import deepcopy
@@ -29,7 +30,7 @@ def Attack_main(bar, player, dummy, Do, loop):
         # Check for available ability
         for i in range(0, bar.N):
             if not bar.Rotation[i].cdStatus:
-                bar.AdrenalineStatus(bar.Rotation[i].Type, player)
+                bar.AdrenalineStatus(bar.Rotation[i], player)
 
                 if bar.FireStatus:
                     bar.FireN = i  # Index of ability is equal to for loop i
@@ -124,8 +125,30 @@ def AttackDummy(bar, player, dummy, Do, loop):
         dummy.nPH += FA.nT
 
     # Check for AoE shenanigans
-    if dummy.nTarget > 1 and FA.AoE:
+    if any([FA.Name == 'Greater Ricochet', all([dummy.nTarget > 1 and FA.AoE])]):
         AoECheck(bar, dummy, player, FA, Do)
+
+    # Check for Greater Chain effect
+    if player.GreaterChain and FA.Name != 'Greater Chain':
+        if not FA.Bleed:
+            Avg = AVGCalc.StandardChannelDamAvgCalc(FA, player, Do, 'Normal', 0)
+            NewHit = deepcopy(FA.Hits[0])
+            NewHit.Damage = Avg[0] / 2
+        else:
+            NewHit = deepcopy(FA.DoTHits[0])
+            NewHit.Damage = FA.DoTHits[0].Damage / 2
+
+        NewHit.Name = 'Greater Chain'
+        NewHit.Type = 8
+
+        for target in player.GreaterChainTargets:
+            NewHit.Target = target
+            dummy.PHits[dummy.nPH] = deepcopy(NewHit)
+            dummy.nPH += 1
+
+        player.GreaterChain = False
+        player.GreaterChainTargets = []
+        player.GreaterChainDuration = 0
 
     # Attack the dummy if a timer equals 0
     DummyDamage(bar, dummy, player, Do, loop)
@@ -230,7 +253,7 @@ def AoECheck(bar, dummy, player, FA, Do):
             for j in range(0, N):
                 dummy.PHits[dummy.nPH + i * N + j].Target = i + 2
 
-    elif FA.Name in {'Chain', 'Ricochet'}:  # Ricochet and Chain only hit up to 3 targets (except when perk)
+    elif FA.Name in {'Chain', 'Greater Chain', 'Ricochet', 'Greater Ricochet'}:  # Ricochet and Chain only hit up to 3 targets (except when perk)
         N = FA.nT
 
         if nDT > 3 + player.Cr:  # If number of damageable targets is larger than 3, set nDT to 3.
@@ -242,8 +265,20 @@ def AoECheck(bar, dummy, player, FA, Do):
             for j in range(0, N):
                 dummy.PHits[dummy.nPH + i * N + j].Target = i + 2
 
+        if FA.Name == 'Greater Ricochet' and dummy.nTarget < 3 + player.Cr:
+            player.GreaterRicochet = True
+            player.nGreaterRicochet = int(3 + player.Cr - dummy.nTarget)
+
+        if FA.Name == 'Greater Chain':
+            player.GreaterChain = True
+            player.GreaterChainDuration = 10
+            player.GreaterChainTargets = list(range(2, nDT + 1))
+
     else:
         N = FA.nT
+
+        if FA.Name == 'Dragon Breath' and dummy.nTarget > 4:
+            nDT = 4
 
         for i in range(0, nDT - 1):
             dummy.PHits[dummy.nPH + i * N: dummy.nPH + (i + 1) * N] = deepcopy(dummy.PHits[dummy.nPH - N: dummy.nPH])
@@ -306,7 +341,6 @@ def DummyDamage(bar, dummy, player, Do, loop):
             if loop.CycleFound:  # If a cycle has been found
                 player.AbilInfo[dummy.PHits[i].Name]['damage'] += HitDamage / ((1 + player.AbilCritBuff) * player.BoostX * player.Boost1X)
                 player.AbilInfo['Boosted']['damage'] += HitDamage - (HitDamage / ((1 + player.AbilCritBuff) * player.BoostX * player.Boost1X))
-
 
                 if dummy.PHits[i].Type != 4:
                     loop.CycleDamage += HitDamage
@@ -378,14 +412,21 @@ def CalcNewAvg(bar, dummy, player, Do, i):
     ############# Calculate new avg depending on type ############
     ##############################################################
 
+    if dummy.PHits[i].Type in {7, 8}:
+        return dummy.PHits[i].Damage
+
     IDX = bar.AbilNames.index(dummy.PHits[i].Name)  # Spot of the ability on the bar
 
     if dummy.PHits[i].Type in {1, 2}:
 
+        # if dummy.PHits[i].Name == 'Greater Ricochet' and dummy.PHits[i].Target == 1:
+        #     nRedundantHits = 3 + player.Cr - dummy.nTarget
+        #     Avg = bar.Rotation[IDX].StandardChannelDamAvgCalc(player, Do, 'Greater Ricochet', 0, nRedundantHits)
+
         if not all([bar.Rotation[IDX].StunBindDam,  any([dummy.Stun, dummy.Bind])]):
-            Avg = bar.Rotation[IDX].StandardChannelDamAvgCalc(player, Do, 'Normal', dummy.PHits[i].Index)
+            Avg = AVGCalc.StandardChannelDamAvgCalc(bar.Rotation[IDX], player, Do, 'Normal', dummy.PHits[i].Index)
         else:
-            Avg = bar.Rotation[IDX].StandardChannelDamAvgCalc(player, Do, 'StunBind', dummy.PHits[i].Index)
+            Avg = AVGCalc.StandardChannelDamAvgCalc(bar.Rotation[IDX], player, Do, 'StunBind', dummy.PHits[i].Index)
 
     elif dummy.PHits[i].Type in {3, 4}:
 

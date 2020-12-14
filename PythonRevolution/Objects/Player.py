@@ -11,6 +11,11 @@ class Player:
         self.Cooldown = []                  # List of abilities which are currently on cooldown
         self.ChanAbil = False               # When True, the player used a channeled ability
         self.ChanTime = 0                   # Duration of the channeled ability
+        self.GreaterRicochet = False
+        self.nGreatRicochet = 0
+        self.GreaterChain = False           # True when greater chain has been activated
+        self.GreaterChainDuration = 0       # Time for the greater chain effect to take effect
+        self.GreaterChainTargets = []       # Target numbers hit by Greater Chain minus main target
         self.BaseBoost = 1                  # Base damage boost for all abilities
         self.LevelBoost = 0                 # Amount of boosted combat levels
         self.Boost = False                  # True if a damage boosting ability has been used
@@ -24,6 +29,7 @@ class Player:
         self.CritAdrenalineBuff = False     # True if Meteor Strike, Tsunami or Incendiary Shot were used in an attack cycle
         self.CritAdrenalineBuffTime = 0     # Timer for adrenaline buff due to the above ^
         self.BasicAdrenalineGain = 0        # Adrenaline boost for basic abilities due to the above ^
+        self.DragonBreathGain = False       # True if Dragon Breath is on the bar and there are more than 2 dummies
 
         self.Switcher = opt['switchStatus']         # True if the user want to use both 2h and dual weapons
         self.Afk = not opt['afkStatus']             # True if the player intends to afk
@@ -209,3 +215,13 @@ class Player:
                 if Do.HTMLwrite:
                     Do.Text += f'<li style="color: {Do.nor_color};">Player damage boost has been reset</li>\n'
 
+        # If the player has a Greater Chain effect going on
+        if self.GreaterChain:
+            self.GreaterChainDuration -= 1
+
+            if self.GreaterChainDuration == 0:
+                self.GreaterChain = False
+                self.GreaterChainTargets = []
+
+                if Do.HTMLwrite:
+                    Do.Text += f'<li style="color: {Do.nor_color};">Player Greater Chain effect has worn off</li>\n'

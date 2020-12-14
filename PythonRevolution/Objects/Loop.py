@@ -25,7 +25,9 @@ class DoList:
             3: 'bleed',
             4: 'puncture',
             5: 'standard Stun/Bind',
-            6: 'side target'
+            6: 'side target',
+            7: 'greater ricochet effect',
+            8: 'greater chain effect'
         }
 
 

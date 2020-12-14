@@ -53,7 +53,9 @@ class AbilityBar:
             ['Lesser Snipe', 'Snipe'],
             ['Lesser Fragmentation Shot', 'Fragmentation Shot'],
             ['Lesser Needle Strike', 'Needle Strike'],
-            ['Lesser Dazing Shot', 'Dazing Shot', 'Greater Dazing Shot']
+            ['Lesser Dazing Shot', 'Dazing Shot', 'Greater Dazing Shot'],
+            ['Ricochet', 'Greater Ricochet'],
+            ['Chain', 'Greater Chain']
         ]
 
     def TimerCheck(self, Do):
@@ -71,26 +73,29 @@ class AbilityBar:
                 if Do.HTMLwrite:
                     Do.Text += f'<li style="color: {Do.nor_color};">Global cooldown ended</li>\n'
 
-    def AdrenalineStatus(self, Type, player):
+    def AdrenalineStatus(self, Ability, player):
         """
         Checks if an ability is allowed to fire.
         :param Type: Type of ability (Basic/Threshold/Ultimate)
         :param player: The Player object
         """
 
-        if Type == 'Basic':
-            self.Adrenaline += self.Basic
+        if Ability.Type == 'Basic':
+            if Ability.Name == 'Dragon Breath' and player.DragonBreathGain:
+                self.Adrenaline += self.Basic + 2
+            else:
+                self.Adrenaline += self.Basic
 
             if self.Adrenaline > player.MaxAdrenaline:
                 self.Adrenaline = player.MaxAdrenaline
 
             self.FireStatus = True
 
-        elif Type == 'Threshold' and self.Adrenaline >= 50:
+        elif Ability.Type == 'Threshold' and self.Adrenaline >= 50:
             self.Adrenaline -= self.Threshold
             self.FireStatus = True
 
-        elif Type == 'Ultimate' and self.Adrenaline >= 100:
+        elif Ability.Type == 'Ultimate' and self.Adrenaline >= 100:
             self.Adrenaline -= self.Ultimate
             self.FireStatus = True
 

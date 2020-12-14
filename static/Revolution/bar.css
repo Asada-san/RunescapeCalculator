@@ -107,7 +107,7 @@
 /* Ability Blocks */
 .AbilBlock {
     margin: auto;
-    width: 975px; /* 989 */
+    width: 1045px; /* 989 */
     height: 300px; /* 314 */
 }
 .AbilType {
@@ -127,7 +127,7 @@
     flex-direction: row;
     background-color: var(--attColor);
     height: 75px;
-    width: 975px;
+    width: 1045px;
     border: 2.5px solid var(--attColor);
 }
 .att {
@@ -141,7 +141,7 @@
     flex-direction: row;
     background-color: var(--strColor);
     height: 75px;
-    width: 975px;
+    width: 1045px;
     border: 2.5px solid var(--strColor);
 }
 .str {
@@ -155,7 +155,7 @@
     flex-direction: row;
     background-color: var(--magColor);
     height: 75px;
-    width: 975px;
+    width: 1045px;
     border: 2.5px solid var(--magColor);
 }
 .mag {
@@ -169,7 +169,7 @@
     flex-direction: row;
     background-color: var(--ranColor);
     height: 75px;
-    width: 975px;
+    width: 1045px;
     border: 2.5px solid var(--ranColor);
 }
 .ran {
@@ -183,7 +183,7 @@
     flex-direction: row;
     background-color: var(--conColor);
     height: 75px;
-    width: 975px;
+    width: 1045px;
     border: 2.5px solid var(--conColor);
 }
 .con {
@@ -197,7 +197,7 @@
     flex-direction: row;
     background-color: var(--defColor);
     height: 75px;
-    width: 975px;
+    width: 1045px;
     border: 2.5px solid var(--defColor);
 }
 .def {
