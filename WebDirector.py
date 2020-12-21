@@ -12,6 +12,8 @@ import random
 
 app = Flask(__name__)
 
+counter = 0
+
 
 def get_tradeable_itemIDs():
     item_list = {}
@@ -83,7 +85,7 @@ def home():
 
 @app.route("/bar")
 def bar():
-    return render_template("bar.html")
+    return render_template("bar.html", counter=counter)
 
 
 @app.route("/item_ids")
@@ -148,10 +150,14 @@ def calc():
     else:
         error = False
 
+    global counter
+    counter += 1
+
     CalcResults.update({'ExecutionTime': round(end_loop - start_loop, 5),
                         'warning': warning,
                         'error': error,
-                        'error_message': error_message})
+                        'error_message': error_message,
+                        'counter': counter})
 
     res = make_response(jsonify(CalcResults), 200)
 

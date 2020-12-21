@@ -427,6 +427,11 @@ calcDPT.addEventListener("click", async function(ev) {
             // print the message in the right place
             document.getElementById('DPT').innerHTML = message;
 
+            counterMessage = `<span style="color:#4CAF50; font-size:11px"> Simulated fights since last update: ${data['counter']}`
+
+            // print the message in the right place
+            document.getElementById('counter').innerHTML = counterMessage;
+
             // CREATE STRING CONTAINING THE CYCLE ROTATION
             RotationString = '<br><br><span style="color: yellow;">START</span> --> '
 
