@@ -1,7 +1,4 @@
-from PythonRevolution import CycleChecker as Cycle
-from PythonRevolution import AverageDamageCalculator as AVGCalc
-import pprint
-import numpy as np
+from App.PythonRevolution import AverageDamageCalculator as AVGCalc, CycleChecker as Cycle
 from copy import deepcopy
 
 

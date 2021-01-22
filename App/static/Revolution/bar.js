@@ -268,8 +268,12 @@ for (var k=0; k<AbilityColl.length; k++) {
         // get the element which has been clicked on
         var element = document.getElementById(ev.target.id);
 
-        // if element is of type img and its not on the RevoBar
-        if (element.nodeName == 'IMG' && element.parentNode.classList.value !== 'RevoBar' && !BarAbilities.includes(element.id) ) {
+        if (window.event.ctrlKey && element.nodeName == 'IMG' && element.parentNode.classList.value !== 'RevoBar') {
+            url = "http://runescape.wiki/w/" + element.id;
+            // open rs wiki page for the ability
+            window.open(url, "_blank");
+        } else if (element.nodeName == 'IMG' && element.parentNode.classList.value !== 'RevoBar' && !BarAbilities.includes(element.id) ) {
+            // if element is of type img and its not on the RevoBar
             var currentBar = document.getElementById('RevolutionBar')
 
             BarAbilities.push(element.id)
@@ -286,10 +290,6 @@ for (var k=0; k<AbilityColl.length; k++) {
                     break;
                 }
             }
-        } else if (window.event.ctrlKey && element.nodeName == 'IMG' && element.parentNode.classList.value !== 'RevoBar') {
-            url = "http://runescape.wiki/w/" + element.id;
-            // open rs wiki page for the ability
-            window.open(url, "_blank");
         }
     })
 }
@@ -339,14 +339,10 @@ var calcDPT = document.getElementById("calcbutton");
 var LoopText;
 var CycleText;
 var AbilityTable;
+var DPTNoteOut = false;
 
 // check if the calc button is being clicked on
 calcDPT.addEventListener("click", async function(ev) {
-
-    if (DPTNote.style.maxHeight){
-        DPTNote.style.maxHeight = null;
-        document.getElementById('DPTprint').innerHTML = null;
-    }
 
     // get an array with the bar abilities in correct order
     var InputAbilities = [];
@@ -427,7 +423,7 @@ calcDPT.addEventListener("click", async function(ev) {
             // print the message in the right place
             document.getElementById('DPT').innerHTML = message;
 
-            counterMessage = `<span style="color:#4CAF50; font-size:11px"> Simulated fights since last update: ${data['counter']}`
+            counterMessage = `<span style="color:#4CAF50; font-size:11px"> Simulated fights: ${data['counter']}`
 
             // print the message in the right place
             document.getElementById('counter').innerHTML = counterMessage;
@@ -503,6 +499,13 @@ calcDPT.addEventListener("click", async function(ev) {
 
             // the loop text which shows what happens for each tick
             LoopText = data['LoopText'];
+
+            document.getElementById('DPTprint').innerHTML = CycleText + LoopText;
+
+            console.log(DPTNoteOut, DPTNote.style.maxHeight)
+            if (DPTNote.style.maxHeight && DPTNoteOut == true){
+                DPTNote.style.maxHeight = DPTNote.scrollHeight + "px";
+            }
         })
     })
 
@@ -569,8 +572,10 @@ function DPTprint() {
     if (DPTNote.style.maxHeight) {
         DPTNote.style.maxHeight = null;
         document.getElementById('DPTprint').innerHTML = null;
+        DPTNoteOut = false;
     } else { // else ScrollOut the content
         DPTNote.style.maxHeight = DPTNote.scrollHeight + "px";
+        DPTNoteOut = true;
     }
 }
 

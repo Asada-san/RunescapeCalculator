@@ -1,14 +1,6 @@
-from PythonRevolution import CombatChecks
-from PythonRevolution import AttackCycle as Attack
-from PythonRevolution import CycleChecker as Cycle
-from PythonRevolution.Objects import Loop
-from PythonRevolution.Objects import Dummy
-from PythonRevolution.Objects import Bar
-from PythonRevolution.Objects import Player
-import time
-import pprint
-import numpy as np
-import cProfile
+from App.PythonRevolution import CombatChecks, CycleChecker as Cycle, \
+    AttackCycle as Attack
+from App.PythonRevolution.Objects import Loop, Dummy, Bar, Player
 
 
 def fight_dummy(user_input, AbilityBook):

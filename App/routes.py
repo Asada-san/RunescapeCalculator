@@ -1,18 +1,18 @@
-from PythonRevolution import Revolution_main as RevoMain
+from App.PythonRevolution import Revolution_main as RevoMain
+from App.models import Counter
+from App import db
 from AbilityBook import AbilityBook
-from flask import Flask, redirect, url_for, render_template, request
+from flask import url_for, render_template, request, Blueprint, redirect
 from flask import make_response, jsonify, send_file
 import os
 import requests
 from bs4 import BeautifulSoup
 import json
 import time
-import pprint
 import random
 
-app = Flask(__name__)
 
-counter = 0
+RS = Blueprint('RS', __name__)
 
 
 def get_tradeable_itemIDs():
@@ -77,42 +77,43 @@ def get_tradeable_itemIDs():
     return None
 
 
-@app.route("/")
-@app.route("/home")
+@RS.route("/")
+@RS.route("/home")
 def home():
     return render_template("home.html")
 
 
-@app.route("/bar")
+@RS.route("/bar")
 def bar():
-    return render_template("bar.html", counter=counter)
+    N = Counter.query.first().count
+    return render_template("bar.html", counter=N)
 
 
-@app.route("/item_ids")
+@RS.route("/item_ids")
 def item_ids():
     with open('itemIDs.json', 'r') as file:
         item_list = json.load(file)
     return render_template("item_ids.html", item_list=item_list)
 
 
-@app.route('/download', methods=['GET', 'POST'])
+@RS.route('/download', methods=['GET', 'POST'])
 def downloadJSON():
     path = "itemIDs.json"
     return send_file(path, as_attachment=True)
 
 
-# @app.route("/get_item_ids", methods=['GET', 'POST'])
-# def get_item_ids():
-#     get_tradeable_itemIDs()
-#     return redirect(url_for('item_ids'))
+@RS.route("/get_item_ids", methods=['GET', 'POST'])
+def get_item_ids():
+    # get_tradeable_itemIDs()
+    return redirect(url_for('RS.item_ids'))
 
 
-@app.route("/song")
+@RS.route("/song")
 def song():
     return render_template("song.html")
 
 
-@app.route("/calc", methods=['POST'])
+@RS.route("/calc", methods=['POST'])
 def calc():
     user_input = request.get_json()
 
@@ -145,35 +146,28 @@ def calc():
 
     end_loop = time.time()
 
+    N = Counter.query.first()
+
     if error_message is not None:
         error = True
     else:
         error = False
 
-    global counter
-    counter += 1
+        N.count = Counter.count + 1
+        db.session.commit()
 
     CalcResults.update({'ExecutionTime': round(end_loop - start_loop, 5),
                         'warning': warning,
                         'error': error,
                         'error_message': error_message,
-                        'counter': counter})
+                        'counter': N.count})
 
     res = make_response(jsonify(CalcResults), 200)
 
     return res
 
 
-if __name__ == '__main__':
-
-    ##############################################################
-    ###################### Run the webapp ########################
-    ##############################################################
-
-    app.run(debug=True)
-
-
-@app.context_processor
+@RS.context_processor
 def override_url_for():
     return dict(url_for=dated_url_for)
 
@@ -182,6 +176,6 @@ def dated_url_for(endpoint, **values):
     if endpoint == 'static':
         filename = values.get('filename', None)
         if filename:
-            file_path = os.path.join(app.root_path, endpoint, filename)
+            file_path = os.path.join(RS.root_path, endpoint, filename)
             values['q'] = int(os.stat(file_path).st_mtime)
     return url_for(endpoint, **values)

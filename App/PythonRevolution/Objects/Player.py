@@ -96,6 +96,12 @@ class Player:
         self.SBr = opt['ShieldBashing']         # Shield Bashing rank
         self.PerkShieldBashing = self.SBr > 0   # True if the user selected the Shield Bashing perk
 
+        self.Ur = opt['Ultimatums']             # Ultimatums rank
+        self.PerkUltimatums = self.Ur > 0       # True if the user selected the Ultimatums perk
+
+        self.Ir = opt['Impatient']  # Ultimatums rank
+        self.PerkImpatient = self.Ir > 0  # True if the user selected the Ultimatums perk
+
         self.PerkPlantedFeet = opt['PlantedFeet']   # True if the user selected the Planted Feet perk
 
         self.PerkReflexes = opt['Reflexes']         # True if the user selected the Reflexes Feet perk
@@ -110,6 +116,8 @@ class Player:
                        f'<li style="color: {Do.init_color};">User select: Caroming Perk {self.PerkCaroming}, {self.Ar}</li>'\
                        f'<li style="color: {Do.init_color};">User select: Ruthless Perk {self.PerkRuthless}, {self.Ar}</li>' \
                        f'<li style="color: {Do.init_color};">User select: Aftershock Perk {self.PerkAftershock}, {self.Ar}</li>' \
+                       f'<li style="color: {Do.init_color};">User select: Ultimatums Perk {self.PerkUltimatums}</li>' \
+                       f'<li style="color: {Do.init_color};">User select: Impatient Perk {self.PerkImpatient}</li>' \
                        f'<li style="color: {Do.init_color};">User select: Planted Feet Perk {self.PerkPlantedFeet}</li>' \
                        f'<li style="color: {Do.init_color};">User select: Reflexes Perk {self.PerkReflexes}</li>'
 

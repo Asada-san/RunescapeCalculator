@@ -1,4 +1,4 @@
-from PythonRevolution import AverageDamageCalculator as AVGCalc
+from App.PythonRevolution import AverageDamageCalculator as AVGCalc
 import numpy as np
 
 

@@ -1,8 +1,4 @@
-from PythonRevolution import AttackCycle as Attack
-from PythonRevolution import AverageDamageCalculator as AVGCalc
-import pprint
-import numpy as np
-import pandas as pd
+from App.PythonRevolution import AverageDamageCalculator as AVGCalc, AttackCycle as Attack
 from copy import deepcopy
 
 

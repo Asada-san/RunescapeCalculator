@@ -1,5 +1,4 @@
-from PythonRevolution import CombatChecks
-import numpy as np
+from App.PythonRevolution import CombatChecks
 
 
 def CycleCheck(bar, player, dummy, Do, loop):
