@@ -340,6 +340,7 @@ var LoopText;
 var CycleText;
 var AbilityTable;
 var DPTNoteOut = false;
+var PreviousBar;
 
 // check if the calc button is being clicked on
 calcDPT.addEventListener("click", async function(ev) {
@@ -351,6 +352,13 @@ calcDPT.addEventListener("click", async function(ev) {
         if (RevolutionBar[k].firstChild !== null) {
             InputAbilities.push(RevolutionBar[k].firstChild.name)
         }
+    }
+
+    // Make sure the user put in a new rotation to prevent spam
+    if (JSON.stringify(PreviousBar) == JSON.stringify(InputAbilities)) {
+        return;
+    } else {
+        PreviousBar = InputAbilities
     }
 
     optionElements = document.forms["optmenu"].elements
@@ -502,7 +510,6 @@ calcDPT.addEventListener("click", async function(ev) {
 
             document.getElementById('DPTprint').innerHTML = CycleText + LoopText;
 
-            console.log(DPTNoteOut, DPTNote.style.maxHeight)
             if (DPTNote.style.maxHeight && DPTNoteOut == true){
                 DPTNote.style.maxHeight = DPTNote.scrollHeight + "px";
             }
