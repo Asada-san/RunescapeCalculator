@@ -9,3 +9,8 @@ from App.models import Counter
 @with_appcontext
 def create_tables():
     db.create_all()
+
+
+def init_app(app):
+    for command in [create_tables]:
+        app.cli.add_command(app.cli.command()(command))
