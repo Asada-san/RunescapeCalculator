@@ -12,7 +12,15 @@ def create_tables():
     db.create_all()
 
 
+@click.command(name='drop_db')
+@with_appcontext
+def drop_db():
+    """Cleans database"""
+    db.drop_all()
+
+
 app.cli.add_command(create_tables)
+app.cli.add_command(drop_db)
 
 # ctx = app.app_context()
 # ctx.push()  # start working on database after that command
