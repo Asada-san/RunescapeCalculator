@@ -1,7 +1,18 @@
 from App import create_app, db
+import click
+from flask.cli import with_appcontext
 from App.models import Counter
 
 app = create_app()
+
+
+@click.command(name='create_tables')
+@with_appcontext
+def create_tables():
+    db.create_all()
+
+
+app.cli.add_command(create_tables)
 
 # ctx = app.app_context()
 # ctx.push()  # start working on database after that command

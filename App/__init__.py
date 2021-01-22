@@ -1,7 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from App.config import Config
-import App.commands
 
 db = SQLAlchemy()
 
@@ -17,7 +16,6 @@ def create_app(**kwargs):
 
     app = Flask(__name__)
     db.init_app(app)
-    App.commands.init_app(app)
     app.config.from_object(Config)
 
     from App.routes import RS
