@@ -19,8 +19,18 @@ def drop_db():
     db.drop_all()
 
 
+@click.command(name='create_count')
+@click.argument('value')
+@with_appcontext
+def create_count(value):
+    counter = Counter(count=value)
+    db.session.add(counter)
+    db.session.commit()
+
+
 app.cli.add_command(create_tables)
 app.cli.add_command(drop_db)
+app.cli.add_command(create_count)
 
 # ctx = app.app_context()
 # ctx.push()  # start working on database after that command
