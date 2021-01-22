@@ -20,8 +20,8 @@ class Config:
     SECRET_KEY = 'a618c71bc7605c466bf47d817f843531'
 
     # SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI')
-    # SQLALCHEMY_DATABASE_URI = 'sqlite:///site.db'
+    # DATABASE_URL = 'sqlite:///db.sqlite3'
 
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
-    DATABASE_URL = 'sqlite:///db.sqlite3'
+
     SQLALCHEMY_TRACK_MODIFICATIONS = False
