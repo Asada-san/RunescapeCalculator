@@ -340,7 +340,7 @@ var LoopText;
 var CycleText;
 var AbilityTable;
 var DPTNoteOut = false;
-var PreviousBar;
+var PreviousBarInfo;
 
 // check if the calc button is being clicked on
 calcDPT.addEventListener("click", async function(ev) {
@@ -352,13 +352,6 @@ calcDPT.addEventListener("click", async function(ev) {
         if (RevolutionBar[k].firstChild !== null) {
             InputAbilities.push(RevolutionBar[k].firstChild.name)
         }
-    }
-
-    // Make sure the user put in a new rotation to prevent spam
-    if (JSON.stringify(PreviousBar) == JSON.stringify(InputAbilities)) {
-        return;
-    } else {
-        PreviousBar = InputAbilities
     }
 
     optionElements = document.forms["optmenu"].elements
@@ -378,6 +371,13 @@ calcDPT.addEventListener("click", async function(ev) {
 
     // create dict with user options and the bar abilities
     barInfo['Abilities'] = InputAbilities;
+
+    // Make sure the user put in a new rotation to prevent spam
+    if (JSON.stringify(PreviousBarInfo) == JSON.stringify(barInfo)) {
+        return;
+    } else {
+        PreviousBarInfo = barInfo;
+    }
 
     // send bar info to the calc page where the DPT is calculated
     await fetch(`${window.origin}/calc`, {

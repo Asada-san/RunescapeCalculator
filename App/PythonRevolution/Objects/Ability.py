@@ -107,7 +107,7 @@ class Ability:
 
         if player.PerkPlantedFeet and self.Name in {'Sunshine', 'Death\'s Swiftness'}:
             self.Bleed = False
-            self.BoostTime = 37.8
+            self.BoostTime = 63
             return
 
         if self.Standard or self.Channeled:

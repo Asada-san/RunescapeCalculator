@@ -36,9 +36,9 @@ app.cli.add_command(create_count)
 # ctx.push()  # start working on database after that command
 # # Database manipulations here
 # db.create_all()
-# # counter = Counter(count=0)
-# # db.session.add(counter)
-# # db.session.commit()
+# counter = Counter(count=0)
+# db.session.add(counter)
+# db.session.commit()
 # ctx.pop()  # exit from the app
 
 if __name__ == '__main__':

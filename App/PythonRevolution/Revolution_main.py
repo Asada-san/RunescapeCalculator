@@ -118,6 +118,7 @@ def fight_dummy(user_input, AbilityBook):
 
         if loop.SimulationTime > 300:
             Do.HTMLwrite = False
+        print(loop.n)
 
         # --------- PRE ATTACKING PHASE -----------------------
         # Status checks

@@ -143,9 +143,11 @@ def AttackDummy(bar, player, dummy, Do, loop):
             dummy.PHits[dummy.nPH] = deepcopy(NewHit)
             dummy.nPH += 1
 
-        player.GreaterChain = False
-        player.GreaterChainTargets = []
-        player.GreaterChainDuration = 0
+        if not FA.Channeled:
+            player.GreaterChain = False
+            player.GreaterChainTargets = []
+            player.GreaterChainDuration = 0
+            player.GreaterChainHitN = 0
 
     # Attack the dummy if a timer equals 0
     DummyDamage(bar, dummy, player, Do, loop)
@@ -297,6 +299,25 @@ def DummyDamage(bar, dummy, player, Do, loop):
     :param Do: The DoList object.
     :param loop: The Loop object.
     """
+
+    for i in range(dummy.nPH - 1, -1, -1):
+        if dummy.PHits[i].Time == 0:
+            if all([player.GreaterChain, player.ChanAbil]):
+                IDX = bar.AbilNames.index(dummy.PHits[i].Name)
+                player.GreaterChainHitN += 1
+
+                Avg = AVGCalc.StandardChannelDamAvgCalc(bar.Rotation[IDX], player, Do, 'Normal', player.GreaterChainHitN)
+
+                NewHit = deepcopy(dummy.PHits[i])
+                NewHit.Damage = Avg[0] / 2
+
+                NewHit.Name = 'Greater Chain'
+                NewHit.Type = 8
+
+                for target in player.GreaterChainTargets:
+                    NewHit.Target = target
+                    dummy.PHits[dummy.nPH] = deepcopy(NewHit)
+                    dummy.nPH += 1
 
     # Check if dummy takes a hit
     for i in range(dummy.nPH - 1, -1, -1):

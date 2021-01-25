@@ -15,6 +15,7 @@ class Player:
         self.nGreatRicochet = 0
         self.GreaterChain = False           # True when greater chain has been activated
         self.GreaterChainDuration = 0       # Time for the greater chain effect to take effect
+        self.GreaterChainHitN = 0           # Number of current channeled hit
         self.GreaterChainTargets = []       # Target numbers hit by Greater Chain minus main target
         self.BaseBoost = 1                  # Base damage boost for all abilities
         self.LevelBoost = 0                 # Amount of boosted combat levels
@@ -37,7 +38,6 @@ class Player:
         self.RoV = opt['RoV']                       # True if the user selected the Ring of Vigour
         self.MSoA = opt['MSoA']                     # True if the user selected the Masterwork Spear of Annihilation
         self.Aura = opt['Aura']                     # Aura selected by the user
-
 
         if Do.HTMLwrite:
             Do.Text += f'<li style="color: {Do.init_color};">User select: Switcher {self.Switcher}</li>' \
@@ -209,6 +209,12 @@ class Player:
             if self.ChanTime == 0:
                 self.ChanAbil = False
 
+                if self.GreaterChain:
+                    self.GreaterChain = False
+                    self.GreaterChainTargets = []
+                    self.GreaterChainDuration = 0
+                    self.GreaterChainHitN = 0
+
                 if Do.HTMLwrite:
                     Do.Text += f'<li style="color: {Do.nor_color};">Player is no longer performing a channeled ability</li>\n'
 
@@ -230,6 +236,7 @@ class Player:
             if self.GreaterChainDuration == 0:
                 self.GreaterChain = False
                 self.GreaterChainTargets = []
+                self.GreaterChainHitN = 0
 
                 if Do.HTMLwrite:
                     Do.Text += f'<li style="color: {Do.nor_color};">Player Greater Chain effect has worn off</li>\n'
