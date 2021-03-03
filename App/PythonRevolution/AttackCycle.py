@@ -191,7 +191,7 @@ def EffectCheck(bar, dummy, player, FA, Do):
             Hit = deepcopy(FA.Hits[0])  # Copy the hit from the ability to fire
 
             # Calculate its new average
-            Hit.Damage = bar.Rotation[IDX].StandardChannelDamAvgCalc(player, Do, 'Salt the Wound', FA.Hits[0].Index, dummy.nPuncture)[0]
+            Hit.Damage = AVGCalc.StandardChannelDamAvgCalc(bar.Rotation[IDX], player, Do, 'Salt the Wound', FA.Hits[0].Index, dummy.nPuncture)[0]
             dummy.PHits[dummy.nPH] = Hit  # Put the hit with the new average in the pending hits
             dummy.nPuncture = 0  # Reset stack
             return
@@ -214,7 +214,7 @@ def AoECheck(bar, dummy, player, FA, Do):
     :param Do: The DoList object.
     """
 
-    if dummy.nTarget > 9 and not FA.Name in {'Corruption Blast', 'Corruption Shot'}:
+    if dummy.nTarget > 9 and FA.Name not in {'Corruption Blast', 'Corruption Shot'}:
         nDT = 9
     else:
         nDT = dummy.nTarget
