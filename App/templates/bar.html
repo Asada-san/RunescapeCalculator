@@ -6,7 +6,7 @@
 {% block content %}
 
 <div class="note">
-  <h2 style="text-align: center; margin-bottom: 15px; margin-top: 15px;">Revolution Bar <span style="font-size:small;">V1.05.5</span></h2>
+  <h2 style="text-align: center; margin-bottom: 15px; margin-top: 15px;">Revolution Bar <span style="font-size:small;">V1.05.6</span></h2>
   <button id="guide-button" class="note-button">General Info</button>
   <div id="Bar-guide" class="content note-collapsible">
     <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;">
@@ -55,6 +55,16 @@
   </div>
   <button id="changelog-button" class="note-button">Changelog</button>
   <div id="Changelog-notes" class="content note-collapsible">
+    <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.05.6 - 4-3-2021</strong></p>
+    <ul style="margin-top: 10px; margin-right: 15px;">
+      <li>Added the ability name to the tooltip of the ability images</li>
+      <li>Removed the options info section and instead added tooltips to the options</li>
+      <li>Moved the options section for a slightly better user experience</li>
+      <li>Fixed some formatting issues when clicking on the resulting output</li>
+      <li>Greater Dazing Shot stack timer is now more accurate</li>
+      <li>Salt the Wound can once again be used and now works properly when there is a boost active</li>
+    </ul>
+
     <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.05.5 - 25-1-2021</strong></p>
     <ul style="margin-top: 10px; margin-right: 15px;">
       <li>Sunshine and Death Swiftness duration is no longer infinite when using Planted Feet</li>
@@ -152,8 +162,13 @@
 
 <div class="centering">
   <div class="btn-group">
-    <button id="OptBtn" class="Options">Options</button>
-    <button id="OptInfoBtn" class="Options">Options Info</button>
+    <button id="AttBtn" class="collapsible">Attack</button>
+    <button id="StrBtn" class="collapsible">Strength</button>
+    <button id="MagBtn" class="collapsible">Magic</button>
+    <button id="RanBtn" class="collapsible">Ranged</button>
+    <button id="ConBtn" class="collapsible">Constitution</button>
+    <button id="DefBtn" class="collapsible">Defence</button>
+    <button id="OptBtn" class="collapsible">Options</button>
   </div>
 </div>
 
@@ -163,7 +178,7 @@
 
     <div id="AbilityOptions1" class="optsect">
       <p style="margin-left: 15px; margin-top: 15px; text-align: center; font-weight: bold; color: var(--textColor2);">Strength Boost</p>
-      <label class="OptText" for="StrengthBoost">Level Boost:
+      <label class="OptText" for="StrengthBoost" title="The amount of boosted levels (above your base level) due to potions and/or aura's (min:0, max:60)">Level Boost:
         <input type="number" id="StrengthBoost" name="fname" min="0" max="60" value="0" style="width: 50px;"><br>
       </label>
       <label class="OptSelect" for="StrengthPrayer" style="margin-left: 15px; margin-right: 15px;">
@@ -179,7 +194,7 @@
         </select>
       </label>
       <p style="margin-left: 15px; margin-top: 15px; text-align: center; font-weight: bold; color: var(--textColor2);">Magic Boost</p>
-      <label class="OptText" for="MagicBoost">Level Boost:
+      <label class="OptText" for="MagicBoost" title="The amount of boosted levels (above your base level) due to potions and/or aura's (min:0, max:60)">Level Boost:
         <input type="number" id="MagicBoost" name="fname" min="0" max="60" value="0" style="width: 50px;"><br>
       </label>
       <label class="OptSelect" for="MagicPrayer" style="margin-left: 15px; margin-right: 15px;">
@@ -195,7 +210,7 @@
         </select>
       </label>
       <p style="margin-left: 15px; margin-top: 15px; text-align: center; font-weight: bold; color: var(--textColor2);">Ranged Boost</p>
-      <label class="OptText" for="RangedBoost">Level Boost:
+      <label class="OptText" for="RangedBoost" title="The amount of boosted levels (above your base level) due to potions and/or aura's (min:0, max:60)">Level Boost:
         <input type="number" id="RangedBoost" name="fname" min="0" max="60" value="0" style="width: 50px;"><br>
       </label>
       <label class="OptSelect" for="RangedPrayer" style="margin-left: 15px; margin-right: 15px;">
@@ -214,19 +229,19 @@
 
     <div id="AbilityOptions2" class="optsect">
       <p style="margin-left: 15px; margin-top: 15px; text-align: center; font-weight: bold; color: var(--textColor2);">Invention Perks</p>
-      <label class="SingleOpt" for="Level20Gear" style="margin-left: 20px;">Level 20 Gear
+      <label class="SingleOpt" for="Level20Gear" style="margin-left: 20px;" title="Assumes the equipment levels of all augmented items are equal to level 20">Level 20 Gear
         <input id="Level20Gear" type="checkbox" value="true">
         <span class="tickbox"></span>
       </label>
-      <label class="SingleOpt" for="PlantedFeet" style="margin-left: 20px;">Planted Feet
+      <label class="SingleOpt" for="PlantedFeet" style="margin-left: 20px;" title="Duration of Sunshine and Death's Swiftness are increased by 25%, but lose their damage-over-time effect">Planted Feet
         <input id="PlantedFeet" type="checkbox" value="true">
         <span class="tickbox"></span>
       </label>
-      <label class="SingleOpt" for="Reflexes" style="margin-left: 20px;">Reflexes
+      <label class="SingleOpt" for="Reflexes" style="margin-left: 20px;" title="Anticipation's duration and cooldown are halved">Reflexes
         <input id="Reflexes" type="checkbox" value="true">
         <span class="tickbox"></span>
       </label>
-      <label class="OptSelect" for="Precise" style="margin-left: 15px; margin-right: 15px;">
+      <label class="OptSelect" for="Precise" style="margin-left: 15px; margin-right: 15px;" title="Increases your minimum damage by 1.5% per rank of your maximum damage">
         <select id="Precise" style="float: center; width: 100%;" >
           <option value="0" disabled selected hidden>Precise Perk</option>
           <option value="0">None</option>
@@ -238,7 +253,7 @@
           <option value="6">Precise 6</option>
         </select>
       </label>
-      <label class="OptSelect" for="Equilibrium" style="margin-left: 15px; margin-right: 15px;">
+      <label class="OptSelect" for="Equilibrium" style="margin-left: 15px; margin-right: 15px;" title="Increases minimum hit by 3% per rank, and decreases maximum hit by 1% per rank">
         <select id="Equilibrium" style="float: center; width: 100%;" >
           <option value="0" disabled selected hidden>Equilibrium Perk</option>
           <option value="0">None</option>
@@ -248,7 +263,7 @@
           <option value="4">Equilibrium 4</option>
         </select>
       </label>
-      <label class="OptSelect" for="Biting" style="margin-left: 15px; margin-right: 15px;">
+      <label class="OptSelect" for="Biting" style="margin-left: 15px; margin-right: 15px;" title="+2% chance per rank to critically hit opponents">
         <select id="Biting" style="float: center; width: 100%;" >
           <option value="0" disabled selected hidden>Biting Perk</option>
           <option value="0">None</option>
@@ -258,7 +273,7 @@
           <option value="4">Biting 4</option>
         </select>
       </label>
-      <label class="OptSelect" for="Flanking" style="margin-left: 15px; margin-right: 15px;">
+      <label class="OptSelect" for="Flanking" style="margin-left: 15px; margin-right: 15px;" title="Certain abilities lose their stunning ability in exchange for dealing increased damage to a target that does not face the player">
         <select id="Flanking" style="float: center; width: 100%;" >
           <option value="0" disabled selected hidden>Flanking Perk</option>
           <option value="0">None</option>
@@ -268,7 +283,7 @@
           <option value="4">Flanking 4</option>
         </select>
       </label>
-      <label class="OptSelect" for="Lunging" style="margin-left: 15px; margin-right: 15px;">
+      <label class="OptSelect" for="Lunging" style="margin-left: 15px; margin-right: 15px;" title="The maximum damage of Combust, Dismember and Fragmentation shot is increased by 20% weapon damage per rank, but enemies that move will only take 1.5X increased damage">
         <select id="Lunging" style="float: center; width: 100%;" >
           <option value="0" disabled selected hidden>Lunging Perk</option>
           <option value="0">None</option>
@@ -278,7 +293,7 @@
           <option value="4">Lunging 4</option>
         </select>
       </label>
-      <label class="OptSelect" for="Caroming" style="margin-left: 15px; margin-right: 15px;">
+      <label class="OptSelect" for="Caroming" style="margin-left: 15px; margin-right: 15px;" title="Chain and Ricochet hit 1 extra target per rank">
         <select id="Caroming" style="float: center; width: 100%;" >
           <option value="0" disabled selected hidden>Caroming Perk</option>
           <option value="0">None</option>
@@ -288,7 +303,7 @@
           <option value="4">Caroming 4</option>
         </select>
       </label>
-      <label class="OptSelect" for="Ruthless" style="margin-left: 15px; margin-right: 15px;">
+      <label class="OptSelect" for="Ruthless" style="margin-left: 15px; margin-right: 15px;" title="Whenever you defeat an enemy you gain a 0.5% damage boost per rank for 20 seconds (code assumes a continuous max stack of 2.5%)">
         <select id="Ruthless" style="float: center; width: 100%;" >
           <option value="0" disabled selected hidden>Ruthless Perk</option>
           <option value="0">None</option>
@@ -297,7 +312,7 @@
           <option value="3">Ruthless 3</option>
         </select>
       </label>
-      <label class="OptSelect" for="Aftershock" style="margin-left: 15px; margin-right: 15px;">
+      <label class="OptSelect" for="Aftershock" style="margin-left: 15px; margin-right: 15px;" title="After dealing 50,000 damage, create an explosion centered on your current target, dealing up to 40% per rank weapon damage to nearby enemies">
         <select id="Aftershock" style="float: center; width: 100%;" >
           <option value="0" disabled selected hidden>Aftershock Perk</option>
           <option value="0">None</option>
@@ -308,7 +323,7 @@
         </select>
       </label>
       <label class="OptSelect" for="ShieldBashing" style="margin-left: 15px; margin-right: 15px;">
-        <select id="ShieldBashing" style="float: center; width: 100%;" >
+        <select id="ShieldBashing" style="float: center; width: 100%;" title="Debilitate's damage is increased by 15% per rank">
           <option value="0" disabled selected hidden>Shield Bashing Perk</option>
           <option value="0">None</option>
           <option value="1">Shield Bashing 1</option>
@@ -317,7 +332,7 @@
           <option value="4">Shield Bashing 4</option>
         </select>
       </label>
-      <label class="OptSelect" for="Ultimatums" style="margin-left: 15px; margin-right: 15px;">
+      <label class="OptSelect" for="Ultimatums" style="margin-left: 15px; margin-right: 15px;" title="Reduces the adrenaline cost of Overpower, Frenzy, Unload and Omnipower by 5% per rank">
         <select id="Ultimatums" style="float: center; width: 100%;" >
           <option value="0" disabled selected hidden>Ultimatums Perk</option>
           <option value="0">None</option>
@@ -327,7 +342,7 @@
           <option value="4">Ultimatums 4</option>
         </select>
       </label>
-      <label class="OptSelect" for="Impatient" style="margin-left: 15px; margin-right: 15px;">
+      <label class="OptSelect" for="Impatient" style="margin-left: 15px; margin-right: 15px;" title="9% chance per rank for basic abilities to generate 3% extra adrenaline">
         <select id="Impatient" style="float: center; width: 100%;" >
           <option value="0" disabled selected hidden>Impatient Perk</option>
           <option value="0">None</option>
@@ -341,19 +356,19 @@
 
     <div id="PlayerOptions" class="optsect">
       <p style="margin-left: 15px; margin-top: 15px; text-align: center; font-weight: bold; color: var(--textColor2);">Equipment</p>
-      <label class="SingleOpt" for="StrengthCape" style="margin-left: 20px;">Strength Cape
+      <label class="SingleOpt" for="StrengthCape" style="margin-left: 20px;" title="The Strength cape's perk causes Dismember's damage over time to last an extra 3.6 seconds (an extra 3 hits for a total of 8)">Strength Cape
         <input id="StrengthCape" type="checkbox" value="true">
         <span class="tickbox"></span>
       </label>
-      <label class="SingleOpt" for="RoV" style="margin-left: 20px;">Ring of Vigour
+      <label class="SingleOpt" for="RoV" style="margin-left: 20px;" title="When an ultimate ability is used, adrenaline will be reduced by 90% instead of 100%">Ring of Vigour
         <input id="RoV" type="checkbox" value="true">
         <span class="tickbox"></span>
       </label>
-      <label class="SingleOpt" for="MSoA" style="margin-left: 20px;">MS of Annihilation
+      <label class="SingleOpt" for="MSoA" style="margin-left: 20px;" title="Melee damage over time abilities (bleeds) have their duration extended by 50%, rounded down to the nearest whole number">MS of Annihilation
         <input id="MSoA" type="checkbox" value="true">
         <span class="tickbox"></span>
       </label>
-      <label class="SingleOpt" for="Grimoire" style="margin-left: 20px;">Erethdor's Grimoire
+      <label class="SingleOpt" for="Grimoire" style="margin-left: 20px;" title="Every non-bleed hit has a 12% chance to be forced to become a critical hit and the player's damage cap for critical hits is increased to 15,000, up from 12,000">Erethdor's Grimoire
         <input id="Grimoire" type="checkbox" value="true">
         <span class="tickbox"></span>
       </label>
@@ -378,27 +393,27 @@
 
     <div id="DummyOptions" class="optsect">
       <p style="margin-left: 15px; margin-top: 15px; text-align: center; font-weight: bold; color: var(--textColor2);">Player</p>
-      <label class="SingleOpt" for="afkStatus" style="margin-left: 20px;">Efficient
+      <label class="SingleOpt" for="afkStatus" style="margin-left: 20px;" title="Assumes the player breaks channeling abilities such that they still do all their damage (except for Concentrated Blast which cuts off after 2 hits) but the next ability is activated earlier">Efficient
         <input id="afkStatus" type="checkbox" value="true">
         <span class="tickbox"></span>
       </label>
-      <label class="SingleOpt" for="switchStatus" style="margin-left: 20px;">Switcher
+      <label class="SingleOpt" for="switchStatus" style="margin-left: 20px;" title="Assumes the player switches between 2h/dual/shield whenever required for the next available ability">Switcher
         <input id="switchStatus" type="checkbox" value="true">
         <span class="tickbox"></span>
       </label>
-      <label class="OptText" for="baseDamage">Ability Damage:
+      <label class="OptText" for="baseDamage" title="The ability damage as calculated in the 'Calculating ability damage' section on the RS3 wiki (Min:1, Max:10000)">Ability Damage:
         <input type="number" id="baseDamage" name="fname" min="0" max="10000" value="1000"><br>
       </label>
       <p style="margin-top: 15px; text-align: center; font-weight: bold; color: var(--textColor2);">Dummy</p>
-      <label class="SingleOpt" for="movementStatus" style="margin-left: 20px;">Stationary
+      <label class="SingleOpt" for="movementStatus" style="margin-left: 20px;" title="Assumes the dummy is stuck in place, meaning bleed damage won't be multiplied. When not ticked, bleed damage is multiplied for all hits (unless the dummy is stunned and/or bound).">Stationary
         <input id="movementStatus" type="checkbox" value="true" checked>
         <span class="tickbox"></span>
       </label>
-      <label class="SingleOpt" for="stunbindStatus" style="margin-left: 20px;">Stun&Bind Immune
+      <label class="SingleOpt" for="stunbindStatus" style="margin-left: 20px;" title="Assumes the dummy is immune to stuns and binds from abilities">Stun&Bind Immune
         <input id="stunbindStatus" type="checkbox" value="true">
         <span class="tickbox"></span>
       </label>
-      <label class="OptSelect" for="nTargets" style="margin-left: 15px; margin-right: 15px;">Targets:
+      <label class="OptSelect" for="nTargets" style="margin-left: 15px; margin-right: 15px;" title="Number of targets within reach for all AoE abilities">Targets:
         <select id="nTargets" style="float: right; width: 62%;" >
           <option value="1">1</option>
           <option value="2">2</option>
@@ -416,31 +431,32 @@
 
     <div id="Relics&PythonScriptOptions" class="optsect">
       <p style="margin-top: 15px; text-align: center; font-weight: bold; color: var(--textColor2);">Archaeology Relics</p>
-      <label class="SingleOpt" for="HeightenedSenses" style="margin-left: 20px;">Heightened Senses
+      <label class="SingleOpt" for="HeightenedSenses" style="margin-left: 20px;" title="Increases maximum adrenaline by 10%">Heightened Senses
         <input id="HeightenedSenses" type="checkbox" value="true">
         <span class="tickbox"></span>
       </label>
-      <label class="SingleOpt" for="FotS" style="margin-left: 20px;">Fury of the Small
+      <label class="SingleOpt" for="FotS" style="margin-left: 20px;" title="All adrenaline generating basic abilities generate +1% adrenaline">Fury of the Small
         <input id="FotS" type="checkbox" value="true">
         <span class="tickbox"></span>
       </label>
-      <label class="SingleOpt" for="CoE" style="margin-left: 20px;">Conserv. of Energy
+      <label class="SingleOpt" for="CoE" style="margin-left: 20px;" title="After using an ultimate ability, you will regain 10% adrenaline">Conserv. of Energy
         <input id="CoE" type="checkbox" value="true">
         <span class="tickbox"></span>
       </label>
-      </label>
-        <label class="OptText" for="BerserkersFury">Berserker's Fury:
+      <label class="OptText" for="BerserkersFury" title="Deal up to +5.5% damage (all styles) the lower your current life points are below max">Berserker's Fury:
         <input style="width: 60px;" type="number" step="0.1" id="BerserkersFury" name="fname" min="0" max="5.5" value="0"><br>
       </label>
 
       <p style="margin-top: 15px; text-align: center; font-weight: bold; color: var(--textColor2);">Python Script</p>
-      <label class="OptText" for="simulationTime">Simulation T(s):
-        <input type="number" id="simulationTime" name="fname" min="0" max="3600" value="0" style="float: right;"><br>
-      </label>
-      <label class="OptText" for="Adrenaline">Start Adrenaline:
-        <input type="number" id="Adrenaline" name="fname" min="0" max="100" value="0" style="width: 50px; float: right;"><br>
-      </label>
-      <label class="SingleOpt" for="HTMLwrite" style="margin-left: 20px;">Print more info
+      <div title="When a value has been set for both the Simulation Time (in seconds, min:1, max:3600) and the Starting Adrenaline (min:0, max:100), the Python script won't detect cycles but instead runs for the given simulation time and determines the Damage Per Tick (DPT) in that time.">
+        <label class="OptText" for="simulationTime">Simulation T(s):
+          <input type="number" id="simulationTime" name="fname" min="0" max="3600" value="0" style="float: right;"><br>
+        </label>
+        <label class="OptText" for="Adrenaline">Start Adrenaline:
+          <input type="number" id="Adrenaline" name="fname" min="0" max="100" value="0" style="width: 50px; float: right;"><br>
+        </label>
+      </div>
+      <label class="SingleOpt" for="HTMLwrite" style="margin-left: 20px;" title="When ticked, up to the first 5 minutes of the simulation time can be verified upon clicking the resulting AADPT number (mostly used for debugging purposes).">Print more info
         <input id="HTMLwrite" type="checkbox" value="true">
         <span class="tickbox"></span>
       </label>
@@ -450,7 +466,7 @@
   </form>
 </div>
 
-<div id="optInfoBlock" class="content OptionBlock" style="background-color: #DGDGDG;">
+{#<div id="optInfoBlock" class="content OptionBlock" style="background-color: #DGDGDG;">
   <div class="optsect" style="width: 50px;"></div>
   <div id="AbilityInfo1" class="optsect" style="width: 500px;">
     <p style="margin-left: 15px; margin-top: 15px; color: var(--textColor2);">
@@ -487,20 +503,9 @@
     </p>
   </div>
   <div class="optsect" style="width: 50px;"></div>
-</div>
+</div>#}
 
-<div class="centering">
-  <div class="btn-group">
-    <button id="AttBtn" class="collapsible">Attack</button>
-    <button id="StrBtn" class="collapsible">Strength</button>
-    <button id="MagBtn" class="collapsible">Magic</button>
-    <button id="RanBtn" class="collapsible">Ranged</button>
-    <button id="ConBtn" class="collapsible">Constitution</button>
-    <button id="DefBtn" class="collapsible">Defence</button>
-  </div>
-</div>
-
-<div id="attabils" class="content AbilBlock" style="background-color: #FFD700; margin-top: 20px;">
+<div id="attAbils" class="content AbilBlock" style="background-color: #FFD700;">
   <div class="attbox">
     <div class="AbilType">Basic</div>
     <div class="att">
@@ -581,7 +586,7 @@
   </div>
 </div>
 
-<div id="strabils" class="content AbilBlock" style="background-color: #FFA500;">
+<div id="strAbils" class="content AbilBlock" style="background-color: #FFA500;">
   <div class="strbox">
     <div class="AbilType" style="background-color: var(--strColor);">Basic</div>
     <div class="str">
@@ -644,7 +649,7 @@
   </div>
 </div>
 
-<div id="magabils" class="content AbilBlock" style="background-color: #00008B;">
+<div id="magAbils" class="content AbilBlock" style="background-color: #00008B;">
   <div class="magbox">
     <div class="AbilType" style="background-color: var(--magColor); color: #FFFFFF">Basic</div>
     <div class="mag">
@@ -737,7 +742,7 @@
   </div>
 </div>
 
-<div id="ranabils" class="content AbilBlock" style="background-color: #006400;">
+<div id="ranAbils" class="content AbilBlock" style="background-color: #006400;">
   <div class="ranbox">
     <div class="AbilType" style="background-color: var(--ranColor); color: #FFFFFF">Basic</div>
     <div class="ran">
@@ -836,7 +841,7 @@
   </div>
 </div>
 
-<div id="conabils" class="content AbilBlock" style="background-color: #DE0219;">
+<div id="conAbils" class="content AbilBlock" style="background-color: #DE0219;">
   <div class="conbox">
     <div class="AbilType" style="background-color: var(--conColor); color: #FFFFFF">Basic</div>
     <div class="con">
@@ -860,7 +865,7 @@
   </div>
 </div>
 
-<div id="defabils" class="content AbilBlock" style="background-color: #4B4B4B;">
+<div id="defAbils" class="content AbilBlock" style="background-color: #4B4B4B;">
   <div class="defbox">
     <div class="AbilType" style="background-color: var(--defColor); color: #FFFFFF">Basic</div>
     <div class="def">
@@ -892,8 +897,6 @@
     <div class="AbilType" style="background-color: var(--defColor); color: #FFFFFF">Lesser</div>
   </div>
 </div>
-
-
 
 <div id="RevolutionBar">
   <div id="revo1" class="RevoBar" ondrop="drop(event)" ondragover="allowDrop(event)" style="border-left: 0px; width: 61px;"></div>

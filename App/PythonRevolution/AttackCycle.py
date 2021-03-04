@@ -1,5 +1,6 @@
 from App.PythonRevolution import AverageDamageCalculator as AVGCalc, CycleChecker as Cycle
 from copy import deepcopy
+import pprint
 
 
 def Attack_main(bar, player, dummy, Do, loop):
@@ -193,12 +194,25 @@ def EffectCheck(bar, dummy, player, FA, Do):
             # Calculate its new average
             Hit.Damage = AVGCalc.StandardChannelDamAvgCalc(bar.Rotation[IDX], player, Do, 'Salt the Wound', FA.Hits[0].Index, dummy.nPuncture)[0]
             dummy.PHits[dummy.nPH] = Hit  # Put the hit with the new average in the pending hits
+            dummy.LastStack = dummy.nPuncture
             dummy.nPuncture = 0  # Reset stack
-            return
+            dummy.PunctureDuration = 0
+            dummy.Puncture = False
 
-        # Set puncture stack
-        if dummy.nPuncture < 10:  # Stacks are capped at 10
-            dummy.nPuncture += 1
+            if Do.HTMLwrite:
+                Do.Text += f'<li style="color: {Do.stat_color};">Dummy puncture stack reset to 0</li>\n'
+
+            return
+        else:  # Else the Greater Dazing Shot ability has been used, change stack value accordingly
+            dummy.PunctureDuration = 15
+            dummy.Puncture = True
+
+            # Set puncture stack
+            if dummy.nPuncture < 10:  # Stacks are capped at 10
+                dummy.nPuncture += 1
+
+            if Do.HTMLwrite:
+                Do.Text += f'<li style="color: {Do.stat_color};">Dummy puncture stack: {dummy.nPuncture}</li>\n'
 
         dummy.PHits[dummy.nPH + FA.nS: dummy.nPH + FA.nT] = deepcopy(FA.DoTHits)
 
@@ -412,12 +426,6 @@ def DummyDamage(bar, dummy, player, Do, loop):
     # Determine if dummy takes damage outside attack cycle
     if dummy.nPH == 0:
         dummy.PH = False
-        dummy.nPuncture = 0
-
-    elif 4 not in [Hit.Type for Hit in dummy.PHits[0: dummy.nPH]]:
-        dummy.nPuncture = 0
-        dummy.PH = True
-
     else:
         dummy.PH = True
 
@@ -435,7 +443,10 @@ def CalcNewAvg(bar, dummy, player, Do, i):
 
     IDX = bar.AbilNames.index(dummy.PHits[i].Name)  # Spot of the ability on the bar
 
-    if dummy.PHits[i].Type in {1, 2}:
+    if dummy.PHits[i].Name == 'Salt the Wound':
+        Avg = AVGCalc.StandardChannelDamAvgCalc(bar.Rotation[IDX], player, Do, 'Salt the Wound', dummy.PHits[i].Index, dummy.LastStack)
+
+    elif dummy.PHits[i].Type in {1, 2}:
 
         # if dummy.PHits[i].Name == 'Greater Ricochet' and dummy.PHits[i].Target == 1:
         #     nRedundantHits = 3 + player.Cr - dummy.nTarget

@@ -15,12 +15,13 @@ var coll = document.getElementsByClassName("collapsible");
 
 // Get all the content corresponding to the collapsible buttons in an array
 var cbContent = [
-    attContent = document.getElementById("attabils"),
-    strContent = document.getElementById("strabils"),
-    magContent = document.getElementById("magabils"),
-    ranContent = document.getElementById("ranabils"),
-    conContent = document.getElementById("conabils"),
-    defContent = document.getElementById("defabils")
+    attContent = document.getElementById("attAbils"),
+    strContent = document.getElementById("strAbils"),
+    magContent = document.getElementById("magAbils"),
+    ranContent = document.getElementById("ranAbils"),
+    conContent = document.getElementById("conAbils"),
+    defContent = document.getElementById("defAbils"),
+    optContent = document.getElementById("optBlock")
 ];
 
 var LastIdx = null; // The previous button the user clicked on
@@ -45,6 +46,8 @@ for (var i = 0; i < coll.length; i++) { // for every collapsible button
             var ScrollIdx = 4;
         } else if (srcId.id == "DefBtn") {
             var ScrollIdx = 5;
+        } else if (srcId.id == "OptBtn") {
+            var ScrollIdx = 6;
         }
 
         // if the content is already showing
@@ -79,56 +82,56 @@ for (var i = 0; i < coll.length; i++) { // for every collapsible button
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 
-// Get all collapsible buttons in an array
-var optBtns = document.getElementsByClassName("Options");
-
-// Get all the content corresponding to the collapsible buttons in an array
-var optContent = [
-    Options = document.getElementById("optBlock"),
-    OptionsInfo = document.getElementById("optInfoBlock")
-];
-
-var LastBtnIdx = null; // The previous button the user clicked on
-
-for (var i = 0; i < optBtns.length; i++) { // for every collapsible button
-    // If the button is clicked on
-    optBtns[i].addEventListener("click", function(ev) {
-//        this.classList.toggle("active"); // toggle this class active
-        // get button element which has been clicked on
-        var srcId = document.getElementById(ev.srcElement.id)
-
-        // depending on which button has been clicked on set index
-        if (srcId.id == "OptBtn") {
-            var ScrollBtnIdx = 0;
-        } else if (srcId.id == "OptInfoBtn") {
-            var ScrollBtnIdx = 1;
-        }
-
-        // if the content is already showing
-        if (optContent[ScrollBtnIdx].style.maxHeight){
-            optContent[ScrollBtnIdx].style.maxHeight = null;
-            ScrollOut = false;
-        } else { // else ScrollOut the content
-            optContent[ScrollBtnIdx].style.maxHeight = optContent[ScrollBtnIdx].scrollHeight + "px";
-            ScrollOut = true;
-        }
-
-        // depending on the action in the previous if-else statement:
-        // if this is not the first button being clicked on and its not the same
-        // button as last time
-        if (LastBtnIdx !== null && LastBtnIdx !== ScrollBtnIdx) {
-            // basically do the opposite for the previous content compared to the new content
-            if (ScrollOut) {
-                optContent[LastBtnIdx].style.maxHeight = null;
-            } else {
-                optContent[LastBtnIdx].style.maxHeight = optContent[LastBtnIdx].scrollHeight + "px";
-            }
-        }
-
-        // update the button which has previously been clicked on
-        LastBtnIdx = ScrollBtnIdx;
-    });
-}
+//// Get all collapsible buttons in an array
+//var optBtns = document.getElementsByClassName("Options");
+//
+//// Get all the content corresponding to the collapsible buttons in an array
+//var optContent = [
+//    Options = document.getElementById("optBlock"),
+//    OptionsInfo = document.getElementById("optInfoBlock")
+//];
+//
+//var LastBtnIdx = null; // The previous button the user clicked on
+//
+//for (var i = 0; i < optBtns.length; i++) { // for every collapsible button
+//    // If the button is clicked on
+//    optBtns[i].addEventListener("click", function(ev) {
+////        this.classList.toggle("active"); // toggle this class active
+//        // get button element which has been clicked on
+//        var srcId = document.getElementById(ev.srcElement.id)
+//
+//        // depending on which button has been clicked on set index
+//        if (srcId.id == "OptBtn") {
+//            var ScrollBtnIdx = 0;
+//        } else if (srcId.id == "OptInfoBtn") {
+//            var ScrollBtnIdx = 1;
+//        }
+//
+//        // if the content is already showing
+//        if (optContent[ScrollBtnIdx].style.maxHeight){
+//            optContent[ScrollBtnIdx].style.maxHeight = null;
+//            ScrollOut = false;
+//        } else { // else ScrollOut the content
+//            optContent[ScrollBtnIdx].style.maxHeight = optContent[ScrollBtnIdx].scrollHeight + "px";
+//            ScrollOut = true;
+//        }
+//
+//        // depending on the action in the previous if-else statement:
+//        // if this is not the first button being clicked on and its not the same
+//        // button as last time
+//        if (LastBtnIdx !== null && LastBtnIdx !== ScrollBtnIdx) {
+//            // basically do the opposite for the previous content compared to the new content
+//            if (ScrollOut) {
+//                optContent[LastBtnIdx].style.maxHeight = null;
+//            } else {
+//                optContent[LastBtnIdx].style.maxHeight = optContent[LastBtnIdx].scrollHeight + "px";
+//            }
+//        }
+//
+//        // update the button which has previously been clicked on
+//        LastBtnIdx = ScrollBtnIdx;
+//    });
+//}
 
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
@@ -462,48 +465,48 @@ calcDPT.addEventListener("click", async function(ev) {
                 CycleText += '<br><br><span style="color: #FF3333;">Cycle Convergence Time: </span> ' + data['CycleConvergenceTime'] + "s --> " + (parseFloat(data['CycleConvergenceTime']) / 0.6).toFixed(0) + " ticks";
                 CycleText += '<br><br><span style="color: #FF3333;">Cycle Damage: </span> ' + data['CycleDamage'] + ' <span style="color: #707070;">Base Damage: ' + data['BaseDamage'] + '</span>';
                 CycleText += '<br><br><span style="color: #FF3333;">Cycle Rotation: </span> ' + RotationString + '<br><br>';
-            }
 
-            if (data['CycleRedundant'].length > 0) {
-                CycleText += '<span style="color: #FF3333;">Redundant abilities: </span> ' + RedundantAbilities.replace(/,/g, ', ') + "<br><br>";
-            }
+                if (data['CycleRedundant'].length > 0) {
+                    CycleText += '<span style="color: #FF3333;">Redundant abilities: </span> ' + RedundantAbilities.replace(/,/g, ', ') + "<br><br>";
+                }
 
-            function tableCreate() {
-                tt = '<table style="">';
-                headText = ['Source', 'activations', 'damage', '% of total damage'];
-                for(var i = 0; i < Object.keys(data['AbilityInfo']).length + 1; i++){
-                    tt += '<tr>';
-                    if (i !== 0) {
-                        key = Object.keys(data['AbilityInfo'])[i-1];
-                    }
-                    for(var j = 0; j < 4; j++){
-                        if (i == 0) {
-                            tt += '<th style="border: 1px solid #999999;">' + headText[j] + '</th>';
-                        } else {
-                            if (j == 0) {
-                                tt += '<td style="border: 1px solid #999999;">' + key + '</td>';
-                            } else if (j == 1) {
-                                tt += '<td style="border: 1px solid #999999;">' + '<span style="float: right;">' + data['AbilityInfo'][key]['activations'] + '</span>' + '</td>';
-                            } else if (j == 2) {
-                                tt += '<td style="border: 1px solid #999999;">' + '<span style="float: right;">' + parseFloat(data['AbilityInfo'][key]['damage']).toFixed(2) + '</span>' + '</td>';
-                            } else if (j == 3) {
-                                tt += '<td style="border: 1px solid #999999;">' + '<span style="float: right;">' + parseFloat(data['AbilityInfo'][key]['shared%']).toFixed(2) + '</span>' + '</td>';
+                function tableCreate() {
+                    tt = '<table style="">';
+                    headText = ['Source', 'activations', 'damage', '% of total damage'];
+                    for(var i = 0; i < Object.keys(data['AbilityInfo']).length + 1; i++){
+                        tt += '<tr>';
+                        if (i !== 0) {
+                            key = Object.keys(data['AbilityInfo'])[i-1];
+                        }
+                        for(var j = 0; j < 4; j++){
+                            if (i == 0) {
+                                tt += '<th style="border: 1px solid #999999;">' + headText[j] + '</th>';
+                            } else {
+                                if (j == 0) {
+                                    tt += '<td style="border: 1px solid #999999;">' + key + '</td>';
+                                } else if (j == 1) {
+                                    tt += '<td style="border: 1px solid #999999;">' + '<span style="float: right;">' + data['AbilityInfo'][key]['activations'] + '</span>' + '</td>';
+                                } else if (j == 2) {
+                                    tt += '<td style="border: 1px solid #999999;">' + '<span style="float: right;">' + parseFloat(data['AbilityInfo'][key]['damage']).toFixed(2) + '</span>' + '</td>';
+                                } else if (j == 3) {
+                                    tt += '<td style="border: 1px solid #999999;">' + '<span style="float: right;">' + parseFloat(data['AbilityInfo'][key]['shared%']).toFixed(2) + '</span>' + '</td>';
+                                }
                             }
                         }
+                        tt += '</tr>';
                     }
-                    tt += '</tr>';
+                    tt += '</table>';
+                    return tt;
                 }
-                tt += '</table>';
-                return tt;
+                AbilityTable = tableCreate();
+
+                CycleText += '<span style="color: #FF3333;">Cycle Ability Information: </span> <br><br>'
+
+                CycleText += AbilityTable + '<br><br>';
             }
-            AbilityTable = tableCreate();
 
-            CycleText += '<span style="color: #FF3333;">Cycle Ability Information: </span> <br><br>'
-
-            CycleText += AbilityTable;
-
-            CycleText += '<br><br><br><span style="color: #FF3333; font-size: medium;">Python Script Execution Time: </span> ' + data['ExecutionTime'] + "s<br>";
-            CycleText += '<span style="color: #FF3333; font-size: medium;">Simulation Time: </span>' + (parseFloat(data['SimulationTime']) * 0.6).toFixed(1) + "s --> " + data['SimulationTime'] + ' ticks<br>';
+            CycleText += '<span style="color: #FF3333; font-size: small;">Python Script Execution Time: </span><span style="font-size:small;">' + data['ExecutionTime'] + "s</span><br>";
+            CycleText += '<span style="color: #FF3333; font-size: small;">Simulation Time: </span><span style="font-size:small;">' + (parseFloat(data['SimulationTime']) * 0.6).toFixed(1) + "s --> " + data['SimulationTime'] + ' ticks</span><br>';
 
             // the loop text which shows what happens for each tick
             LoopText = data['LoopText'];

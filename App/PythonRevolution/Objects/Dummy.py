@@ -17,7 +17,10 @@ class Dummy:
         self.DamageNames = []           # List of abilities which caused damage to the dummy in the current tick
         self.PHits = [0] * 50           # List of Pending Hits
         self.nPH = 0                    # Amount of Pending Hits
+        self.Puncture = False           # True if a Puncture effect has been applied on the dummy
         self.nPuncture = 0              # Amount of puncture stacks on dummy
+        self.PunctureDuration = 0       # Duration of the Puncture effect before the stack is reset
+        self.LastStack = 0              # Stack number when the Salt the Wound ability has been used
 
         self.nTarget = int(opt['nTargets'])             # Number of targets
         self.Movement = not opt['movementStatus']       # True if the dummy can move
@@ -51,3 +54,13 @@ class Dummy:
 
                 if Do.HTMLwrite:
                     Do.Text += f'<li style="color: {Do.stat_color};">Dummy no longer bound</li>\n'
+
+        if self.Puncture:
+            self.PunctureDuration -= 1
+
+            if self.PunctureDuration == 0:
+                self.Puncture = False
+                self.nPuncture = 0
+
+                if Do.HTMLwrite:
+                    Do.Text += f'<li style="color: {Do.stat_color};">Dummy puncture stack reset to 0</li>\n'

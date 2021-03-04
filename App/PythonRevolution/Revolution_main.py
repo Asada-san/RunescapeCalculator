@@ -44,6 +44,8 @@ def fight_dummy(user_input, AbilityBook):
         Ruthless: float
         Aftershock: float
         ShieldBashing: float
+        Ultimatums: float
+        Impatient: float
         Reflexes: boolean
         PlantedFeet: boolean
 
