@@ -445,6 +445,7 @@ def CalcNewAvg(bar, dummy, player, Do, i):
 
     if dummy.PHits[i].Name == 'Salt the Wound':
         Avg = AVGCalc.StandardChannelDamAvgCalc(bar.Rotation[IDX], player, Do, 'Salt the Wound', dummy.PHits[i].Index, dummy.LastStack)
+        dummy.LastStack = 0
 
     elif dummy.PHits[i].Type in {1, 2}:
 
