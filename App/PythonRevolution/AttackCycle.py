@@ -460,7 +460,7 @@ def CalcNewAvg(bar, dummy, player, Do, i):
 
     elif dummy.PHits[i].Type in {3, 4}:
 
-        Avg = bar.Rotation[IDX].BleedDamAvgCalc(player, Do)
+        Avg = AVGCalc.BleedDamAvgCalc(bar.Rotation[IDX], player, Do)
 
     ##############################################################
     ########### Return the new Average if its not None ###########
