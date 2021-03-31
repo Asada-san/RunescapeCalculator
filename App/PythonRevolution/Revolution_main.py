@@ -2,6 +2,7 @@ from App.PythonRevolution import CombatChecks, CycleChecker as Cycle, \
     AttackCycle as Attack
 from App.PythonRevolution.Objects import Loop, Dummy, Bar, Player
 
+TICK = 0.6 # Tick rate of RuneScape in seconds
 
 def fight_dummy(user_input, AbilityBook):
     """
@@ -67,8 +68,6 @@ def fight_dummy(user_input, AbilityBook):
 
     # cp = cProfile.Profile()
     # cp.enable()
-
-    tick = .6  # Tick rate of RuneScape in seconds
     Do = Loop.DoList(user_input)
 
     # Start writing HTML text
@@ -93,7 +92,7 @@ def fight_dummy(user_input, AbilityBook):
         # Don't look for repeating cycles
         loop.FindCycle = False
 
-        loop.nMax = round(user_input['simulationTime'] / .6, 0)  # Set max runtime in ticks
+        loop.nMax = round(user_input['simulationTime'] / TICK, 0)  # Set max runtime in ticks
         bar.Adrenaline = round(user_input['Adrenaline'], 0)  # Set starting adrenaline
 
         if Do.HTMLwrite:
@@ -158,7 +157,7 @@ def fight_dummy(user_input, AbilityBook):
                            f'Total damage: {round(dummy.Damage + dummy.PunctureDamage, 3)}'
                            f'<span style="float: right; margin-right: 18px;">Time: {round(loop.SimulationTime * .6, 1)}</span></li><br>\n')
         else:
-            loop.CycleLoopTime += .6  # Add tick time
+            loop.CycleLoopTime += TICK  # Add tick time
 
             if Do.HTMLwrite:
                 Do.Text += (f'<br>\n<li style="color: {Do.cycle_color}; white-space: pre-wrap;">'
@@ -167,7 +166,7 @@ def fight_dummy(user_input, AbilityBook):
         # -----------------------------------------------------
 
     if not loop.CycleFound:  # If no cycle has been found, change some result variables
-        loop.CycleTime = loop.SimulationTime
+        loop.CycleTime = loop.SimulationTime * TICK
         loop.CycleDamage = dummy.Damage
         loop.CyclePunctureDamage = dummy.PunctureDamage
 
@@ -183,8 +182,8 @@ def fight_dummy(user_input, AbilityBook):
             player.AbilInfo[entry]['shared%'] = round(player.AbilInfo[entry]['damage'] / loop.CycleDamage * 100, 2)
 
     Results = {  # The output of main
-        'AADPTPercentage': round(loop.CycleDamage / (loop.CycleTime / tick) / player.BaseDamage * 100, 3),
-        'AADPT': round(loop.CycleDamage / (loop.CycleTime / tick), 3),
+        'AADPTPercentage': round(loop.CycleDamage / (loop.CycleTime / TICK) / player.BaseDamage * 100, 3),
+        'AADPT': round(loop.CycleDamage / (loop.CycleTime / TICK), 3),
         'BaseDamage': player.BaseDamage,
         'SimulationTime': int(loop.n),
         'CycleTime': round(loop.CycleTime, 1),
