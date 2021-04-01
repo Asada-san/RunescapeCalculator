@@ -89,7 +89,7 @@ def AttackDummy(bar, player, dummy, Do, loop):
 
     FA = bar.Rotation[bar.FireN]  # FireAbility: ability to be fired in the current tick
 
-    if loop.CycleFound:
+    if loop.CycleFound or not loop.FindCycle:
         player.AbilInfo[FA.Name]['activations'] += 1
 
     if Do.HTMLwrite:
