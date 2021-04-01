@@ -370,7 +370,7 @@ def DummyDamage(bar, dummy, player, Do, loop):
             else:
                 dummy.PunctureDamage += HitDamage
 
-            if loop.CycleFound:  # If a cycle has been found
+            if loop.CycleFound or not loop.FindCycle:  # If a cycle has been found
                 player.AbilInfo[dummy.PHits[i].Name]['damage'] += HitDamage / ((1 + player.AbilCritBuff) * player.BoostX * player.Boost1X)
                 player.AbilInfo['Boosted']['damage'] += HitDamage - (HitDamage / ((1 + player.AbilCritBuff) * player.BoostX * player.Boost1X))
 

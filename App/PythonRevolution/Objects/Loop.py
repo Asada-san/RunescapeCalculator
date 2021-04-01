@@ -46,14 +46,14 @@ class Loop:
         self.cdTimes = np.empty(14, dtype=np.float)     # Array consisting of cd times of all abilities
         self.runLoop = True             # True if we want to keep the while loop running
         self.Rotation = []              # Array containing the cycle rotation
-        self.CycleTime = 0              # Cycle time
+        self.CycleTime = 0              # Cycle time in TICKS
         self.CycleDamage = 0            # Damage done during 1 cycle time - puncture damage
         self.CyclePunctureDamage = 0    # Puncture damage done during 1 cycle time
         self.CycleFound = False         # True if a cycle has been found
         self.Cycle1More = 0             # Starts at t = CycleTime and when it runs out, runLoop is set to False
         self.ConditionList = []         # List containing 3 condition to be satisfied
         self.Redundant = []             # Array containing abilities which are not used in the cycle
-        self.CycleLoopTime = 0          # Current time in when simulating the extra cycle
+        self.CycleLoopTime = 0          # Current time in ticks when simulating the extra cycle
         self.CycleStart = 0             # Starting time of the extra cycle
         self.nStall = 0                 # Number of consecutive stalls
         self.CycleConvergenceTime = 0   # The convergence time to the cycle

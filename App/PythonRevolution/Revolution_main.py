@@ -2,7 +2,6 @@ from App.PythonRevolution import CombatChecks, CycleChecker as Cycle, \
     AttackCycle as Attack
 from App.PythonRevolution.Objects import Loop, Dummy, Bar, Player
 
-TICK = 0.6 # Tick rate of RuneScape in seconds
 
 def fight_dummy(user_input, AbilityBook):
     """
@@ -92,7 +91,7 @@ def fight_dummy(user_input, AbilityBook):
         # Don't look for repeating cycles
         loop.FindCycle = False
 
-        loop.nMax = round(user_input['simulationTime'] / TICK, 0)  # Set max runtime in ticks
+        loop.nMax = round(user_input['simulationTime'] / .6, 0)  # Set max runtime in ticks
         bar.Adrenaline = round(user_input['Adrenaline'], 0)  # Set starting adrenaline
 
         if Do.HTMLwrite:
@@ -147,7 +146,7 @@ def fight_dummy(user_input, AbilityBook):
         loop.nCheck += 1
 
         # If a cycle has been found
-        if loop.CycleFound:
+        if loop.CycleFound or all([loop.n == loop.nMax, not loop.FindCycle]):
             Cycle.CycleRotation(bar, player, dummy, Do, loop)
 
         # Print total damage and loop time depending if a cycle has been found or not
@@ -157,18 +156,21 @@ def fight_dummy(user_input, AbilityBook):
                            f'Total damage: {round(dummy.Damage + dummy.PunctureDamage, 3)}'
                            f'<span style="float: right; margin-right: 18px;">Time: {round(loop.SimulationTime * .6, 1)}</span></li><br>\n')
         else:
-            loop.CycleLoopTime += TICK  # Add tick time
+            loop.CycleLoopTime += 1  # Add tick time
 
             if Do.HTMLwrite:
                 Do.Text += (f'<br>\n<li style="color: {Do.cycle_color}; white-space: pre-wrap;">'
                             f'Cycle damage: {round(loop.CycleDamage + loop.CyclePunctureDamage, 3)}'
-                            f'<span style="float: right; margin-right: 18px;">Cycle Time: {round(loop.CycleLoopTime, 1)}</span></li><br>\n')
+                            f'<span style="float: right; margin-right: 18px;">Cycle Time: {round(loop.CycleLoopTime * .6, 1)}</span></li><br>\n')
         # -----------------------------------------------------
 
     if not loop.CycleFound:  # If no cycle has been found, change some result variables
-        loop.CycleTime = loop.SimulationTime * TICK
+        loop.CycleTime = loop.SimulationTime
         loop.CycleDamage = dummy.Damage
         loop.CyclePunctureDamage = dummy.PunctureDamage
+
+        if loop.FindCycle:
+            loop.Rotation.extend([f'<span style="color: {Do.cycle_color}">NO CYCLE HAS BEEN FOUND AFTER 6000 TICKS!!! DPT RESULT GIVEN INSTEAD!</span>'])
 
     if player.PerkAftershock:
         # Increase max by 0.396 per rank and min 0.24 per rank
@@ -182,8 +184,8 @@ def fight_dummy(user_input, AbilityBook):
             player.AbilInfo[entry]['shared%'] = round(player.AbilInfo[entry]['damage'] / loop.CycleDamage * 100, 2)
 
     Results = {  # The output of main
-        'AADPTPercentage': round(loop.CycleDamage / (loop.CycleTime / TICK) / player.BaseDamage * 100, 3),
-        'AADPT': round(loop.CycleDamage / (loop.CycleTime / TICK), 3),
+        'AADPTPercentage': round(loop.CycleDamage / loop.CycleTime / player.BaseDamage * 100, 3),
+        'AADPT': round(loop.CycleDamage / loop.CycleTime, 3),
         'BaseDamage': player.BaseDamage,
         'SimulationTime': int(loop.n),
         'CycleTime': round(loop.CycleTime, 1),

@@ -461,10 +461,14 @@ calcDPT.addEventListener("click", async function(ev) {
 
             // FORMAT SOME NICE OUTPUT TEXT WITH CYCLE INFORMATION
             if (data['CycleRotation'].length !== 0) {
-                CycleText += '<span style="color: #FF3333;">Cycle Time: </span> ' + data['CycleTime'] + "s --> " + (parseFloat(data['CycleTime']) / 0.6).toFixed(0) + " ticks";
-                CycleText += '<br><br><span style="color: #FF3333;">Cycle Convergence Time: </span> ' + data['CycleConvergenceTime'] + "s --> " + (parseFloat(data['CycleConvergenceTime']) / 0.6).toFixed(0) + " ticks";
-                CycleText += '<br><br><span style="color: #FF3333;">Cycle Damage: </span> ' + data['CycleDamage'] + ' <span style="color: #707070;">Base Damage: ' + data['BaseDamage'] + '</span>';
-                CycleText += '<br><br><span style="color: #FF3333;">Cycle Rotation: </span> ' + RotationString + '<br><br>';
+                Type = 'Cycle'
+            } else {
+                Type = ''
+            }
+                CycleText += '<span style="color: #FF3333;">' + Type + ' Time: </span> ' + parseFloat((data['CycleTime'] * .6)).toFixed(1) + "s --> " + data['CycleTime'] + " ticks";
+                CycleText += '<br><br><span style="color: #FF3333;">' + Type + ' Convergence Time: </span> ' + parseFloat((data['CycleConvergenceTime'] * .6)).toFixed(1) + "s --> " + data['CycleConvergenceTime'] + " ticks";
+                CycleText += '<br><br><span style="color: #FF3333;">' + Type + ' Damage: </span> ' + data['CycleDamage'] + ' <span style="color: #707070;">Base Damage: ' + data['BaseDamage'] + '</span>';
+                CycleText += '<br><br><span style="color: #FF3333;">' + Type + ' Rotation: </span> ' + RotationString + '<br><br>';
 
                 if (data['CycleRedundant'].length > 0) {
                     CycleText += '<span style="color: #FF3333;">Redundant abilities: </span> ' + RedundantAbilities.replace(/,/g, ', ') + "<br><br>";
@@ -500,10 +504,10 @@ calcDPT.addEventListener("click", async function(ev) {
                 }
                 AbilityTable = tableCreate();
 
-                CycleText += '<span style="color: #FF3333;">Cycle Ability Information: </span> <br><br>'
+                CycleText += '<span style="color: #FF3333;">' + Type + ' Ability Information: </span> <br><br>'
 
                 CycleText += AbilityTable + '<br><br>';
-            }
+//            }
 
             CycleText += '<span style="color: #FF3333; font-size: small;">Python Script Execution Time: </span><span style="font-size:small;">' + data['ExecutionTime'] + "s</span><br>";
             CycleText += '<span style="color: #FF3333; font-size: small;">Simulation Time: </span><span style="font-size:small;">' + (parseFloat(data['SimulationTime']) * 0.6).toFixed(1) + "s --> " + data['SimulationTime'] + ' ticks</span><br>';
