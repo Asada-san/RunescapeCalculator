@@ -23,13 +23,8 @@ def drop_db():
 @click.argument('value')
 @with_appcontext
 def create_count(value):
-    Old_value = Counter.query.first().count
-
-    db.drop_all()
-    db.create_all()
-
-    RevoCounter = Counter(name="RevolutionCounter", count=Old_value)
-    DownloadCounter = Counter(name="ItemIDsDownloadCounter", count=value)
+    RevoCounter = Counter(name="RevolutionCounter", count=value)
+    DownloadCounter = Counter(name="ItemIDsDownloadCounter", count=0)
     db.session.add(RevoCounter)
     db.session.add(DownloadCounter)
 
