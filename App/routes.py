@@ -93,7 +93,7 @@ def bar():
 
 @RS.route("/item_ids")
 def item_ids():
-    with open('itemIDs.json', 'r') as file:
+    with open('App/itemIDs.json', 'r') as file:
         item_list = json.load(file)
 
     N = Counter.query.filter_by(name="ItemIDsDownloadCounter").first().count
