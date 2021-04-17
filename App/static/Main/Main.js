@@ -24,39 +24,42 @@
 
 var sidenavStatus = false;
 
-if (typeof(Storage) !== "undefined") {
-    // If we need to open the bar
+document.getElementById("mySidenav").style.width = "0";
+document.getElementById("main").style.marginLeft= "0";
 
-    if(localStorage.getItem("sidebar") == 'true'){
-        // Open the bar
-        document.getElementById("mySidenav").style.transition = "0s"
-        document.getElementById("mySidenav").style.width = "250px";
-        document.getElementById("main").style.transition = "0s"
-        document.getElementById("main").style.marginLeft = "250px";
-
-        sidenavStatus = true;
-    }
-}
-
-function sideNav() {
-    document.getElementById("mySidenav").style.transition = ".5s"
-    document.getElementById("main").style.transition = ".5s"
-
-    if (sidenavStatus == false) {
-        document.getElementById("mySidenav").style.width = "250px";
-        document.getElementById("main").style.marginLeft = "250px";
-
-        sidenavStatus = true;
-    } else if (sidenavStatus == true) {
-        document.getElementById("mySidenav").style.width = "0";
-        document.getElementById("main").style.marginLeft= "0";
-
-        sidenavStatus = false;
-    }
-
-    if (typeof(Storage) !== "undefined") {
-        // Save the state of the sidebar as "true" (becomes a string)
-        localStorage.setItem("sidebar", sidenavStatus);
-    }
-}
+//if (typeof(Storage) !== "undefined") {
+//    // If we need to open the bar
+//
+//    if(localStorage.getItem("sidebar") == 'true'){
+//        // Open the bar
+//        document.getElementById("mySidenav").style.transition = "0s"
+//        document.getElementById("mySidenav").style.width = "250px";
+//        document.getElementById("main").style.transition = "0s"
+//        document.getElementById("main").style.marginLeft = "250px";
+//
+//        sidenavStatus = true;
+//    }
+//}
+//
+//function sideNav() {
+//    document.getElementById("mySidenav").style.transition = ".5s"
+//    document.getElementById("main").style.transition = ".5s"
+//
+//    if (sidenavStatus == false) {
+//        document.getElementById("mySidenav").style.width = "250px";
+//        document.getElementById("main").style.marginLeft = "250px";
+//
+//        sidenavStatus = true;
+//    } else if (sidenavStatus == true) {
+//        document.getElementById("mySidenav").style.width = "0";
+//        document.getElementById("main").style.marginLeft= "0";
+//
+//        sidenavStatus = false;
+//    }
+//
+//    if (typeof(Storage) !== "undefined") {
+//        // Save the state of the sidebar as "true" (becomes a string)
+//        localStorage.setItem("sidebar", sidenavStatus);
+//    }
+//}
 

@@ -96,19 +96,19 @@ def item_ids():
     with open('App/itemIDs.json', 'r') as file:
         item_list = json.load(file)
 
-    N = Counter.query.filter_by(name="ItemIDsDownloadCounter").first().count
-    return render_template("item_ids.html", item_list=item_list, counter=N)
+    return render_template("item_ids.html", item_list=item_list)
 
 
 @RS.route('/download', methods=['GET', 'POST'])
 def downloadJSON():
     path = "itemIDs.json"
+
     return send_file(path, as_attachment=True)
 
 
 @RS.route("/get_item_ids", methods=['GET', 'POST'])
 def get_item_ids():
-    # get_tradeable_itemIDs()
+    get_tradeable_itemIDs()
     return redirect(url_for('RS.item_ids'))
 
 
