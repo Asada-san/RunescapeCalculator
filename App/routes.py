@@ -87,7 +87,7 @@ def home():
 @RS.route("/bar")
 def bar():
     N = Counter.query.filter_by(name="RevolutionCounter").first().count
-    print(N)
+
     return render_template("bar.html", counter=N)
 
 
@@ -181,7 +181,7 @@ def graph():
     user_input = request.get_json()
 
     data = processEquation.get_data(user_input)
-    print(data)
+
     res = make_response(jsonify(data), 200)
 
     return res

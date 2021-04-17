@@ -284,7 +284,7 @@
 }
 
 #DPT {
-    color: var(--textColor);
+    color: var(--textColor1);
 }
 
 .DPTprintButton:hover {
@@ -295,4 +295,5 @@
 #DPTprint {
     text-align: left;
     margin-left: 10px;
+    color: var(--textColor1);
 }

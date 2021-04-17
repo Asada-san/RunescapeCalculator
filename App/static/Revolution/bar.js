@@ -434,25 +434,25 @@ calcDPT.addEventListener("click", async function(ev) {
             // print the message in the right place
             document.getElementById('DPT').innerHTML = message;
 
-            counterMessage = `<span style="color:#4CAF50; font-size:11px"> Simulated fights: ${data['counter']}`
+            counterMessage = `<span style="color:#4CAF50; font-size:11px"> Simulated fights: ${data['counter']}`;
 
             // print the message in the right place
             document.getElementById('counter').innerHTML = counterMessage;
 
             // CREATE STRING CONTAINING THE CYCLE ROTATION
-            RotationString = '<br><br><span style="color: yellow;">START</span> --> '
+            RotationString = '<br><br><span style="color: yellow;">START</span> --> ';
 
             // for every ability or stall in the rotation
             for (m = 0; m < data['CycleRotation'].length; m++) {
-                RotationString += data['CycleRotation'][m] + ' --> '
+                RotationString += data['CycleRotation'][m] + ' --> ';
 
                 // break a line each time 4 elements have been printed
                 if (m == 2 || (m > 3 && (m + 2) % 4 == 0)) {
-                    RotationString += '<br>'
+                    RotationString += '<br>';
                 }
             }
             // at the end, print BACK TO START
-            RotationString += '<span style="color: yellow;">BACK TO START</span>'
+            RotationString += '<span style="color: yellow;">BACK TO START</span>';
 
             // STRING CONTAINING ALL REDUNDANT ABILITIES ON THE BAR
             var RedundantAbilities = data['CycleRedundant'].toString();
@@ -461,9 +461,9 @@ calcDPT.addEventListener("click", async function(ev) {
 
             // FORMAT SOME NICE OUTPUT TEXT WITH CYCLE INFORMATION
             if (data['CycleRotation'].length !== 0) {
-                Type = 'Cycle'
+                Type = 'Cycle';
             } else {
-                Type = ''
+                Type = '';
             }
                 CycleText += '<span style="color: #FF3333;">' + Type + ' Time: </span> ' + parseFloat((data['CycleTime'] * .6)).toFixed(1) + "s --> " + data['CycleTime'] + " ticks";
                 CycleText += '<br><br><span style="color: #FF3333;">' + Type + ' Convergence Time: </span> ' + parseFloat((data['CycleConvergenceTime'] * .6)).toFixed(1) + "s --> " + data['CycleConvergenceTime'] + " ticks";
@@ -504,7 +504,7 @@ calcDPT.addEventListener("click", async function(ev) {
                 }
                 AbilityTable = tableCreate();
 
-                CycleText += '<span style="color: #FF3333;">' + Type + ' Ability Information: </span> <br><br>'
+                CycleText += '<span style="color: #FF3333;">' + Type + ' Ability Information: </span> <br><br>';
 
                 CycleText += AbilityTable + '<br><br>';
 //            }

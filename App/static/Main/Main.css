@@ -22,9 +22,6 @@
 }
 
 .body {
-    margin: 0;
-    padding: 0;
-    box-sizing:border-box;
     background-color: var(--main-bg-color);
     height: 100vh;
 }
@@ -88,6 +85,19 @@
     background: #15811A;
 }
 
+.costumfooter {
+    display: table-row;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    height: 30px;
+    margin-top: 30px;
+    width: 100%;
+    background-color: #202020;
+    color: #BEBEBE;
+    text-align: center;
+}
+
 /* width */
 ::-webkit-scrollbar {
   width: 10px;
@@ -148,7 +158,6 @@
     line-height: normal;
     mc-auto-number-format: '{b}Note: {/b}';
     overflow: hidden;
-    padding: 0px;
 }
 
 .note-collapsible {
@@ -191,7 +200,7 @@
   background-color: #111;
   overflow-x: hidden;
   transition: 0.5s;
-  padding-top: 30px;
+  padding-top: 60px;
 }
 
 .sidenav a {
@@ -205,17 +214,22 @@
 
 .sidenav a:hover {
   color: #f1f1f1;
-  background: var(--button-bg-color-hover);
+  background: white;
+}
+
+.sidenav .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
 }
 
 #main {
-    z-index: 1;
-    position: absolute;
-    transition: margin-left .5s;
-    padding: 16px;
+  z-index = 1;
+  position: absolute;
+  transition: margin-left .5s;
+  padding: 16px;
 }
 
-@media screen and (max-height: 450px) {
-    .sidenav {padding-top: 15px;}
-    .sidenav a {font-size: 18px;}
-}
+
