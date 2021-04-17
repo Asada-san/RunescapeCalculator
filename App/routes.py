@@ -1,4 +1,5 @@
 from App.PythonRevolution import Revolution_main as RevoMain
+from App.GraphProcessing import processEquation
 from App.models import Counter
 from App import db
 from AbilityBook import AbilityBook
@@ -85,7 +86,8 @@ def home():
 
 @RS.route("/bar")
 def bar():
-    N = Counter.query.first().count
+    N = Counter.query.filter_by(name="RevolutionCounter").first().count
+    print(N)
     return render_template("bar.html", counter=N)
 
 
@@ -93,7 +95,9 @@ def bar():
 def item_ids():
     with open('itemIDs.json', 'r') as file:
         item_list = json.load(file)
-    return render_template("item_ids.html", item_list=item_list)
+
+    N = Counter.query.filter_by(name="ItemIDsDownloadCounter").first().count
+    return render_template("item_ids.html", item_list=item_list, counter=N)
 
 
 @RS.route('/download', methods=['GET', 'POST'])
@@ -111,6 +115,11 @@ def get_item_ids():
 @RS.route("/song")
 def song():
     return render_template("song.html")
+
+
+@RS.route("/grapher")
+def grapher():
+    return render_template("grapher.html")
 
 
 @RS.route("/calc", methods=['POST'])
@@ -146,7 +155,7 @@ def calc():
 
     end_loop = time.time()
 
-    N = Counter.query.first()
+    N = Counter.query.filter_by(name="RevolutionCounter").first().count
 
     if error_message is not None:
         error = True
@@ -163,6 +172,17 @@ def calc():
                         'counter': N.count})
 
     res = make_response(jsonify(CalcResults), 200)
+
+    return res
+
+
+@RS.route("/graph", methods=['POST'])
+def graph():
+    user_input = request.get_json()
+
+    data = processEquation.get_data(user_input)
+    print(data)
+    res = make_response(jsonify(data), 200)
 
     return res
 

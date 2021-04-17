@@ -21,7 +21,13 @@
     --textColor2: #000000;
 }
 
-.body {background-color: var(--main-bg-color); height: 100vh;}
+.body {
+    margin: 0;
+    padding: 0;
+    box-sizing:border-box;
+    background-color: var(--main-bg-color);
+    height: 100vh;
+}
 
 .topnav {
   overflow: hidden;
@@ -82,19 +88,6 @@
     background: #15811A;
 }
 
-.costumfooter {
-    display: table-row;
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    height: 30px;
-    margin-top: 30px;
-    width: 100%;
-    background-color: #202020;
-    color: #BEBEBE;
-    text-align: center;
-}
-
 /* width */
 ::-webkit-scrollbar {
   width: 10px;
@@ -148,7 +141,6 @@
 .note {
     color: var(--textColor1);
     margin: auto;
-    margin-top: 20px;
     text-align: left;
     width: 700px;
     box-shadow: var(--note-border);
@@ -157,7 +149,6 @@
     mc-auto-number-format: '{b}Note: {/b}';
     overflow: hidden;
     padding: 0px;
-    margin-bottom: 20px;
 }
 
 .note-collapsible {
@@ -188,4 +179,43 @@
     overflow: hidden;
     max-height: 0;
     transition: max-height 0.3s ease-out;
+}
+
+.sidenav {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 30px;
+}
+
+.sidenav a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+.sidenav a:hover {
+  color: #f1f1f1;
+  background: var(--button-bg-color-hover);
+}
+
+#main {
+    z-index: 1;
+    position: absolute;
+    transition: margin-left .5s;
+    padding: 16px;
+}
+
+@media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+    .sidenav a {font-size: 18px;}
 }

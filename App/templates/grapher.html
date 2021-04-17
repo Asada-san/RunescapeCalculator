@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block head %}
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='Grapher/Grapher.css') }}">
+{% endblock %}
+{% block title %}{% endblock %}
+{% block content %}
+
+<div class="center">
+
+<span style="color: white">Equation</span><br>
+<input type="text" id="equation"><br><br>
+
+<button onclick="processEquation()">Graph</button>
+
+</div>
+
+<canvas id="canvas"></canvas>
+
+<script src="{{ url_for('static', filename='Grapher/Grapher.js') }}"></script>
+
+{% endblock %}
