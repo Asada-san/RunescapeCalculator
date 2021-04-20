@@ -1,28 +1,27 @@
 {% extends "base.html" %}
 {% block head %}
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='Nightcorify/song.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='itemIDs/itemIDs.css') }}">
 {% endblock %}
 {% block title %}Item id's{% endblock %}
 {% block content %}
 
-<div class="note">
-  <h2 style="text-align: center; margin-bottom: 15px; margin-top: 15px;">Item IDs (tradeable)</h2>
-  <p style="text-align:center;">Last updated: 22-1-2021</p>
+<div style="padding: 20px;">
+  <div class="note">
+    <h2 style="text-align: center; margin-bottom: 15px; margin-top: 15px;">Item IDs (tradeable)</h2>
+    <p style="text-align:center;">Last updated: 17-4-2021</p>
+  </div>
 </div>
 
 <div style="text-align: center;">
   <div class="btn-group">
-    <button id="calcbutton" type="button" onclick="location.href = '{{ url_for('RS.downloadJSON') }}';" style="padding: 10px 40px; margin-top: 50px; margin-bottom: 20px;">Download .json</button>
+    <button id="calcbutton" type="button" onclick="location.href = '{{ url_for('RS.downloadJSON') }}';" style="padding: 10px 40px; margin-top: 30px; margin-bottom: 50px;">Download .json</button>
   </div>
 </div>
 
 <div class="note" style="width: 500px;">
-    <pre id="json" style="color: var(--textColor1); margin-left: 10px; margin-top: 10px"></pre>
+    <pre id="JSONprint" onclick="JSONprint({{ item_list }})" style="margin-top: 10px; text-align: center; color: #4CAF50;">Click to show JSON</pre>
 </div>
 
-<script>
-  var json = JSON.parse('{{ item_list | tojson | safe}}');
-  document.getElementById("json").innerHTML = JSON.stringify(json, null, 2);
-</script>
+<script src="{{ url_for('static', filename='itemIDs/itemIDs.js') }}"></script>
 
 {% endblock %}
