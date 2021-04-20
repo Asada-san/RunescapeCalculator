@@ -85,7 +85,7 @@ def home():
 
 @RS.route("/bar")
 def bar():
-    N = Counter.query.first().count
+    N = Counter.query.filter_by(name="RevolutionCounter").first().count
     return render_template("bar.html", counter=N)
 
 
@@ -146,14 +146,14 @@ def calc():
 
     end_loop = time.time()
 
-    N = Counter.query.first()
+    N = Counter.query.filter_by(name="RevolutionCounter").first()
 
     if error_message is not None:
         error = True
     else:
         error = False
 
-        N.count = Counter.count + 1
+        N.count = N.count + 1
         db.session.commit()
 
     CalcResults.update({'ExecutionTime': round(end_loop - start_loop, 5),

@@ -15,8 +15,9 @@ def create_app(**kwargs):
     """
 
     app = Flask(__name__)
-    db.init_app(app)
+
     app.config.from_object(Config)
+    db.init_app(app)
 
     from App.routes import RS
 

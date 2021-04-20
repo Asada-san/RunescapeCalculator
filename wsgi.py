@@ -23,8 +23,9 @@ def drop_db():
 @click.argument('value')
 @with_appcontext
 def create_count(value):
-    counter = Counter(count=value)
-    db.session.add(counter)
+    RevoCounter = Counter(name="RevolutionCounter", count=value)
+    db.session.add(RevoCounter)
+
     db.session.commit()
 
 
@@ -36,8 +37,8 @@ app.cli.add_command(create_count)
 # ctx.push()  # start working on database after that command
 # # Database manipulations here
 # db.create_all()
-# counter = Counter(count=0)
-# db.session.add(counter)
+# RevoCounter = Counter(name="RevolutionCounter", count=0)
+# db.session.add(RevoCounter)
 # db.session.commit()
 # ctx.pop()  # exit from the app
 
