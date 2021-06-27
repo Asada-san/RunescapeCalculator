@@ -460,7 +460,7 @@ def getGreaterChainHits(PHit, player):
     NewHit.Damage /= 2
 
     # NewHit.Type = 8
-    print(player.GreaterChainTargets)
+
     for target in player.GreaterChainTargets:
         NewHit.Target = target
         PHitList.append(NewHit)
