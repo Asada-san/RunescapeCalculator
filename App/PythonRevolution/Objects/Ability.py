@@ -20,9 +20,9 @@ class Ability:
         self.Type = abil_stats[4]                   # Basic, Threshold or Ultimate
         self.Member = abil_stats[5]                 # True if its a members only ability
 
-        self.cdMax = abil_stats[6]      # Maximum cooldown time of the ability
-        self.cdStatus = False           # True if the ability is on cooldown
-        self.cdTime = 0                 # Current cooldown time of the ability
+        self.cdMax = abil_stats[6]                  # Maximum cooldown time of the ability
+        self.cdStatus = False                       # True if the ability is on cooldown
+        self.cdTime = 0                             # Current cooldown time of the ability
 
         self.Equipment = abil_stats[7]              # Determines if the weapon required is a 2h, duals or both
 
@@ -31,7 +31,7 @@ class Ability:
         self.nD = abil_stats[10]                    # Total amount of special hits (DoT effects)
 
         self.TrueWaitTime = abil_stats[11]          # The true waiting time before revolution fires a new ability
-        self.EfficientWaitTime = abil_stats[12]     # Waiting time before the user manually fires the next abiltiy
+        self.EfficientWaitTime = abil_stats[12]     # Waiting time before the user manually fires the next abilitiy
 
         self.Delay = abil_stats[13]                 # True if the ability experiences a delay between firing and actually doing damage
         self.DelayTime = abil_stats[14]             # Normal delay after firing the ability
@@ -39,69 +39,116 @@ class Ability:
         self.Standard = abil_stats[15]              # True if the ability does a standard attack
         self.Channeled = abil_stats[16]             # True if the ability has a channel effect
 
-        if self.Name not in {'Death\'s Swiftness', 'Sunshine'}:  # If Death's Swiftness or Sunshine do it manually
-            self.Timings = list(map(float, abil_stats[17][1:-1].replace(',', '.').split('; ')))  # Hit times of the ability
-        else:
-            self.Timings = np.array([n * 3 for n in range(0, self.nD)])
+        self.Timings = np.fromstring(abil_stats[17].strip('[]'), dtype=float, sep='; ')         # Hit times of the ability
 
-        self.DamMax = np.array(list(map(float, abil_stats[18][1:-1].replace(',', '.').split('; '))))  # Maximum damage of the ability
-        self.DamMin = np.array(list(map(float, abil_stats[19][1:-1].replace(',', '.').split('; '))))  # Minimum damage of the ability
-        self.DamAvg = []    # Average damage of the ability
-        self.Hits = []      # Array containing Standard or Channeled hits
+        self.DamMax = np.fromstring(abil_stats[18].strip('[]'), dtype=float, sep='; ')          # Maximum damage of the ability
+        self.DamMin = np.fromstring(abil_stats[19].strip('[]'), dtype=float, sep='; ')          # Minimum damage of the ability
+        self.Hits = []                              # Array containing Standard or Channeled hits
 
-        self.Bleed = abil_stats[20]         # True if the ability has a bleed effect
-        self.BleedOnMove = abil_stats[21]   # Damage multiplier when target moves after bleed attack
-        self.Puncture = abil_stats[22]      # True if the ability has a puncture effect
+        self.Bleed = abil_stats[20]                 # True if the ability has a bleed effect
+        self.BleedOnMove = abil_stats[21]           # Damage multiplier when target moves after bleed attack
+        self.Puncture = abil_stats[22]              # True if the ability has a puncture effect
 
-        self.DoTMax = np.array(list(map(float, abil_stats[23][1:-1].replace(',', '.').split('; '))))  # Maximum damage of the effect
-        self.DoTMin = np.array(list(map(float, abil_stats[24][1:-1].replace(',', '.').split('; '))))  # Minimum damage of the effect
-        self.DoTAvg = []    # Average damage of the effect
-        self.DoTHits = []   # Array containing DoT effect hits
+        self.DoTMax = np.fromstring(abil_stats[23].strip('[]'), dtype=float, sep='; ')          # Maximum damage of the effect
+        self.DoTMin = np.fromstring(abil_stats[24].strip('[]'), dtype=float, sep='; ')          # Minimum damage of the effect
+        self.DoTHits = []                           # Array containing DoT effect hits
 
-        self.StunBindDam = abil_stats[25]                   # True if the ability does extra damage when the dummy is stunned/bound
-        self.StunBindDamMax = np.array([abil_stats[26]])    # Maximum damage
-        self.StunBindDamMin = np.array([abil_stats[27]])    # Minimum damage
-        self.HitsStunBind = []      # Array containing stun&bind hits
+        self.StunBindDam = abil_stats[25]           # True if the ability does extra damage when the dummy is stunned/bound
+        self.StunBindDamMax = np.fromstring(abil_stats[26].strip('[]'), dtype=float, sep='; ')  # Maximum damage of the effect
+        self.StunBindDamMin = np.fromstring(abil_stats[27].strip('[]'), dtype=float, sep='; ')  # Maximum damage of the effect
+        self.HitsStunBind = []                      # Array containing stun&bind hits
 
-        self.Stun = abil_stats[28]          # True if the ability has a stun effect
-        self.StunDur = abil_stats[29]       # Duration of the stun
+        self.Stun = abil_stats[28]                  # True if the ability has a stun effect
+        self.StunDur = abil_stats[29]               # Duration of the stun
 
-        self.Bind = abil_stats[30]          # True if the ability has a bind effect
-        self.BindDur = abil_stats[31]       # Duration of the bind
+        self.Bind = abil_stats[30]                  # True if the ability has a bind effect
+        self.BindDur = abil_stats[31]               # Duration of the bind
 
-        self.Boost1 = abil_stats[32]        # True if the ability has a single ability boosting effect
-        self.Boost1X = abil_stats[33]       # Boost multiplier
-        self.Boost = abil_stats[34]         # True if the ability has a ability boosting effect
-        self.BoostTime = abil_stats[35]     # Boost duration
-        self.BoostX = abil_stats[36]        # Boost multiplier
-        self.Special = abil_stats[37]       # True if the ability is a special cunt
-        self.AoE = abil_stats[38]           # True if the ability does AoE damage
+        self.SideTarget = abil_stats[32]            # True if the ability does different damage to side targets
+        self.SideTargetMax = np.fromstring(abil_stats[33].strip('[]'), dtype=float, sep='; ')   # Maximum damage of the effect
+        self.SideTargetMin = np.fromstring(abil_stats[34].strip('[]'), dtype=float, sep='; ')   # Maximum damage of the effect
+        self.HitsSideTarget = []                    # Array containing side target hits
 
-        ########## Doing it manually for AoE abilities ###############
-        if self.Name == 'Quake':
-            self.SideTargetMax = np.array([1.88])
-            self.SideTargetMin = np.array([0.376])
-            self.SideTarget = True
-        elif self.Name == 'Greater Flurry':
-            self.SideTargetMax = np.array([0.94] * 4)
-            self.SideTargetMin = np.array([0.2] * 4)
-            self.SideTarget = True
-        else:
-            self.SideTargetMax = np.array([0])
-            self.SideTargetMin = np.array([0])
-            self.SideTarget = False
+        self.Boost1 = abil_stats[35]                # True if the ability has a single ability boosting effect
+        self.Boost1X = abil_stats[36]               # Boost multiplier
+        self.Boost = abil_stats[37]                 # True if the ability has a ability boosting effect
+        self.BoostTime = abil_stats[38]             # Boost duration
+        self.BoostX = abil_stats[39]                # Boost multiplier
+        self.Special = abil_stats[40]               # True if the ability is a special cunt
+        self.AoE = abil_stats[41]                   # True if the ability does AoE damage
 
-        self.SideTargetAvg = []
-
-    def ConstructHitObject(self, player, dummy, Do):
+    def AbilityUpgrades(self, player, logger):
         """
-        Constructs the Hit object depending on the type of hit.
+        Further initialises the Ability objects and applies upgrades depending on the
+        user input.
 
         :param player: The Player object
-        :param Do: The DoList object
+        :param logger: The Logger object
         :return: Nothing
         """
 
+        # Manually calculate the Max and Min of Shadow Tendrils
+        if self.Name in {'Shadow Tendrils'}:
+            self.DamMax[0] = 0.1 * self.DamMax[0] * 2 + .18 * self.DamMax[0] * 3 + .216 * self.DamMax[0] * 4 + .504 * self.DamMax[0] * 5
+            self.DamMin[0] = 0.1 * self.DamMin[0] * 2 + .18 * self.DamMin[0] * 3 + .216 * self.DamMin[0] * 4 + .504 * self.DamMin[0] * 5
+
+        # Stun ability changes due to perks
+        if player.PerkFlanking:
+            if self.Name in {'Backhand', 'Impact', 'Binding Shot'}:
+                self.Stun = False  # Abilities above loose their stun effect
+
+                for i in range(0, self.nS):  # Increase min by 8% per rank, max by 40% per rank
+                    self.DamMax[i] += 0.4 * player.Fr
+                    self.DamMin[i] += 0.08 * player.Fr
+
+            if self.Name in {'Forceful Backhand', 'Deep Impact', 'Tight Bindings'}:
+                self.Stun = False  # Abilities above lose their stun effect
+
+                for i in range(0, self.nS):  # Increase min by 6% per rank, max by 30% per rank
+                    self.DamMax[i] += 0.3 * player.Fr
+                    self.DamMin[i] += 0.06 * player.Fr
+
+        if self.Name == 'Debilitate' and player.PerkShieldBashing:
+            self.DamMax[0] += 0.15 * player.SBr
+            self.DamMin[0] += 0.15 * player.SBr
+
+        # Bleed ability changes due to perks and items
+        nExtend = 0
+
+        if player.PerkLunging and self.Name in {'Dismember', 'Combust', 'Fragmentation Shot'}:
+            # Bleeds of Combust and Fragmentation Shot are multiplied by 1.5 upon walking instead of 2
+            if self.Name != 'Dismember':
+                self.BleedOnMove = 1.5
+
+            self.DoTMax += 0.2 * player.Lr / self.nD  # Increase max hit by 0.2 for every rank
+
+        if player.StrengthCape and self.Name == 'Dismember':
+            nExtend += 3  # Add 3 hits to the Dismember ability
+
+            self.DoTMax = np.append(self.DoTMax, self.DoTMax[-4: -1])
+            self.DoTMin = np.append(self.DoTMin, self.DoTMin[-4: -1])
+
+            if logger.DebugMode:
+                logger.write(14, self.Name)
+
+        if player.MSoA and self.Name in {'Dismember', 'Blood Tendrils', 'Slaughter'}:
+            nExtend += 2  # Add 2 hits to the Dismember, Blood Tendrils and Slaughter abilities
+
+            self.DoTMax = np.append(self.DoTMax, self.DoTMax[-3: -1])
+            self.DoTMin = np.append(self.DoTMin, self.DoTMin[-3: -1])
+
+            if logger.DebugMode:
+                logger.write(15, self.Name)
+
+        if nExtend > 0:
+            self.nD += nExtend
+            self.nT += nExtend
+
+        # Extend the Timings array if nExtend > 0
+        for i in range(0, nExtend):
+            self.Timings = np.append(self.Timings, [self.Timings[-1] + 2])
+
+        # Other ability changes
         if player.PerkReflexes and self.Name == 'Anticipation':
             self.cdMax = 12
 
@@ -110,52 +157,66 @@ class Ability:
             self.BoostTime = 63
             return
 
-        if self.Standard or self.Channeled:
-            DamAvg = AVGCalc.StandardChannelDamAvgCalc(self, player, Do)
+        # Creating Hit objects which will be attached to the ability
+        AvgDam = []
+        Type = 0
+
+        if self.nS > 0:
+            DamAvg = AVGCalc.StandardChannelDamAvgCalc(self, player, logger)
 
             if self.Standard:
-                for i in range(0, self.nS):
-                    self.Hits.append(self.Hit(self, DamAvg, 1, 1, i, i))
+                Type = 1
+            elif self.Channeled:
+                Type = 2
 
-                if self.StunBindDam:
-                    StunBindDamAvg = AVGCalc.StandardChannelDamAvgCalc(self, player, Do, 'StunBind', 0)
+            self.Hits.extend([self.Hit(self, DamAvg, Type, i, i) for i in range(0, self.nS)])
 
-                    for i in range(0, self.nS):
-                        self.HitsStunBind.append(self.Hit(self, StunBindDamAvg, 5, 1, i, i))
+        if self.StunBindDam:
+            StunBindDamAvg = AVGCalc.StandardChannelDamAvgCalc(self, player, logger, 'StunBind')
 
-            else:
-                for i in range(0, self.nS):
-                    self.Hits.append(self.Hit(self, DamAvg, 2, 1, i, i))
+            self.HitsStunBind.extend([self.Hit(self, StunBindDamAvg, 5, i, i) for i in range(0, self.nS)])
 
-            if self.SideTarget:
-                SideTargetAvg = AVGCalc.StandardChannelDamAvgCalc(self, player, Do, 'SideTarget', 0)
+        if self.SideTarget:
+            SideTargetAvg = AVGCalc.StandardChannelDamAvgCalc(self, player, logger, 'SideTarget')
 
-                for i in range(0, self.nS):
-                    self.SideTargetAvg.append(self.Hit(self, SideTargetAvg, 6, 1, i, i))
+            self.HitsSideTarget.extend([self.Hit(self, SideTargetAvg, 6, i, i) for i in range(0, self.nS)])
 
-        if self.Bleed:
-            DoTAvg = AVGCalc.BleedDamAvgCalc(self, player, Do)
+        if self.nD > 0:
+            if self.Bleed:
+                AvgDam = AVGCalc.BleedDamAvgCalc(self, player, logger)
+                Type = 3
+            elif self.Puncture:
+                AvgDam = AVGCalc.PunctureDamAvgCalc(self, player, logger)
+                Type = 4
 
-            for i in range(0, self.nD):
-                self.DoTHits.append(self.Hit(self, DoTAvg, 3, 1, i, self.nS + i))
-
-        if self.Puncture:
-            DoTAvg = AVGCalc.PunctureDamAvgCalc(self, player, Do)
-
-            for i in range(0, self.nD):
-                self.DoTHits.append(self.Hit(self, DoTAvg, 4, 1, i, self.nS + i))
+            self.DoTHits.extend([self.Hit(self, AvgDam, Type, i, self.nS + i) for i in range(0, self.nD)])
 
     class Hit:
         """
         The Hit object class used for defining a single hit of an ability.
         """
 
-        def __init__(self, ability, Avg, Type, Target, Index, HitIndex):
-            self.Damage = Avg[Index]                                    # Amount of damage for each hit
-            self.Time = ability.Timings[HitIndex] + ability.DelayTime   # Timing of each hit
-            self.Type = Type                                            # Type of effect (or standard) of each hit
-            self.Target = Target                                        # Target on which each hit should be applied
-            self.Index = HitIndex                                       # Index of the hit
-            self.Name = ability.Name                                    # Name of the ability causing the hit
+        def __init__(self, Abil, Avg, Type, Index, HitIndex):
+            if Type in {1, 2}:
+                self.DamMin = np.array([Abil.DamMin[HitIndex]])
+                self.DamMax = np.array([Abil.DamMax[HitIndex]])
+            elif Type in {3, 4}:
+                self.DoTMin = np.array([Abil.DoTMin[HitIndex-Abil.nS]])
+                self.DoTMax = np.array([Abil.DoTMax[HitIndex-Abil.nS]])
+            elif Type in {5}:
+                self.DamMin = np.array([Abil.StunBindDamMin[HitIndex]])
+                self.DamMax = np.array([Abil.StunBindDamMax[HitIndex]])
+            elif Type in {6}:
+                self.DamMin = np.array([Abil.SideTargetMin[HitIndex]])
+                self.DamMax = np.array([Abil.SideTargetMax[HitIndex]])
+
+            self.BleedOnMove = Abil.BleedOnMove
+
+            self.Damage = Avg[Index]                                # Amount of damage for each hit
+            self.Time = Abil.Timings[HitIndex] + Abil.DelayTime     # Timing of each hit
+            self.Type = Type                                        # Type of effect (or standard) of each hit
+            self.Target = 1                                         # Target on which each hit should be applied, initialised as #1
+            self.Index = HitIndex                                   # Index of the hit
+            self.Name = Abil.Name                                   # Name of the ability causing the hit
 
 

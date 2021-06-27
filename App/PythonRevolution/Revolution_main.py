@@ -1,65 +1,91 @@
 from App.PythonRevolution import CombatChecks, CycleChecker as Cycle, \
     AttackCycle as Attack
-from App.PythonRevolution.Objects import Loop, Dummy, Bar, Player
+from App.PythonRevolution.Objects.Logger import Logger
+from App.PythonRevolution.Objects.Dummy import Dummy
+from App.PythonRevolution.Objects.Player import Player
+from App.PythonRevolution.Objects.Bar import AbilityBar
+from App.PythonRevolution.Objects.Settings import Settings
 
 
-def fight_dummy(user_input, AbilityBook):
+def fight_dummy(userInput, AbilityBook):
     """
     Initialises and simulates the player vs dummy fight.
 
-    :param user_input: A dict containing the following:
+    :param userInput: A dict containing the following:
 
-        PLAYER OBJECT RELATED
+        ABILITY BAR
 
-        Abilities: array[string]
+        Abilities: list[string]     --> [<ability_name_1>, <ability_name_2>, ..., <ability_name_14>]
+
+        PLAYER
 
         afkStatus: boolean
         switchStatus: boolean
-        baseDamage: float
-        ShieldArmourValue: float
-        DefenceLevel: float
-        StrengthBoost: float
-        MagicBoost: float
-        RangedBoost: float
-        StrengthPrayer: float
-        MagicPrayer: float
-        RangedPrayer: float
+        baseDamage: float           --> 0 <= x <= 10000
+
+        STRENGTH BOOST
+
+        StrengthBoost: float        --> 0 <= x <= 60
+        StrengthPrayer: float       --> [1, 1.02, 1.04, 1.06, 1.08, 1.10, 1.12]
+
+        MAGIC BOOST
+
+        MagicBoost: float           --> 0 <= x <= 60
+        MagicPrayer: float          --> [1, 1.02, 1.04, 1.06, 1.08, 1.10, 1.12]
+
+        RANGED BOOST
+
+        RangedBoost: float          --> 0 <= x <= 60
+        RangedPrayer: float         --> [1, 1.02, 1.04, 1.06, 1.08, 1.10, 1.12]
+
+        BASH ABILITY
+
+        ShieldArmourValue: float    --> 0 <= x <= 1000
+        DefenceLevel: float         --> 0 <= x <= 200
+
+        INVENTION PERKS
+
+        Level20Gear: boolean
+        Precise: float              --> [0, 1, 2, 3, 4, 5, 6]
+        Equilibrium: float          --> [0, 1, 2, 3, 4]
+        Biting: float               --> [0, 1, 2, 3, 4]
+        Flanking: float             --> [0, 1, 2, 3, 4]
+        Lunging: float              --> [0, 1, 2, 3, 4]
+        Caroming: float             --> [0, 1, 2, 3, 4]
+        Ruthless: float             --> [0, 1, 2, 3]
+        Aftershock: float           --> [0, 1, 2, 3, 4]
+        ShieldBashing: float        --> [0, 1, 2, 3, 4]
+        Ultimatums: float           --> [0, 1, 2, 3, 4]
+        Impatient: float            --> [0, 1, 2, 3, 4]
+        Reflexes: boolean
+        PlantedFeet: boolean
+
+        EQUIPMENT
+
+        StrengthCape: boolean
+        Ring: string                --> 'RoV', 'ChampionsRing', 'ChannelersRing', 'ReaversRing', 'StalkersRing'
+        MSoA: boolean               --> Masterwork Spear of Annihilation
+        Aura: string                --> 'Berserker', 'Maniacal', 'Reckless', 'Equilibrium'
+        Grimoire: boolean
+
+        ARCHAEOloggerY RELICS
 
         HeightenedSenses: boolean
         FotS: boolean               --> Fury of the Small
         CoE: boolean                --> Conservation of Energy
-        BerserkersFury: float
-        StrengthCape: boolean
-        RoV: boolean                --> Ring of Vigour
-        MSoA: boolean               --> Masterwork Spear of Annihilation
-        Aura: string
-        Level20Gear: boolean
-        Grimoire: boolean
-        Precise: float
-        Equilibrium: float
-        Biting: float
-        Flanking: float
-        Lunging: float
-        Caroming: float
-        Ruthless: float
-        Aftershock: float
-        ShieldBashing: float
-        Ultimatums: float
-        Impatient: float
-        Reflexes: boolean
-        PlantedFeet: boolean
+        BerserkersFury: float       --> 0 <= x <= 5.5
 
-        DUMMY OBJECT RELATED
+        DUMMY OBJECT
 
         movementStatus: boolean
         stunbindStatus: boolean
-        nTargets: float
+        nTargets: float             --> 1 <= x <= 10
 
-        SCRIPT RELATED
+        PYTHON SCRIPT
 
-        simulationTime: string
-        adrenaline: string
-        HTMLwrite: boolean
+        simulationTime: float       --> 0 <= x <= 3600
+        adrenaline: string          --> 0 <= x <= 100
+        Debug: boolean
 
     :param AbilityBook: Book containing every ability.
     :return: Results, warnings and error messages.
@@ -67,140 +93,119 @@ def fight_dummy(user_input, AbilityBook):
 
     # cp = cProfile.Profile()
     # cp.enable()
-    Do = Loop.DoList(user_input)
 
-    # Start writing HTML text
-    if Do.HTMLwrite:
-        Do.Text = '----------------------------------------------------------------------------' \
-                  '----------------------------------------------------------------------------' \
-                  '----------------------------------------------------------------------------' \
-                  '----------------------------------------------------------------------------' \
-                  '--------------------------------------------------------<br><br>' \
-                  '<ul style="width: 850px;">\n'
+    logger = Logger()
+    
+    settings = Settings(userInput)
 
-    # Create Combat Objects
-    dummy = Dummy.Dummy(user_input, Do)
-    player = Player.Player(user_input, Do)
-    bar = Bar.AbilityBar(user_input, player, Do)
+    if settings.Debug:
+        logger.DebugMode = True
 
-    # Get loop stuff
-    loop = Loop.Loop()
+    if logger.DebugMode:
+        logger.write(0)
+        logger.write(2, userInput)
 
-    # Check user input for a possible value for simulation time and starting adrenaline
-    if 1 <= user_input['simulationTime'] <= 3600 and 0 <= user_input['Adrenaline'] <= 100:
-        # Don't look for repeating cycles
-        loop.FindCycle = False
-
-        loop.nMax = round(user_input['simulationTime'] / .6, 0)  # Set max runtime in ticks
-        bar.Adrenaline = round(user_input['Adrenaline'], 0)  # Set starting adrenaline
-
-        if Do.HTMLwrite:
-            Do.Text += (
-                f'<li style="color: {Do.init_color};">User select: Simulation Time: {user_input["simulationTime"]}</li>'
-                f'<li style="color: {Do.init_color};">User select: Adrenaline: {user_input["Adrenaline"]}</li>')
+    # Initialise Combat Objects
+    dummy = Dummy(userInput)
+    player = Player(userInput)
+    bar = AbilityBar(userInput)
 
     # Check for correct abilities and initialise the ability bar
-    error, error_mes, warning = CombatChecks.AbilityBar_verifier(user_input, AbilityBook, bar, dummy, player, Do, loop)
+    error, error_mes, warning = CombatChecks.AbilityBar_verifier(userInput, AbilityBook, bar, dummy, player, logger)
 
     # If an error occurred in the Ability Bar verifier, return that error
     if error:
         return {}, warning, error_mes
 
-    # Print start of revolution loop
-    if Do.HTMLwrite:
-        Do.Text += (f'<br><li style="color: {Do.start_color}"> INITIALISATION COMPLETE: starting loop<br><br>'
-                    f'<li style="color: {Do.loop_color}; white-space: pre-wrap;">'
-                    f'Total damage: 0'
-                    f'<span style="float: right; margin-right: 18px;">Time: 0</span></li><br>')
+    # Print start of revolution logger
+    if logger.DebugMode:
+        logger.write(12)
 
     # The revolution loop
-    while loop.runLoop and loop.n < loop.nMax + loop.CycleTime:
+    while settings.run and logger.n < settings.nMax + logger.CycleTime:
 
-        if loop.SimulationTime > 300:
-            Do.HTMLwrite = False
+        if logger.SimulationTime > 300:
+            logger.DebugMode = False
 
         # --------- PRE ATTACKING PHASE -----------------------
         # Status checks
-        CombatChecks.TimerStatuses(bar, player, dummy, Do, loop)
+        CombatChecks.CheckStatuses(bar, player, dummy, logger, settings)
         # -----------------------------------------------------
 
         # --------- ATTACKING PHASE ---------------------------
         # Perform the attack
-        FireAbility = Attack.Attack_main(bar, player, dummy, Do, loop)
+        FireAbility = Attack.Attack_main(bar, player, dummy, logger, settings)
         # -----------------------------------------------------
 
         # --------- POST ATTACKING PHASE ----------------------
         # Check special cooldown phenomena involving FireAbility
         if bar.FireStatus:
-            CombatChecks.PostAttackStatuses(bar, player, dummy, FireAbility, Do)
+            CombatChecks.PostAttackStatuses(bar, player, dummy, FireAbility, logger)
 
         # Check for other ability phenomena
-        CombatChecks.PostAttackCleanUp(bar, player, dummy, Do)
+        CombatChecks.PostAttackCleanUp(bar, player, dummy, logger)
         # -----------------------------------------------------
 
-        # ---------- LOOP SHENANIGANS -------------------------
+        # ---------- logger SHENANIGANS -------------------------
         # Increase the current simulation time of the rotation by a tick
-        loop.SimulationTime += 1
+        logger.SimulationTime += 1
 
-        loop.n += 1
-        loop.nCheck += 1
+        logger.n += 1
+        logger.nCheck += 1
 
         # If a cycle has been found
-        if loop.CycleFound or all([loop.n == loop.nMax, not loop.FindCycle]):
-            Cycle.CycleRotation(bar, player, dummy, Do, loop)
+        if logger.CycleFound or all([logger.n == settings.nMax, not settings.FindCycle]):
+            Cycle.CycleRotation(bar, player, dummy, logger, settings)
 
-        # Print total damage and loop time depending if a cycle has been found or not
-        if not loop.CycleFound:
-            if Do.HTMLwrite:
-                Do.Text +=(f'<br>\n<li style="color: {Do.loop_color}; white-space: pre-wrap;">'
-                           f'Total damage: {round(dummy.Damage + dummy.PunctureDamage, 3)}'
-                           f'<span style="float: right; margin-right: 18px;">Time: {round(loop.SimulationTime * .6, 1)}</span></li><br>\n')
+        # Print total damage and logger time depending if a cycle has been found or not
+        if not logger.CycleFound:
+            if logger.DebugMode:
+                logger.write(46, [round(dummy.Damage + dummy.PunctureDamage, 3), round(logger.SimulationTime * .6, 1)])
         else:
-            loop.CycleLoopTime += 1  # Add tick time
+            logger.CycleLoopTime += 1  # Add tick time
 
-            if Do.HTMLwrite:
-                Do.Text += (f'<br>\n<li style="color: {Do.cycle_color}; white-space: pre-wrap;">'
-                            f'Cycle damage: {round(loop.CycleDamage + loop.CyclePunctureDamage, 3)}'
-                            f'<span style="float: right; margin-right: 18px;">Cycle Time: {round(loop.CycleLoopTime * .6, 1)}</span></li><br>\n')
+            if logger.DebugMode:
+                logger.write(47, [round(logger.CycleDamage + logger.CyclePunctureDamage, 3), round(logger.CycleLoopTime * .6, 1)])
         # -----------------------------------------------------
 
-    if not loop.CycleFound:  # If no cycle has been found, change some result variables
-        loop.CycleTime = loop.SimulationTime
-        loop.CycleDamage = dummy.Damage
-        loop.CyclePunctureDamage = dummy.PunctureDamage
+    if not logger.CycleFound:  # If no cycle has been found, change some result variables
+        logger.CycleTime = logger.SimulationTime
+        logger.CycleDamage = dummy.Damage
+        logger.CyclePunctureDamage = dummy.PunctureDamage
 
-        if loop.FindCycle:
-            loop.Rotation.extend([f'<span style="color: {Do.cycle_color}">NO CYCLE HAS BEEN FOUND AFTER 6000 TICKS!!! DPT RESULT GIVEN INSTEAD!</span>'])
+        if settings.FindCycle:
+            logger.Rotation.extend([f'<span style="color: {logger.TextColor["cycle"]}">NO CYCLE HAS BEEN FOUND AFTER 6000 TICKS!!! DPT RESULT GIVEN INSTEAD!</span>'])
 
     if player.PerkAftershock:
         # Increase max by 0.396 per rank and min 0.24 per rank
         AS_DamAvg = (0.396 * player.Ar + 0.24 * player.Ar) / 2 * player.BaseDamageEffective
-        loop.CycleDamage += (loop.CycleDamage * AS_DamAvg / 50000) * dummy.nTarget
+        logger.CycleDamage += (logger.CycleDamage * AS_DamAvg / 50000) * dummy.nTarget
 
-    loop.CycleDamage += loop.CyclePunctureDamage
+    logger.CycleDamage += logger.CyclePunctureDamage
 
-    if loop.CycleDamage != 0:
-        for entry in player.AbilInfo:
-            player.AbilInfo[entry]['shared%'] = round(player.AbilInfo[entry]['damage'] / loop.CycleDamage * 100, 2)
+    if logger.CycleDamage != 0:
+        for entry in logger.AbilInfo:
+            if entry != 'Boosted':
+                logger.AbilInfo[entry]['shared%'] = round(logger.AbilInfo[entry]['damage'] / logger.CycleDamage * 100, 2)
+            else:
+                logger.AbilInfo[entry]['shared%'] = 0
 
     Results = {  # The output of main
-        'AADPTPercentage': round(loop.CycleDamage / loop.CycleTime / player.BaseDamage * 100, 3),
-        'AADPT': round(loop.CycleDamage / loop.CycleTime, 3),
+        'AADPTPercentage': round(logger.CycleDamage / logger.CycleTime / player.BaseDamage * 100, 3),
+        'AADPT': round(logger.CycleDamage / logger.CycleTime, 3),
         'BaseDamage': player.BaseDamage,
-        'SimulationTime': int(loop.n),
-        'CycleTime': round(loop.CycleTime, 1),
-        'CycleConvergenceTime': round(loop.CycleConvergenceTime, 1),
-        'CycleDamage': round(loop.CycleDamage, 2),
-        'CycleRotation': loop.Rotation,
-        'CycleRedundant': loop.Redundant,
+        'SimulationTime': int(logger.n),
+        'CycleTime': round(logger.CycleTime, 1),
+        'CycleConvergenceTime': round(logger.CycleConvergenceTime, 1),
+        'CycleDamage': round(logger.CycleDamage, 2),
+        'CycleRotation': logger.Rotation,
+        'CycleRedundant': logger.Redundant,
         'CycleBar': bar.AbilNames,
-        'AbilityInfo': player.AbilInfo,
-        'LoopText': Do.Text
+        'AbilityInfo': logger.AbilInfo,
+        'LoggerText': logger.Text
     }
 
     # cp.disable()
     # cp.print_stats(sort='time')
 
     return Results, warning, error_mes
-
-

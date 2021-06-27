@@ -513,7 +513,7 @@ calcDPT.addEventListener("click", async function(ev) {
             CycleText += '<span style="color: #FF3333; font-size: small;">Simulation Time: </span><span style="font-size:small;">' + (parseFloat(data['SimulationTime']) * 0.6).toFixed(1) + "s --> " + data['SimulationTime'] + ' ticks</span><br>';
 
             // the loop text which shows what happens for each tick
-            LoopText = data['LoopText'];
+            LoopText = data['LoggerText'];
 
             document.getElementById('DPTprint').innerHTML = CycleText + LoopText;
 

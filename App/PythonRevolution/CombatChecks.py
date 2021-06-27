@@ -2,17 +2,16 @@ from App.PythonRevolution import AverageDamageCalculator as AVGCalc, AttackCycle
 from copy import deepcopy
 
 
-def AbilityBar_verifier(user_input, AbilityBook, bar, dummy, player, Do, loop):
+def AbilityBar_verifier(userInput, AbilityBook, bar, dummy, player, logger):
     """
     Verifies the user inputted bar and sets certain properties according.
 
-    :param user_input: All options as provided by the user.
+    :param userInput: All options as provided by the user.
     :param AbilityBook: Book containing all existing abilities.
     :param bar: The Bar object.
     :param dummy:  The Dummy object.
     :param player: The Player object.
-    :param Do: The DoList object.
-    :param loop: The Loop object.
+    :param logger: The Logger object.
     :return: Error with message and warning.
     """
 
@@ -21,7 +20,7 @@ def AbilityBar_verifier(user_input, AbilityBook, bar, dummy, player, Do, loop):
     warning = []
 
     # Check user ability bar input
-    nAbils = len(user_input['Abilities'])  # Number of user inputted abilities
+    nAbils = len(userInput['Abilities'])  # Number of user inputted abilities
 
     if nAbils == 0:
         error = True
@@ -30,10 +29,10 @@ def AbilityBar_verifier(user_input, AbilityBook, bar, dummy, player, Do, loop):
         return error, error_mes, warning
 
     # Put user abilities on the bar object
-    for user_ability in user_input['Abilities']:
+    for user_ability in userInput['Abilities']:
         ability = deepcopy(AbilityBook[user_ability])
 
-        player.AbilInfo.update({ability.Name: {'damage': 0,
+        logger.AbilInfo.update({ability.Name: {'damage': 0,
                                                'activations': 0,
                                                'shared%': 0}})
 
@@ -43,19 +42,14 @@ def AbilityBar_verifier(user_input, AbilityBook, bar, dummy, player, Do, loop):
             if ability.Name in {'Surge', 'Escape', 'Balanced Strike'}:
                 warning.append(f'{ability.Name} should not be used with revolution')
 
-                if Do.HTMLwrite:
-                    Do.Text += f'<br>\n<li style="color: {Do.dam_color};">WARNING: {ability.Name} should not be used with revolution</li>\n'
-
+                if logger.DebugMode:
+                    logger.write(9, [ability.Name])
         else:
             warning.append(f'{ability.Name} is not activated by revolution \n')
-            loop.Redundant.extend([ability.Name])
+            logger.Redundant.extend([ability.Name])
 
-            if Do.HTMLwrite:
-                Do.Text += f'<br>\n<li style="color: {Do.dam_color};">WARNING: {ability.Name} is not activated by revolution</li>\n'
-
-    player.AbilInfo.update({'Boosted': {'damage': 0,
-                                        'activations': 'NA',
-                                        'shared%': 0}})
+            if logger.DebugMode:
+                logger.write(10, [ability.Name])
 
     # Create a list of ability names which are on the bar and their required weapon types and styles
     bar.AbilNames = [ability.Name for ability in bar.Rotation]
@@ -143,8 +137,12 @@ def AbilityBar_verifier(user_input, AbilityBook, bar, dummy, player, Do, loop):
 
         return error, error_mes, warning
 
-    if Do.HTMLwrite:
-        Do.Text += f'<li style="color: {Do.init_color};">Ability bar consists of {bar.Style} abilities and can be used with {weapon}</li>'
+    if player.Ring == 'StalkersRing' and bar.Style in {'Ranged', 'Typeless'} and \
+            weapon in {'a 2h weapon', 'anything', 'shield'} and not player.Switcher:
+        player.InitCritBuff = 0.03
+
+    if logger.DebugMode:
+        logger.write(11, [bar.Style, weapon])
 
     # Set various player values depending on bar style
     if bar.Style == 'Melee':
@@ -187,38 +185,37 @@ def AbilityBar_verifier(user_input, AbilityBook, bar, dummy, player, Do, loop):
     if dummy.nTarget > 1 and 'Dragon Breath' in bar.AbilNames:
         player.DragonBreathGain = True
 
-    # Calculate average damages for each ability
+    # Upgrade abilities
     for ability in bar.Rotation:
-        ability.ConstructHitObject(player, dummy, Do)
+        ability.AbilityUpgrades(player, logger)
 
     return error, error_mes, warning
 
 
-def TimerStatuses(bar, player, dummy, Do, loop):
+def CheckStatuses(bar, player, dummy, logger, settings):
     """
     Checks various statuses.
 
     :param bar: The Bar object.
     :param dummy:  The Dummy object.
     :param player: The Player object.
-    :param Do: The DoList object.
-    :param loop: The Loop object.
+    :param logger: The Logger object.
+    :param settings: The Settings object.
     """
 
-    bar.TimerCheck(Do)      # CHECK GLOBAL COOLDOWN TIMER
-    dummy.TimerCheck(Do)    # CHECK STUN AND BIND STATUS TIMERS
-    player.TimerCheck(Do)   # CHECK PLAYER COOLDOWNS/BUFFS/BOOSTS/CHANNEL TIMERS
+    bar.TimerCheck(logger)      # CHECK GLOBAL COOLDOWN TIMER
+    dummy.TimerCheck(logger)    # CHECK STUN AND BIND STATUS TIMERS
+    player.TimerCheck(logger)   # CHECK PLAYER COOLDOWNS/BUFFS/BOOSTS/CHANNEL TIMERS
 
     # CHECK FOR ANY HITS THAT NEED TO INFLICT DAMAGE IN THE CURRENT TICK
-    if dummy.PH:  # If there are any Pending Hits
+    for i in range(0, dummy.nPH):
         # Subtract tick time from every PH
-        for i in range(0, dummy.nPH):
-            dummy.PHits[i].Time -= 1
+        dummy.PHits[i].Time -= 1
 
-        Attack.DummyDamage(bar, dummy, player, Do, loop)  # Inflict damage if the time equals 0
+    Attack.PHitCheck(bar, dummy, player, logger, settings)
 
 
-def PostAttackStatuses(bar, player, dummy, FireAbility, Do):
+def PostAttackStatuses(bar, player, dummy, FireAbility, logger):
     """
     Checks and sets various statuses.
 
@@ -226,7 +223,7 @@ def PostAttackStatuses(bar, player, dummy, FireAbility, Do):
     :param dummy:  The Dummy object.
     :param player: The Player object.
     :param FireAbility: The ability activated in the current attack cycle.
-    :param Do: The DoList object.
+    :param logger: The Logger object.
     """
 
     # (Global) Cooldown shenanigans
@@ -236,24 +233,14 @@ def PostAttackStatuses(bar, player, dummy, FireAbility, Do):
     bar.GCDTime = bar.GCDMax
     bar.FireStatus = False
     player.Cooldown.append(FireAbility)
-    bar.SharedCooldowns(FireAbility, player, Do)
+    bar.SharedCooldowns(FireAbility, player, logger)
 
-    if Do.HTMLwrite:
-        Do.Text += f'<li style="color: {Do.nor_color};">{FireAbility.Name} went on cooldown</li>\n'
-        Do.Text += f'<li style="color: {Do.nor_color};">GCD activated</li>\n'
+    if logger.DebugMode:
+        logger.write(41, FireAbility.Name)
 
     # Status checks
     if FireAbility.Name in {'Meteor Strike', 'Tsunami', 'Incendiary Shot'}:
         player.CritAdrenalineBuffTime = 50
-
-    if FireAbility.Channeled:
-        player.ChanAbil = True
-
-        if player.Afk:
-            player.ChanTime = FireAbility.TrueWaitTime
-
-        else:
-            player.ChanTime = FireAbility.EfficientWaitTime
 
     if FireAbility.Boost:
         player.Boost = True
@@ -266,27 +253,27 @@ def PostAttackStatuses(bar, player, dummy, FireAbility, Do):
             dummy.Stun = True
             dummy.StunTime = FireAbility.StunDur
 
-            if Do.HTMLwrite:
-                Do.Text += f'<li style="color: {Do.stat_color};">Dummy is Stunned for {dummy.StunTime}s</li>\n'
+            if logger.DebugMode:
+                logger.write(43, dummy.StunTime)
 
         if FireAbility.Bind:
             dummy.Bind = True
             dummy.BindTime = FireAbility.BindDur
 
-            if Do.HTMLwrite:
-                Do.Text += f'<li style="color: {Do.stat_color};">Dummy is Bound for {dummy.BindTime}s</li>\n'
+            if logger.DebugMode:
+                logger.write(44, dummy.BindTime)
 
     return None
 
 
-def PostAttackCleanUp(bar, player, dummy, Do):
+def PostAttackCleanUp(bar, player, dummy, logger):
     """
     Check for special effects of abilities and clears the current attack cycle list.
 
     :param bar: The Bar object.
     :param dummy:  The Dummy object.
     :param player: The Player object.
-    :param Do: The DoList object.
+    :param logger: The DoList object.
     """
 
     # Special effect of Greater Flurry
@@ -302,24 +289,8 @@ def PostAttackCleanUp(bar, player, dummy, Do):
         player.Boost1 = True
         player.Boost1X = bar.Rotation[IDX].Boost1X
 
-        if Do.HTMLwrite:
-            Do.Text += f'<li style="color: {Do.att_color};">Needle Strike boost active!</li>\n'
-
-    # Special effect of Greater Ricochet
-    if player.GreaterRicochet:
-        IDX = bar.AbilNames.index('Greater Ricochet')  # Spot of the ability on the bar
-
-        Avg = AVGCalc.StandardChannelDamAvgCalc(bar.Rotation[IDX], player, Do, 'Greater Ricochet', -1)
-        GRNew = deepcopy(bar.Rotation[IDX])
-        GRHit = GRNew.Hit(GRNew, Avg, 7, 1, 0, 0)
-        GRHit.Time += 1  # Hit on target delayed with 1 tick
-
-        for i in range(0, player.nGreaterRicochet):
-            dummy.PHits[dummy.nPH] = deepcopy(GRHit)  # Apply the hit on main target
-            dummy.nPH += 1
-
-        player.GreaterRicochet = False
-        player.nGreaterRicochet = 0
+        if logger.DebugMode:
+            logger.write(45)
 
     # Clear the list of abilities which have inflicted damage on the dummy in the current tick
     dummy.DamageNames.clear()

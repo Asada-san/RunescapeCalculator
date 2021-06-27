@@ -1,3 +1,4 @@
+from App.PythonRevolution import AttackCycle as Attack
 import numpy as np
 
 
@@ -6,14 +7,13 @@ class Dummy:
     The Dummy class. A dummy mimics a (stationary) monster.
     """
 
-    def __init__(self, opt, Do):
+    def __init__(self, userInput):
         self.Damage = 0                 # The amount of damage done - puncture damage
         self.PunctureDamage = 0         # The amount of puncture damage done
         self.Stun = False               # When True, the dummy is in a stunned state
         self.StunTime = 0               # Time before a stun wears of
         self.Bind = False               # When True, the dummy is in a bind state
         self.BindTime = 0               # Time before a bind wears of
-        self.PH = False                 # When True, the dummy is affected by a Damage over Time ability
         self.DamageNames = []           # List of abilities which caused damage to the dummy in the current tick
         self.PHits = [0] * 50           # List of Pending Hits
         self.nPH = 0                    # Amount of Pending Hits
@@ -22,19 +22,15 @@ class Dummy:
         self.PunctureDuration = 0       # Duration of the Puncture effect before the stack is reset
         self.LastStack = 0              # Stack number when the Salt the Wound ability has been used
 
-        self.nTarget = int(opt['nTargets'])             # Number of targets
-        self.Movement = not opt['movementStatus']       # True if the dummy can move
-        self.StunBindImmune = opt['stunbindStatus']     # True if the dummy is Stun and Bind immune
+        self.nTarget = int(userInput['nTargets'])             # Number of targets
+        self.Movement = not userInput['movementStatus']       # True if the dummy can move
+        self.StunBindImmune = userInput['stunbindStatus']     # True if the dummy is Stun and Bind immune
 
-        if Do.HTMLwrite:
-            Do.Text += f'<li style="color: {Do.init_color};">User select: Stationary {self.Movement}</li>' \
-                       f'<li style="color: {Do.init_color};">User select: Stun&Bind Immune {self.StunBindImmune}</li>' \
-                       f'<li style="color: {Do.init_color};">User select: Number of targets: {int(opt["nTargets"])}</li>'
-
-    def TimerCheck(self, Do):
+    def TimerCheck(self, logger):
         """
         Check the Bind and Stun status of the dummy.
-        :param Do: the DoList object.
+
+        :param logger: the Logger object.
         """
 
         if self.Stun:
@@ -43,8 +39,8 @@ class Dummy:
             if self.StunTime == 0:
                 self.Stun = False
 
-                if Do.HTMLwrite:
-                    Do.Text += f'<li style="color: {Do.stat_color};">Dummy no longer stunned</li>\n'
+                if logger.DebugMode:
+                    logger.write(19)
 
         if self.Bind:
             self.BindTime -= 1
@@ -52,8 +48,8 @@ class Dummy:
             if self.BindTime == 0:
                 self.Bind = False
 
-                if Do.HTMLwrite:
-                    Do.Text += f'<li style="color: {Do.stat_color};">Dummy no longer bound</li>\n'
+                if logger.DebugMode:
+                    logger.write(20)
 
         if self.Puncture:
             self.PunctureDuration -= 1
@@ -62,5 +58,5 @@ class Dummy:
                 self.Puncture = False
                 self.nPuncture = 0
 
-                if Do.HTMLwrite:
-                    Do.Text += f'<li style="color: {Do.stat_color};">Dummy puncture stack reset to 0</li>\n'
+                if logger.DebugMode:
+                    logger.write(21)

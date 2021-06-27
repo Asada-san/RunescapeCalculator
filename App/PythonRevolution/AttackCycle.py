@@ -3,7 +3,7 @@ from copy import deepcopy
 import pprint
 
 
-def Attack_main(bar, player, dummy, Do, loop):
+def Attack_main(bar, player, dummy, logger, settings):
     """
     The main function of the attack cycle. Checks if an ability is available and if so,
     the dummy is attacked.
@@ -11,8 +11,8 @@ def Attack_main(bar, player, dummy, Do, loop):
     :param bar: The Bar object.
     :param player: The Player object.
     :param dummy: The Dummy object.
-    :param Do: The DoList object.
-    :param loop: The Loop object.
+    :param logger: The Logger object.
+    :param settings: The Settings object.
     :return: The Ability activated in the current attack cycle.
     """
 
@@ -21,86 +21,77 @@ def Attack_main(bar, player, dummy, Do, loop):
     # CHECK IF THE PLAYER IS ALLOWED TO ATTACK
     if not bar.GCDStatus and not player.ChanAbil:
 
-        # if loop.FindCycle and not loop.CycleFound and 1 == 2:  # Used for debugging
-        if loop.FindCycle and not loop.CycleFound:
-            Cycle.CycleCheck(bar, player, dummy, Do, loop)
+        # if logger.FindCycle and not logger.CycleFound and 1 == 2:  # Used for debugging
+        if settings.FindCycle and not logger.CycleFound:
+            Cycle.CycleCheck(bar, player, dummy, logger)
 
         # Check for available ability
-        for i in range(0, bar.N):
-            if not bar.Rotation[i].cdStatus:
-                bar.AdrenalineStatus(bar.Rotation[i], player)
-
-                if bar.FireStatus:
-                    bar.FireN = i  # Index of ability is equal to for loop i
-
-                    if loop.CycleFound:
-                        loop.Rotation.extend([bar.Rotation[i].Name])
-
-                        if not loop.nFA[bar.FireN]:
-                            loop.nFA[bar.FireN] = True
-
-                    if Do.HTMLwrite:
-                        Do.Text += f'<li style="color: {Do.nor_color};">Attack status: {bar.Rotation[i].Name} ready</li>\n'
-
-                    break  # Break because firing more than 1 ability wouldn't make sense
-
-                else:
-                    if Do.HTMLwrite:
-                        Do.Text += f'<li style="color: {Do.init_color};">Not enough Adrenaline for {bar.Rotation[i].Name}</li>\n'
+        bar.FireNextAbility(player, logger)
 
         # Do stuff based on whether an ability was available or not
         if bar.FireStatus:
-            FireAbility = AttackDummy(bar, player, dummy, Do, loop)
+
+            FireAbility = bar.Rotation[bar.FireN]
+
+            # Count activations
+            if logger.CycleFound or not settings.FindCycle:
+                logger.AbilInfo[FireAbility.Name]['activations'] += 1
+
+            # Tell if Stun/Bind damage is going to be used
+            if logger.DebugMode:
+                if not all([FireAbility.StunBindDam, any([dummy.Stun, dummy.Bind])]):
+                    logger.write(31, FireAbility.Name)
+                else:
+                    logger.write(32, FireAbility.Name)
+
+                logger.write(33, round(bar.Adrenaline, 0))  # Adrenaline status
+
+            # Add to cycle rotation
+            if logger.CycleFound:
+                logger.Rotation.extend([FireAbility.Name])
+
+                if not logger.nFA[bar.FireN]:
+                    logger.nFA[bar.FireN] = True
+
+            AttackDummy(FireAbility, bar, player, dummy, logger, settings)
 
         else:
-            if loop.CycleFound:
-                if len(loop.Rotation) != 0 and 'STALL' in loop.Rotation[-1]:
-                    loop.nStall += 1
-                    loop.Rotation[-1] = f'<span style="color: {Do.cycle_color}">STALL {loop.nStall}x</span>'
+            if logger.CycleFound:
+                if len(logger.Rotation) != 0 and 'STALL' in logger.Rotation[-1]:
+                    logger.nStall += 1
+                    logger.Rotation[-1] = f'<span style="color: {logger.TextColor["cycle"]}">STALL {logger.nStall}x</span>'
                 else:
-                    loop.nStall = 1
-                    loop.Rotation.extend([f'<span style="color: {Do.cycle_color}">STALL {loop.nStall}x</span>'])
+                    logger.nStall = 1
+                    logger.Rotation.extend([f'<span style="color: {logger.TextColor["cycle"]}">STALL {logger.nStall}x</span>'])
 
-            if Do.HTMLwrite:
-                Do.Text += f'<li style="color: {Do.imp_color};">No ability available, skip attack</li>\n'
+            if logger.DebugMode:
+                logger.write(38)
 
     elif player.ChanAbil:
-        if Do.HTMLwrite:
-            Do.Text += f'<li style="color: {Do.imp_color};">Player is using a channeled ability</li>\n'
+        if logger.DebugMode:
+            logger.write(39)
 
     elif bar.GCDStatus:
-        if Do.HTMLwrite:
-            Do.Text += f'<li style="color: {Do.imp_color};">GLOBAL COOLDOWN</li>\n'
+        if logger.DebugMode:
+            logger.write(40)
 
     return FireAbility
 
 
-def AttackDummy(bar, player, dummy, Do, loop):
+def AttackDummy(FA, bar, player, dummy, logger, settings):
     """
     Puts all the hits from the current activated ability on the dummy with timers.
 
+    :param FA: Ability object which has currently been fired from the ability bar.
     :param bar: The Bar object.
     :param player: The Player object.
     :param dummy: The Dummy object.
-    :param Do: The DoList object.
-    :param loop: The Loop object.
+    :param logger: The Logger object.
+    :param settings: The Settings object.
     :return: The Ability activated in the current attack cycle.
     """
 
-    FA = bar.Rotation[bar.FireN]  # FireAbility: ability to be fired in the current tick
-
-    if loop.CycleFound or not loop.FindCycle:
-        player.AbilInfo[FA.Name]['activations'] += 1
-
-    if Do.HTMLwrite:
-        if not all([FA.StunBindDam,  any([dummy.Stun, dummy.Bind])]):
-            Do.Text += f'<li style="color: {Do.att_color};">{FA.Name} activated (normal)\n'
-        else:
-            Do.Text += f'<li style="color: {Do.imp_color};">{FA.Name} activated (stun&bind)\n'
-
-        Do.Text += f'<li style="color: {Do.att_color};">Adrenaline: {round(bar.Adrenaline, 0)}</li>\n'
-
-    # Depending on the type of ability, get its hits
+    # Depending on the type of ability, get its hits and append them to the dummy
     if FA.Standard or FA.Channeled:
         if not all([FA.StunBindDam,  any([dummy.Stun, dummy.Bind])]):
             dummy.PHits[dummy.nPH: dummy.nPH + FA.nS] = deepcopy(FA.Hits)
@@ -108,13 +99,13 @@ def AttackDummy(bar, player, dummy, Do, loop):
             dummy.PHits[dummy.nPH: dummy.nPH + FA.nS] = deepcopy(FA.HitsStunBind)
 
         if any([FA.Bleed, FA.Puncture]):
-            EffectCheck(bar, dummy, player, FA, Do)
+            EffectCheck(dummy, player, FA, logger)
 
     elif FA.Bleed:
-        EffectCheck(bar, dummy, player, FA, Do)
+        EffectCheck(dummy, player, FA, logger)
 
     else:  # The ability doesn't do any damage: end this function
-        return FA
+        return
 
     # Determine amount of hits pending for dummy, some abilities are cut short to maximise dps
     if not player.Afk and FA.Name == 'Concentrated Blast':
@@ -124,48 +115,32 @@ def AttackDummy(bar, player, dummy, Do, loop):
 
     # Check for AoE shenanigans
     if any([FA.Name == 'Greater Ricochet', all([dummy.nTarget > 1 and FA.AoE])]):
-        AoECheck(bar, dummy, player, FA, Do)
+        AoECheck(dummy, player, FA)
 
-    # Check for Greater Chain effect
-    if player.GreaterChain and FA.Name != 'Greater Chain':
-        if not FA.Bleed:
-            Avg = AVGCalc.StandardChannelDamAvgCalc(FA, player, Do, 'Normal', 0)
-            NewHit = deepcopy(FA.Hits[0])
-            NewHit.Damage = Avg[0] / 2
+    if FA.Channeled:
+        player.ChanAbil = True
+
+        if player.Afk:
+            player.ChanTime = FA.TrueWaitTime
+
         else:
-            NewHit = deepcopy(FA.DoTHits[0])
-            NewHit.Damage = FA.DoTHits[0].Damage / 2
-
-        NewHit.Name = 'Greater Chain'
-        NewHit.Type = 8
-
-        for target in player.GreaterChainTargets:
-            NewHit.Target = target
-            dummy.PHits[dummy.nPH] = deepcopy(NewHit)
-            dummy.nPH += 1
-
-        if not FA.Channeled:
-            player.GreaterChain = False
-            player.GreaterChainTargets = []
-            player.GreaterChainDuration = 0
-            player.GreaterChainHitN = 0
+            player.ChanTime = FA.EfficientWaitTime
 
     # Attack the dummy if a timer equals 0
-    DummyDamage(bar, dummy, player, Do, loop)
+    PHitCheck(bar, dummy, player, logger, settings)
 
-    return FA
+    return
 
 
-def EffectCheck(bar, dummy, player, FA, Do):
+def EffectCheck(dummy, player, FA, logger):
     """
     Puts the hits from the current activated ability on the dummy with timers (only
     bleeds and punctures).
 
-    :param bar: The Bar object.
     :param player: The Player object.
     :param dummy: The Dummy object.
     :param FA: The Ability activated in the current attack cycle.
-    :param Do: The DoList object.
+    :param logger: The DoList object.
     """
 
     # Determine whether ability has bleed or puncture effect
@@ -188,19 +163,21 @@ def EffectCheck(bar, dummy, player, FA, Do):
 
         # Salt the Wound ability effect
         if FA.Name == 'Salt the Wound':
-            IDX = bar.AbilNames.index(FA.Name)  # Spot of the ability on the bar
             Hit = deepcopy(FA.Hits[0])  # Copy the hit from the ability to fire
 
             # Calculate its new average
-            Hit.Damage = AVGCalc.StandardChannelDamAvgCalc(bar.Rotation[IDX], player, Do, 'Salt the Wound', FA.Hits[0].Index, dummy.nPuncture)[0]
+            Hit.DamMax[0] += .18 * dummy.nPuncture  # PunctureStack
+            Hit.DamMin[0] += .036 * dummy.nPuncture  # PunctureStack
+
+            Hit.Damage = AVGCalc.StandardChannelDamAvgCalc(Hit, player, logger)[0]
+
             dummy.PHits[dummy.nPH] = Hit  # Put the hit with the new average in the pending hits
-            dummy.LastStack = dummy.nPuncture
             dummy.nPuncture = 0  # Reset stack
             dummy.PunctureDuration = 0
             dummy.Puncture = False
 
-            if Do.HTMLwrite:
-                Do.Text += f'<li style="color: {Do.stat_color};">Dummy puncture stack reset to 0</li>\n'
+            if logger.DebugMode:
+                logger.write(21)
 
             return
         else:  # Else the Greater Dazing Shot ability has been used, change stack value accordingly
@@ -211,21 +188,19 @@ def EffectCheck(bar, dummy, player, FA, Do):
             if dummy.nPuncture < 10:  # Stacks are capped at 10
                 dummy.nPuncture += 1
 
-            if Do.HTMLwrite:
-                Do.Text += f'<li style="color: {Do.stat_color};">Dummy puncture stack: {dummy.nPuncture}</li>\n'
+            if logger.DebugMode:
+                logger.write(34, dummy.nPuncture)
 
         dummy.PHits[dummy.nPH + FA.nS: dummy.nPH + FA.nT] = deepcopy(FA.DoTHits)
 
 
-def AoECheck(bar, dummy, player, FA, Do):
+def AoECheck(dummy, player, FA):
     """
     Duplicates hits if the ability does AoE damage and there are more than 1 target.
 
-    :param bar: The Bar object.
     :param player: The Player object.
     :param dummy: The Dummy object.
     :param FA: The Ability activated in the current attack cycle.
-    :param Do: The DoList object.
     """
 
     if dummy.nTarget > 9 and FA.Name not in {'Corruption Blast', 'Corruption Shot'}:
@@ -237,14 +212,14 @@ def AoECheck(bar, dummy, player, FA, Do):
         N = FA.nT
 
         for i in range(0, nDT - 1):
-            dummy.PHits[dummy.nPH + i: dummy.nPH + i] = deepcopy(FA.SideTargetAvg)
+            dummy.PHits[dummy.nPH + i: dummy.nPH + i] = deepcopy(FA.HitsSideTarget)
             dummy.PHits[dummy.nPH + i].Target = i + 2
 
     elif FA.Name == 'Greater Flurry':  # DamMax = 0.94, DamMin = 0.2, DamAvg = 0.57 for ALL! targets
         N = FA.nT
 
         for i in range(0, nDT):
-            dummy.PHits[dummy.nPH + (i - 1) * N: dummy.nPH + i * N] = deepcopy(FA.SideTargetAvg)
+            dummy.PHits[dummy.nPH + (i - 1) * N: dummy.nPH + i * N] = deepcopy(FA.HitsSideTarget)
 
             if i > 0:
                 for j in range(0, N):
@@ -278,10 +253,6 @@ def AoECheck(bar, dummy, player, FA, Do):
             for j in range(0, N):
                 dummy.PHits[dummy.nPH + i * N + j].Target = i + 2
 
-        if FA.Name == 'Greater Ricochet' and dummy.nTarget < 3 + player.Cr:
-            player.GreaterRicochet = True
-            player.nGreaterRicochet = int(3 + player.Cr - dummy.nTarget)
-
         if FA.Name == 'Greater Chain':
             player.GreaterChain = True
             player.GreaterChainDuration = 10
@@ -302,171 +273,196 @@ def AoECheck(bar, dummy, player, FA, Do):
     # Increase dummy.nPH by the amount of hits N every other target nDT - 1 receives
     dummy.nPH += (nDT - 1) * N
 
+    # Apply Hits of greater Ricochet for which no targets are available back to target 1
+    # but halved. Do it here because dummy.nPH is needed and is only set just above.
+    if FA.Name == 'Greater Ricochet' and dummy.nTarget < 3 + player.Cr:
 
-def DummyDamage(bar, dummy, player, Do, loop):
+        NewHit = deepcopy(dummy.PHits[dummy.nPH - 1])
+        NewHit.DamMax /= 2
+        NewHit.DamMin /= 2
+        NewHit.Damage /= 2
+        NewHit.Time += 1  # Hit on target delayed with 1 tick
+        NewHit.Target = 1
+
+        for i in range(0, int(3 + player.Cr - dummy.nTarget)):
+            dummy.PHits[dummy.nPH] = NewHit  # Apply the hit on main target
+            dummy.nPH += 1
+
+
+def PHitCheck(bar, dummy, player, logger, settings):
     """
-    Checks if a timer of a hit reached 0, if so, damages the target and checks effects.
+    Check if there are any pending hits.
+        True    --> Create HitList with Hit objects that will damage the dummy
+                    Remove the Hit from Pending Hits list
+                    Perform check for Champion's ring
+                    Attack the dummy
+        False   --> Do nothing
 
     :param bar: The Bar object.
     :param player: The Player object.
     :param dummy: The Dummy object.
-    :param Do: The DoList object.
-    :param loop: The Loop object.
+    :param logger: The DoList object.
+    :param settings: The Setting object.
     """
 
-    for i in range(dummy.nPH - 1, -1, -1):
-        if dummy.PHits[i].Time == 0:
-            if all([player.GreaterChain, player.ChanAbil]):
-                IDX = bar.AbilNames.index(dummy.PHits[i].Name)
-                player.GreaterChainHitN += 1
+    if dummy.nPH > 0:  # If there are any Pending Hits
+        doAttack = False
+        isBleeding = False
+        CritChanceHit = False
+        HitList = []
 
-                Avg = AVGCalc.StandardChannelDamAvgCalc(bar.Rotation[IDX], player, Do, 'Normal', player.GreaterChainHitN)
+        for i in range(dummy.nPH - 1, -1, -1):
+            if dummy.PHits[i].Time == 0:
+                doAttack = True
 
-                NewHit = deepcopy(dummy.PHits[i])
-                NewHit.Damage = Avg[0] / 2
+                HitList.append(dummy.PHits[i])
 
-                NewHit.Name = 'Greater Chain'
-                NewHit.Type = 8
+                # Shift the current hit to the right and others after that 1 place to the left
+                # AKA shifting the Hit into meaninglessness
+                dummy.PHits[i: dummy.nPH - 1], dummy.PHits[dummy.nPH - 1] = dummy.PHits[i + 1: dummy.nPH], dummy.PHits[i]
+                dummy.nPH -= 1
 
-                for target in player.GreaterChainTargets:
-                    NewHit.Target = target
-                    dummy.PHits[dummy.nPH] = deepcopy(NewHit)
-                    dummy.nPH += 1
+                if dummy.PHits[i].Type not in {3, 4}:
+                    CritChanceHit = True
+
+            if dummy.PHits[i].Type == 3:
+                isBleeding = True
+
+        if doAttack:
+            if player.Ring == 'ChampionsRing' and isBleeding and CritChanceHit:
+                player.AbilCritBuff += 0.03  # Champion's ring effect
+
+            DummyDamage(HitList, bar, dummy, player, logger, settings)  # Inflict damage if the time equals 0
+
+
+def DummyDamage(CurrentHits, bar, dummy, player, logger, settings):
+    """
+    Checks if a timer of a hit reached 0, if so, damages the target and checks effects.
+
+    :param CurrentHits: Hits that need to inflict damage onto the dummy in the current tick
+    :param bar: The Bar object.
+    :param player: The Player object.
+    :param dummy: The Dummy object.
+    :param logger: The Logger object.
+    :param settings: The Settings object.
+    """
 
     # Check if dummy takes a hit
-    for i in range(dummy.nPH - 1, -1, -1):
-        if dummy.PHits[i].Time == 0:
+    for PHit in CurrentHits:
+        standardDamage = PHit.Damage
 
-            # Determine bleed damage multiplier
-            if dummy.PHits[i].Type == 3 and dummy.Movement and not any([dummy.Stun, dummy.Bind]):
-                IDX = bar.AbilNames.index(dummy.PHits[i].Name)
-                dummy.PHits[i].Damage *= bar.Rotation[IDX].BleedOnMove
+        if player.Ring == 'ChannelersRing' and bar.Style == 'Magic' and player.ChanAbil and PHit.Type == 2 and not PHit.Name == 'Detonate':
+            player.ChannelCritStack += 1
+            player.AbilCritBuff += player.ChannelCritStack * 0.04
 
-            # Determine average hit damage
-            if dummy.PHits[i].Type in {1, 2} and any([player.AbilCritBuff > 0, player.Boost, player.Boost1]):
-                HitDamage = CalcNewAvg(bar, dummy, player, Do, i)
+        # Determine bleed damage multiplier
+        if PHit.Type == 3 and dummy.Movement and not any([dummy.Stun, dummy.Bind]):
+            PHit.Damage *= PHit.BleedOnMove
 
-                if Do.HTMLwrite and any([player.Boost, player.Boost1]):
-                    Do.Text += f'<li style="color: {Do.att_color};">{dummy.PHits[i].Name} hit boosted {player.BoostX * player.Boost1X}x</li>'
+        # Determine average hit damage
+        if PHit.Type in {1, 2, 5, 6, 7, 8} and any([player.AbilCritBuff > player.InitCritBuff, player.Boost, player.Boost1]):
+            PHit.Damage = AVGCalc.StandardChannelDamAvgCalc(PHit, player, logger)[0]
 
-                # The single hit damage boost works on the first 2 hits on rapid fire fore some reason
-                if any([dummy.PHits[i].Name not in ['Rapid Fire', 'Snap Shot'] and player.Boost1, player.Boost1 and int(dummy.PHits[i].Index) == 1]):
-                    player.Boost1 = False
-                    player.Boost1X = 1
+            if any([player.Boost, player.Boost1]):
+                if logger.DebugMode:
+                    logger.write(27, [PHit.Name, player.BoostX * player.Boost1X])
 
-            elif dummy.PHits[i].Type in {3, 4} and player.BaseBoost > 1 and player.Boost:
-                if dummy.PHits[i].Index == 0 and player.Boost1:
-                    player.Boost1 = False
-                    player.Boost1X = 1
+            # The single hit damage boost works on the first 2 hits on rapid fire fore some reason
+            if any([PHit.Name not in ['Rapid Fire', 'Snap Shot'] and player.Boost1, player.Boost1 and int(PHit.Index) == 1]):
+                player.Boost1 = False
+                player.Boost1X = 1
 
-                HitDamage = CalcNewAvg(bar, dummy, player, Do, i)
+            # Reset Critical Hit Buff
+            player.AbilCritBuff = 0
 
+        elif PHit.Type in {3, 4} and player.BaseBoost > 1 and player.Boost:
+            if PHit.Index == 0 and player.Boost1:
+                player.Boost1 = False
+                player.Boost1X = 1
+
+            PHit.Damage = AVGCalc.BleedDamAvgCalc(PHit, player, logger)[0]
+
+        # Add the damage to the total damage
+        if PHit.Type != 4:
+            dummy.Damage += PHit.Damage
+        else:
+            dummy.PunctureDamage += PHit.Damage
+
+        # Check for Greater Chain effect
+        if player.GreaterChain:
+            AbilNames = [PHit.Name for PHit in CurrentHits]
+
+            if 'Greater Chain' not in AbilNames:
+
+                if player.ChanAbil and PHit.Type == 2:
+                    CurrentHits.extend(getGreaterChainHits(PHit, player))
+                elif PHit.Name != 'Sunshine':
+                    CurrentHits.extend(getGreaterChainHits(PHit, player))
+                    player.resetGreaterChain()
+
+        # Set some cycle data
+        if logger.CycleFound or not settings.FindCycle:
+            logger.AbilInfo[PHit.Name]['damage'] += PHit.Damage
+            logger.AbilInfo['Boosted']['damage'] += PHit.Damage - standardDamage
+
+            if PHit.Type != 4:
+                logger.CycleDamage += PHit.Damage
             else:
-                HitDamage = dummy.PHits[i].Damage
+                logger.CyclePunctureDamage += PHit.Damage
 
-            # Add the damage to the total damage
-            if dummy.PHits[i].Type != 4:
-                dummy.Damage += HitDamage
+        if logger.DebugMode:
+            if dummy.nTarget == 1:
+                logger.write(28, [PHit.Name, PHit.Type, round(PHit.Damage, 3)])
             else:
-                dummy.PunctureDamage += HitDamage
+                logger.write(29, [PHit.Name, PHit.Type, int(PHit.Target), round(PHit.Damage, 3)])
 
-            if loop.CycleFound or not loop.FindCycle:  # If a cycle has been found
-                player.AbilInfo[dummy.PHits[i].Name]['damage'] += HitDamage / ((1 + player.AbilCritBuff) * player.BoostX * player.Boost1X)
-                player.AbilInfo['Boosted']['damage'] += HitDamage - (HitDamage / ((1 + player.AbilCritBuff) * player.BoostX * player.Boost1X))
+        # Critical hit chance checks
+        if PHit.Name in {'Concentrated Blast', 'Fury'}:
+            if player.CritStack == 3:  # If the stack reached 3, reset
+                player.CritStack = 0
+            player.CritStack += 1  # Increase stack
+            player.AbilCritBuff += 0.05 * player.CritStack
 
-                if dummy.PHits[i].Type != 4:
-                    loop.CycleDamage += HitDamage
-                else:
-                    loop.CyclePunctureDamage += HitDamage
+        elif PHit.Name == 'Greater Fury' or all([player.CritAdrenalineBuffTime > 0, PHit.Type in {1, 2}]):
 
-            if Do.HTMLwrite:
-                if dummy.nTarget == 1:
-                    Do.Text += f'<li style="color: {Do.dam_color};">{dummy.PHits[i].Name} ({Do.TypeDict[dummy.PHits[i].Type]}) damage applied: {round(HitDamage, 3)}</li>\n'
-                else:
-                    Do.Text += f'<li style="color: {Do.dam_color};">{dummy.PHits[i].Name} ({Do.TypeDict[dummy.PHits[i].Type]}) damage applied on target #{int(dummy.PHits[i].Target)}: {round(HitDamage, 3)}</li>\n'
+            if player.CritAdrenalineBuffTime > 0:
+                player.CritAdrenalineBuff = True  # We need to perform a check
+                AVGCalc.StandardChannelDamAvgCalc(PHit, player, logger)
+                bar.Adrenaline += round(player.BasicAdrenalineGain / 1, 0)
 
-            # Critical hit chance checks
-            if dummy.PHits[i].Name in {'Concentrated Blast', 'Fury'}:
-                if player.CritStack == 3:  # If the stack reached 3, reset
-                    player.CritStack = 0
-                else:  # Increase AbilCritBuff
-                    if player.AbilCritBuff < 0.15:  # If the AbilCritBuff is smaller than 15%, increase by 5%
-                        player.AbilCritBuff += 0.05
-                player.CritStack += 1  # Increase stack
+                if logger.DebugMode:
+                    logger.write(30, [round(player.BasicAdrenalineGain / 1, 0), round(bar.Adrenaline, 0)])
 
-            elif dummy.PHits[i].Name == 'Greater Fury' or all([player.CritAdrenalineBuffTime > 0, dummy.PHits[i].Type in {1, 2}]):
-                player.CritStack = 0  # Reset stack
+                player.BasicAdrenalineGain -= round(player.BasicAdrenalineGain / 1, 0)
 
-                if player.CritAdrenalineBuffTime > 0:
-                    player.CritAdrenalineBuff = True  # We need to perform a check
-                    CalcNewAvg(bar, dummy, player, Do, i)
-                    bar.Adrenaline += round(player.BasicAdrenalineGain / 1, 0)
+            if PHit.Name == 'Greater Fury':
+                player.GreaterFuryCritCheck = True  # We need to perform a check
+                AVGCalc.StandardChannelDamAvgCalc(PHit, player, logger)
 
-                    if Do.HTMLwrite:
-                        Do.Text += f'<li style="color: {Do.att_color};">Adrenaline increased by: {round(player.BasicAdrenalineGain / 1, 0)} to: {round(bar.Adrenaline, 0)}</li>\n'
-
-                    player.BasicAdrenalineGain -= round(player.BasicAdrenalineGain / 1, 0)
-                    player.AbilCritBuff = 0  # Reset crit buff
-
-                if dummy.PHits[i].Name == 'Greater Fury':
-                    player.AbilCritBuff = 0  # Reset crit buff
-                    player.GreaterFuryCritCheck = True  # We need to perform a check
-                    CalcNewAvg(bar, dummy, player, Do, i)
-
-            elif dummy.PHits[i].Type in {1, 2}:
-                player.CritStack = 0  # Reset stack
-                player.AbilCritBuff = 0  # Reset crit buff
-
-            # Delete the Hit
-            dummy.DamageNames.append(dummy.PHits[i].Name)
-            # Shift the current hit to the right and others after that 1 place to the left
-            dummy.PHits[i: dummy.nPH - 1], dummy.PHits[dummy.nPH - 1] = dummy.PHits[i + 1: dummy.nPH], dummy.PHits[i]
-            dummy.nPH -= 1
-
-    # Determine if dummy takes damage outside attack cycle
-    if dummy.nPH == 0:
-        dummy.PH = False
-    else:
-        dummy.PH = True
+        # Append to list of hits that did do damage in the current tick for effect checks
+        dummy.DamageNames.append(PHit.Name)
 
     return None
 
 
-def CalcNewAvg(bar, dummy, player, Do, i):
+def getGreaterChainHits(PHit, player):
+    """
+    Copies the Hit object and puts it in a list GreaterChainTargets times.
 
-    ##############################################################
-    ############# Calculate new avg depending on type ############
-    ##############################################################
+    :param PHit: The Hit object.
+    :param player: The Player object.
+    :return PHitList: List containing copied Hits.
+    """
 
-    if dummy.PHits[i].Type in {7, 8}:
-        return dummy.PHits[i].Damage
+    PHitList = []
 
-    IDX = bar.AbilNames.index(dummy.PHits[i].Name)  # Spot of the ability on the bar
+    NewHit = deepcopy(PHit)
+    NewHit.Damage /= 2
 
-    if dummy.PHits[i].Name == 'Salt the Wound':
-        Avg = AVGCalc.StandardChannelDamAvgCalc(bar.Rotation[IDX], player, Do, 'Salt the Wound', dummy.PHits[i].Index, dummy.LastStack)
-        dummy.LastStack = 0
+    # NewHit.Type = 8
+    print(player.GreaterChainTargets)
+    for target in player.GreaterChainTargets:
+        NewHit.Target = target
+        PHitList.append(NewHit)
 
-    elif dummy.PHits[i].Type in {1, 2}:
-
-        # if dummy.PHits[i].Name == 'Greater Ricochet' and dummy.PHits[i].Target == 1:
-        #     nRedundantHits = 3 + player.Cr - dummy.nTarget
-        #     Avg = bar.Rotation[IDX].StandardChannelDamAvgCalc(player, Do, 'Greater Ricochet', 0, nRedundantHits)
-
-        if not all([bar.Rotation[IDX].StunBindDam,  any([dummy.Stun, dummy.Bind])]):
-            Avg = AVGCalc.StandardChannelDamAvgCalc(bar.Rotation[IDX], player, Do, 'Normal', dummy.PHits[i].Index)
-        else:
-            Avg = AVGCalc.StandardChannelDamAvgCalc(bar.Rotation[IDX], player, Do, 'StunBind', dummy.PHits[i].Index)
-
-    elif dummy.PHits[i].Type in {3, 4}:
-
-        Avg = AVGCalc.BleedDamAvgCalc(bar.Rotation[IDX], player, Do)
-
-    ##############################################################
-    ########### Return the new Average if its not None ###########
-    ##############################################################
-
-    if Avg is not None:
-        return Avg[0]
-    else:
-        return None
+    return PHitList

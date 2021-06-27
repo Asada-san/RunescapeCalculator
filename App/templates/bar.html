@@ -7,7 +7,14 @@
 
 <div style="padding: 20px;">
   <div class="note">
-  <h2 style="text-align: center; margin-bottom: 15px; margin-top: 15px;">Revolution Bar <span style="font-size:small;">V1.05.7</span></h2>
+  <h2 style="text-align: center; margin-bottom: 15px; margin-top: 15px;">Revolution Bar <span style="font-size:small;">V1.06.0</span></h2>
+  <p style="text-align: center; margin-left: 15px; margin-right: 15px; color: pink;">Last update changed a lot codewise, it is
+    impossible to check every bar/option combination myself. If you notice anything
+    funny, or have a suggestion, contact me on Discord:
+    <strong style="color: #4CAF50">Micky#5858</strong>, Reddit:
+    <a style="color: #4CAF50" href="https://www.reddit.com/user/ftwmickywtf"><strong>u/FTWmickyWTF</strong></a>
+    or ingame: <a style="color: #4CAF50" href="https://apps.runescape.com/runemetrics/app/overview/player/asada-san"><strong>Asada-san</strong></a>.
+</p>
   <button id="guide-button" class="note-button">General Info</button>
   <div id="Bar-guide" class="content note-collapsible">
     <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;">
@@ -56,6 +63,26 @@
   </div>
   <button id="changelog-button" class="note-button">Changelog</button>
   <div id="Changelog-notes" class="content note-collapsible">
+    <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.06.0 - 27-6-2021</strong></p>
+    <ul style="margin-top: 10px; margin-right: 15px;">
+      <li>Added the following options:</li>
+        <ul>
+          <li>Channeler's ring</li>
+          <li>Champion's ring</li>
+          <li>Reaver's ring</li>
+          <li>Stalker's ring</li>
+        </ul>
+      <li>Wild Magic is no longer a channeling ability</li>
+      <li>Asphyxiate now stuns</li>
+      <li>Fixed several stun and/or bind durations in line with the updated ability tooltips ingame</li>
+      <li>Added some more tooltips to the options</li>
+      <li>Sped up and simplified the cycle searching algorithm</li>
+      <li>Cleaned up other parts of the code making it faster and more readable</li>
+      <li>Changed the way critical hit chance increases are handled due to ability/items</li>
+      <li>Cleaned up the <a href="https://github.com/Asada-san/RunescapeCalculator/blob/master/AbilityInfo.xlsx" target="_blank" style="color: #4CAF50"><strong>spreadsheet</strong></a> and the way its loaded</li>
+      <li>Added SideTargetDam/SideTargetDamMin/SideTargetDamMax to spreadsheet instead of them being hardcoded</li>
+    </ul>
+
     <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.05.7 - 1-4-2021</strong></p>
     <ul style="margin-top: 10px; margin-right: 15px;">
       <li>Individual ability damage and redundant abilities are now tracked when setting a custom simulation time</li>
@@ -86,7 +113,7 @@
       <li>Greater Chain now works correctly with channeled abilities</li>
     </ul>
 
-    <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.05.4 - 22-1-2021</strong></p>
+    {#<p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.05.4 - 22-1-2021</strong></p>
     <ul style="margin-top: 10px; margin-right: 15px;">
       <li>Simulation counter now hopefully works properly</li>
       <li>Ring of Vigour and Conservation of Energy now stack</li>
@@ -107,7 +134,7 @@
       <li>Set Dragon Breath target cap to 4 and increased its adrenaline gain to 10 when it hits 2 or more targets</li>
     </ul>
 
-    {#<p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.05.1 - 18-10-2020</strong></p>
+    <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.05.1 - 18-10-2020</strong></p>
     <ul style="margin-top: 10px; margin-right: 15px;">
       <li>Added the Devotion ability</li>
     </ul>
@@ -170,7 +197,7 @@
       <li>Moved host from DigitalOcean (paid) to Heroku (free)</li>
       <li>Added Options Info section</li>
     </ul> #}
-    <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.05.1 and earlier not available</strong></p>
+    <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.05.4 and earlier not available</strong></p>
   </div>
 </div>
 </div>
@@ -200,12 +227,12 @@
         <select id="StrengthPrayer" style="float: center; width: 100%;" >
           <option value="1" disabled selected hidden>Strength Prayer</option>
           <option value="1">None</option>
-          <option value="1.02">Burst of Strength</option>
-          <option value="1.04">Superhuman Strength</option>
-          <option value="1.06">Ultimate Strength</option>
-          <option value="1.08">Piety</option>
-          <option value="1.10">Turmoil</option>
-          <option value="1.12">Malevolence</option>
+          <option value="1.02" title="2% Strength boost">Burst of Strength</option>
+          <option value="1.04" title="4% Strength boost">Superhuman Strength</option>
+          <option value="1.06" title="6% Strength boost">Ultimate Strength</option>
+          <option value="1.08" title="8% Strength boost">Piety</option>
+          <option value="1.10" title="10% Strength boost">Turmoil</option>
+          <option value="1.12" title="12% Strength boost">Malevolence</option>
         </select>
       </label>
       <p style="margin-left: 15px; margin-top: 15px; text-align: center; font-weight: bold; color: var(--textColor2);">Magic Boost</p>
@@ -216,12 +243,12 @@
         <select id="MagicPrayer" style="float: center; width: 100%;" >
           <option value="1" disabled selected hidden>Magic Prayer</option>
           <option value="1">None</option>
-          <option value="1.02">Charge</option>
-          <option value="1.04">Super Charge</option>
-          <option value="1.06">Overcharge</option>
-          <option value="1.08">Augury</option>
-          <option value="1.10">Torment</option>
-          <option value="1.12">Affliction</option>
+          <option value="1.02" title="2% Magic boost">Charge</option>
+          <option value="1.04" title="4% Magic boost">Super Charge</option>
+          <option value="1.06" title="6% Magic boost">Overcharge</option>
+          <option value="1.08" title="8% Magic boost">Augury</option>
+          <option value="1.10" title="10% Magic boost">Torment</option>
+          <option value="1.12" title="12% Magic boost">Affliction</option>
         </select>
       </label>
       <p style="margin-left: 15px; margin-top: 15px; text-align: center; font-weight: bold; color: var(--textColor2);">Ranged Boost</p>
@@ -232,12 +259,12 @@
         <select id="RangedPrayer" style="float: center; width: 100%;" >
           <option value="1" disabled selected hidden>Ranged Prayer</option>
           <option value="1">None</option>
-          <option value="1.02">Unstoppable Force</option>
-          <option value="1.04">Unrelenting Force</option>
-          <option value="1.06">Overpowering Force</option>
-          <option value="1.08">Rigour</option>
-          <option value="1.10">Anguish</option>
-          <option value="1.12">Desolation</option>
+          <option value="1.02" title="2% Ranged boost">Unstoppable Force</option>
+          <option value="1.04" title="4% Ranged boost">Unrelenting Force</option>
+          <option value="1.06" title="6% Ranged boost">Overpowering Force</option>
+          <option value="1.08" title="8% Ranged boost">Rigour</option>
+          <option value="1.10" title="10% Ranged boost">Anguish</option>
+          <option value="1.12" title="12% Ranged boost">Desolation</option>
         </select>
       </label>
     </div>
@@ -375,10 +402,10 @@
         <input id="StrengthCape" type="checkbox" value="true">
         <span class="tickbox"></span>
       </label>
-      <label class="SingleOpt" for="RoV" style="margin-left: 20px;" title="When an ultimate ability is used, adrenaline will be reduced by 90% instead of 100%">Ring of Vigour
-        <input id="RoV" type="checkbox" value="true">
-        <span class="tickbox"></span>
-      </label>
+<!--      <label class="SingleOpt" for="RoV" style="margin-left: 20px;" >Ring of Vigour-->
+<!--        <input id="RoV" type="checkbox" value="true">-->
+<!--        <span class="tickbox"></span>-->
+<!--      </label>-->
       <label class="SingleOpt" for="MSoA" style="margin-left: 20px;" title="Melee damage over time abilities (bleeds) have their duration extended by 50%, rounded down to the nearest whole number">MS of Annihilation
         <input id="MSoA" type="checkbox" value="true">
         <span class="tickbox"></span>
@@ -387,14 +414,25 @@
         <input id="Grimoire" type="checkbox" value="true">
         <span class="tickbox"></span>
       </label>
+      <label class="OptSelect" for="Ring" style="margin-left: 15px; margin-right: 15px;">
+        <select id="Ring" style="float: center; width: 100%;" >
+          <option value="None" disabled selected hidden>Ring</option>
+          <option value="None">None</option>
+          <option value="RoV" title="When an ultimate ability is used, adrenaline will be reduced by 90% instead of 100%">Ring of Vigour</option>
+          <option value="ReaversRing" title="Increases critical strike chance by 5%">Reaver's ring</option>
+          <option value="ChampionsRing" title="Increases critical strike chance against bleeding targets by 3%">Champion's ring</option>
+          <option value="ChannelersRing" title="Increases critical strike chance while using channelled abilities by 4% per hit of the channelled ability">Channeler's ring</option>
+          <option value="StalkersRing" title="Increases critical strike chance when using a bow by 3% (cannot be used in conjuction with the Switcher option)">Stalker's ring</option>
+        </select>
+      </label>
       <label class="OptSelect" for="Aura" style="margin-left: 15px; margin-right: 15px;">
         <select id="Aura" style="float: center; width: 100%;" >
           <option value="None" disabled selected hidden>Aura</option>
           <option value="None">None</option>
-          <option value="Equilibrium">Equilibrium</option>
-          <option value="Berserker">Berserker</option>
-          <option value="Maniacal">Maniacal</option>
-          <option value="Reckless">Reckless</option>
+          <option value="Equilibrium" title="Decreases maximum hit by 25%, but increases minimum hit by the same amount">Equilibrium</option>
+          <option value="Berserker" title="Boosts Attack and Strength by 10%">Berserker</option>
+          <option value="Maniacal" title="Boosts Magic by 10%">Maniacal</option>
+          <option value="Reckless" title="Boosts Range by 10%">Reckless</option>
         </select>
       </label>
       <p style="margin-left: 15px; margin-top: 15px; text-align: center; font-weight: bold; color: var(--textColor2);">Bash Ability</p>
@@ -471,8 +509,8 @@
           <input type="number" id="Adrenaline" name="fname" min="0" max="100" value="0" style="width: 50px; float: right;"><br>
         </label>
       </div>
-      <label class="SingleOpt" for="HTMLwrite" style="margin-left: 20px;" title="When ticked, up to the first 5 minutes of the simulation time can be verified upon clicking the resulting AADPT number (mostly used for debugging purposes).">Print more info
-        <input id="HTMLwrite" type="checkbox" value="true">
+      <label class="SingleOpt" for="Debug" style="margin-left: 20px;" title="When ticked, up to the first 5 minutes of the simulation time can be verified upon clicking the resulting AADPT number (mostly used for debugging purposes).">Print more info
+        <input id="Debug" type="checkbox" value="true">
         <span class="tickbox"></span>
       </label>
     </div>
@@ -480,45 +518,6 @@
     <div class="optsect" style="width: 50px;"></div>
   </form>
 </div>
-
-{#<div id="optInfoBlock" class="content OptionBlock" style="background-color: #DGDGDG;">
-  <div class="optsect" style="width: 50px;"></div>
-  <div id="AbilityInfo1" class="optsect" style="width: 500px;">
-    <p style="margin-left: 15px; margin-top: 15px; color: var(--textColor2);">
-      <strong>Level Boost:</strong> The amount of boosted levels (above your base level) due to
-      potions and/or aura's (min:0, max:60).<br><br>
-      <strong>Level 20 Gear:</strong> Assumes the equipment levels of all augmented items are equal to
-      level 20.<br><br>
-      <strong>Flanking Perk:</strong> Assumes the target is not facing you at all times.<br><br>
-      <strong>Ruthless Perk:</strong> Assumes the player starts attacking with a full stack (5)
-      and the stack is never reset.<br><br>
-      <strong>Efficient:</strong> Assumes the player breaks channeling abilities such that they still
-      do all their damage (except for Concentrated Blast which cuts off after 2 hits) but the next
-      ability is activated earlier.<br><br>
-      <strong>Switcher:</strong> Assumes the player switches between 2h/dual/shield whenever required
-      for the next available ability.<br><br>
-      <strong>Ability Damage:</strong> The ability damage as calculated in the
-      <a href="https://runescape.wiki/w/Ability_damage#Calculating_ability_damage" target="_blank" style="color: blue">"Calculating ability damage"</a>
-      section on the RS3 wiki (Min:1, Max:10000).<br><br>
-    </p>
-  </div>
-  <div id="AbilityInfo2" class="optsect" style="width: 500px;">
-    <p style="margin-left: 15px; margin-top: 15px; color: var(--textColor2);">
-      <strong>Stationary:</strong> Assumes the dummy is stuck in place, meaning bleed damage won't
-      be multiplied. When not ticked, bleed damage is multiplied for all hits (unless the dummy is
-      stunned and/or bound).<br><br>
-      <strong>Stun&Bind Immune:</strong> Assumes the dummy is immune to stuns and binds from abilities.<br><br>
-      <strong>Targets:</strong> Number of targets within reach for all AoE abilities.<br><br>
-      <strong>Simulation T(s) and Start Adrenaline</strong> When a value has been set for both the
-      Simulation Time (in seconds, min:1, max:3600) and the Starting Adrenaline (min:0, max:100), the Python
-      script won't detect cycles but instead runs for the given simulation time and determines the
-      Damage Per Tick (DPT) in that time.<br><br>
-      <strong>Print more info:</strong> When ticked, up to the first 5 minutes of the simulation time can
-      be verified upon clicking the resulting AADPT number (mostly used for debugging purposes).<br><br>
-    </p>
-  </div>
-  <div class="optsect" style="width: 50px;"></div>
-</div>#}
 
 <div id="attAbils" class="content AbilBlock" style="background-color: #FFD700;">
   <div class="attbox">
