@@ -116,7 +116,6 @@ def BleedDamAvgCalc(Object, player, logger):
 
     Max = Object.DoTMax.copy()
     Min = Object.DoTMin.copy()
-    Avg = []
 
     # If the player has a boost from berserker or w/e, the aura boost is replaced by the ability boost
     if player.Boost:
@@ -127,18 +126,10 @@ def BleedDamAvgCalc(Object, player, logger):
         Min *= player.BaseBoost * player.BaseDamage
 
     ################## Calculate averages ########################
-    if Object.Name in {'Blood Tendrils', 'Corruption Shot', 'Corruption Blast', 'Incendiary Shot'}:  # Simply max + min / 2
-        for i in range(0, Object.nD):
-            Avg.append(((Max[i] + Min[i]) / 2))
+    Avg = (Max + Min) / 2
 
-            if logger.DebugMode:
-                logger.write(17, [Object.Name, Avg[i]])
-
-    else:
-        Avg = (Max + Min) / 2
-
-        if logger.DebugMode:
-            logger.write(16, [Object.Name, len(Max), round(Avg[0], 2)])
+    if logger.DebugMode:
+        logger.write(17, [Object.Name, Avg])
 
     return Avg
 

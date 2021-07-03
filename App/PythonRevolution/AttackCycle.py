@@ -276,7 +276,6 @@ def AoECheck(dummy, player, FA):
     # Apply Hits of greater Ricochet for which no targets are available back to target 1
     # but halved. Do it here because dummy.nPH is needed and is only set just above.
     if FA.Name == 'Greater Ricochet' and dummy.nTarget < 3 + player.Cr:
-
         NewHit = deepcopy(dummy.PHits[dummy.nPH - 1])
         NewHit.DamMax /= 2
         NewHit.DamMin /= 2
@@ -285,7 +284,7 @@ def AoECheck(dummy, player, FA):
         NewHit.Target = 1
 
         for i in range(0, int(3 + player.Cr - dummy.nTarget)):
-            dummy.PHits[dummy.nPH] = NewHit  # Apply the hit on main target
+            dummy.PHits[dummy.nPH] = deepcopy(NewHit)  # Apply the hit on main target
             dummy.nPH += 1
 
 

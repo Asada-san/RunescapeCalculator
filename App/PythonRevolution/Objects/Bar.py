@@ -163,25 +163,3 @@ class AbilityBar():
 
                 # The ability will never occur in 2 groups (would not make sense)
                 break
-
-        # for i in range(0, len(self.SharedCDs)):
-        #     if FireAbility.Name in self.SharedCDs[i]:
-        #         # Get the index of the ability in that specific list
-        #         FireAbilityIDX = self.SharedCDs[i].index(FireAbility.Name)
-        #         # Assign the complete list to a new variable
-        #         shared_cooldown_list = self.SharedCDs[i].copy()
-        #         # Pop the fired ability of the list
-        #         shared_cooldown_list.pop(FireAbilityIDX)
-        #
-        #         for j in range(0, len(shared_cooldown_list)):  # For every remaining ability in the list
-        #             if shared_cooldown_list[j] in self.AbilNames:
-        #                 idx = self.AbilNames.index(shared_cooldown_list[j])
-        #                 self.Rotation[idx].cdStatus = True
-        #                 self.Rotation[idx].cdTime = self.Rotation[idx].cdMax
-        #                 player.Cooldown.append(self.Rotation[idx])
-        #
-        #                 if logger.DebugMode:
-        #                     logger.write(42, self.Rotation[idx].Name)
-        #
-        #         # The ability will never occur in 2 groups (would not make sense)
-        #         break
