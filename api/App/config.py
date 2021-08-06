@@ -16,10 +16,10 @@ class Config:
 
     # os.environ.get returns a string, so save the environment variables as plain text (not with '')
 
-    # SECRET_KEY = 'a618c71bc7605c466bf47d817f843531'
-    SECRET_KEY = os.environ.get('SECRET_KEY')
+    SECRET_KEY = 'a618c71bc7605c466bf47d817f843531'
+    # SECRET_KEY = os.environ.get('SECRET_KEY')
 
-    # SQLALCHEMY_DATABASE_URI = 'sqlite:///db.sqlite3'
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///db.sqlite3'
+    # SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
