@@ -1,1 +1,1 @@
-web: sh -c 'cd ./api/ && exec gunicorn -w 3 wsgi:app --preload'
+web: gunicorn -w 3 --pythonpath api wsgi:app --preload

@@ -6,7 +6,7 @@ import pandas as pd
 ##############################################################
 
 # Get table from excel file WITH ALL ABILITY INFORMATION
-tab_excel = pd.read_excel('AbilityInfo.xlsx')
+tab_excel = pd.read_excel('api/AbilityInfo.xlsx')
 rows, columns = tab_excel.shape  # Shape of excel table
 
 AbilityBook = {}
