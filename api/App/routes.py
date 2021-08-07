@@ -26,6 +26,7 @@ def get_tradeable_itemIDs():
     # For every category on the Grand Exchange catalogue page starting at 0
     for i in range(0, number_of_categories):
         end_loop = False
+        time.sleep(10)
 
         # For every page in a given category (make sure the pages don't go over 10) starting at 1
         for j in range(1, max_amount_of_pages + 1):
@@ -68,22 +69,25 @@ def get_tradeable_itemIDs():
                 else:
                     item_list.update({id: item})
 
-            time.sleep(1)
+            time.sleep(3)
 
             if end_loop:
                 break
 
     # Save the list
-    with open('itemIDs.json', 'w') as file:
+    with open('api/App/itemIDs.json', 'w') as file:
         json.dump(item_list, file)
 
     return None
 
 
+# get_tradeable_itemIDs()
+
+
 @api.route('/itemIDs', methods=['GET'])
 def itemIDs():
     path = "itemIDs.json"
-    return send_file(path, as_attachment=True)
+    return send_file(path, as_attachment=True, cache_timeout=0)
 
 
 @api.route('/return_counter', methods=['GET'])
@@ -100,12 +104,6 @@ def return_counter():
 def downloadJSON():
     path = "itemIDs.json"
     return send_from_directory('./', path, as_attachment=True)
-
-
-@api.route("/get_item_ids", methods=['GET', 'POST'])
-def get_item_ids():
-    # get_tradeable_itemIDs()
-    return redirect(url_for('RS.item_ids'))
 
 
 @api.route("/calc", methods=['POST'])

@@ -32,6 +32,7 @@ export default {
     }
 }
 
+document.title = 'Runescape';
 document.body.style.backgroundColor = '#1D1F21';
 </script>
 

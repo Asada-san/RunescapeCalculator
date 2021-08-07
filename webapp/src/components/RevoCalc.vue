@@ -71,11 +71,11 @@
           <b-collapse id="accordion-3" accordion="my-accordion" role="tabpanel">
             <b-card-body>
               <b-card-text>
-                <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V2.00.0 - some day</strong></p>
+                <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V2.00.0 - 7-8-2021</strong></p>
                 <ul style="margin-top: 10px; margin-right: 15px;">
                   <li>Restyled everything</li>
-                  <li>Improved code such that the check to determine the hits that do damage in the current tick is only performed once per tick</li>
-                  <li>Removed the useless "delay" column on the <a href="https://github.com/Asada-san/RunescapeCalculator/blob/master/AbilityInfo.xlsx" target="_blank" style="color: #4CAF50"><strong>spreadsheet</strong></a></li>
+                  <li>Improved code: check to determine hits that do damage in current tick is only performed once per tick</li>
+                  <li>Removed useless "delay" column on the ability <a href="https://github.com/Asada-san/RunescapeCalculator/blob/master/AbilityInfo.xlsx" target="_blank" style="color: #4CAF50"><strong>spreadsheet</strong></a></li>
                 </ul>
 
                 <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.06.1 - 3-7-2021</strong></p>
@@ -786,7 +786,7 @@ let LastIdx = null;
 let BarAbilities = [];
 let RevolutionBar = document.getElementsByClassName("RevoBar");
 let PreviousBarInfo;
-console.log(window.origin)
+
 let origin
 if (window.origin === 'http://localhost:8080') {
   origin = 'http://localhost:5000';

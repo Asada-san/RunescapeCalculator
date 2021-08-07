@@ -3,7 +3,7 @@
     <b-card no-body class="mb-1" id="card-header" bg-variant="dark" text-variant="white" style="text-align: left;">
       <h2 style="text-align: center; margin-bottom: 15px; margin-top: 15px;">Item IDs (tradeable)</h2>
       <p style="text-align: center;">
-          Last updated: 27-6-2021
+          Last updated: 7-8-2021
       </p>
     </b-card>
 
@@ -22,6 +22,13 @@
 <script>
 let getItemIDs = true;
 
+let origin
+if (window.origin === 'http://localhost:8080') {
+  origin = 'http://localhost:5000';
+} else {
+  origin = window.origin;
+}
+
 export default {
   data: function () {
     return {
@@ -29,15 +36,15 @@ export default {
         alignItems: 'center',
         textAlign: 'center'
       },
-      url: 'http://localhost:5000/api/downloadJSON'
+      url: `${origin}/api/downloadJSON`
     }
   },
   methods: {
     showIDs: async function () {
       if (getItemIDs) {
-        await fetch("http://localhost:5000/api/itemIDs", {
+        await fetch(`${origin}/api/itemIDs`, {
           method: "GET",
-          cache: "no-cache",
+          'cache-control': "no-cache",
           headers: new Headers({
             "content-type": "application/json"
           })
