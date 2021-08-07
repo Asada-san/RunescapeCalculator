@@ -7,6 +7,8 @@ app = create_app()
 
 
 @app.route('/')
+@app.route('/bar')
+@app.route('/item_ids')
 def index():
     print()
     return app.send_static_file('index.html')
