@@ -15,7 +15,7 @@ def create_app(**kwargs):
     :return: app
     """
 
-    app = Flask(__name__, static_folder='./dist/', static_url_path='/')
+    app = Flask(__name__, static_folder='../../webapp/dist/', static_url_path='/')
 
     app.config.from_object(Config)
     db.init_app(app)
