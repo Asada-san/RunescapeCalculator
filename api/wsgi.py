@@ -41,14 +41,14 @@ def index():
 # app.cli.add_command(drop_db)
 # app.cli.add_command(create_count)
 
-ctx = app.app_context()
-ctx.push()  # start working on database after that command
-# Database manipulations here
-db.create_all()
-# RevoCounter = Counter(name="RevolutionCounter", count=0)
-# db.session.add(RevoCounter)
-# db.session.commit()
-ctx.pop()  # exit from the app
+# ctx = app.app_context()
+# ctx.push()  # start working on database after that command
+# # Database manipulations here
+# db.create_all()
+# # RevoCounter = Counter(name="RevolutionCounter", count=0)
+# # db.session.add(RevoCounter)
+# # db.session.commit()
+# ctx.pop()  # exit from the app
 
 if __name__ == '__main__':
     app.run(debug=True)
