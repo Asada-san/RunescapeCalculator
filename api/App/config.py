@@ -20,6 +20,10 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY')
 
     # SQLALCHEMY_DATABASE_URI = 'sqlite:///db.sqlite3'
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+
+    uri = os.environ.get("DATABASE_URL")  # or other relevant config var if uri.startswith("postgres://"):
+    SQLALCHEMY_DATABASE_URI = uri.replace("postgres://", "postgresql://", 1)
+
+    # SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
