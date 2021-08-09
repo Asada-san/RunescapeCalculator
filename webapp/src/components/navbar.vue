@@ -45,16 +45,26 @@
 import RevoCalc from './RevoCalc.vue'
 import ItemIDs from './itemids.vue'
 
+let lastComponent;
+
+if (localStorage.component !== undefined) {
+  lastComponent = localStorage.component;
+} else {
+  lastComponent = RevoCalc;
+}
+// lastComponent = localStorage.component;
+
 export default {
   name: "navbar",
   data: function(){
     return {
-      currentComponent: RevoCalc
+      currentComponent: lastComponent
     }
   },
   methods: {
     changeComponent: function (component) {
       this.currentComponent = component;
+      localStorage.component = component;
     },
     searchDDG: function () {
       let searchEngineString = 'https://duckduckgo.com/?q=' + document.getElementById('search-input').value.replace(/ /g, '+')

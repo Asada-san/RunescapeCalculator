@@ -18,18 +18,22 @@ def useAbility(bar, player, dummy, logger, settings):
 
     FireAbility = None
 
+    mustStall = player.nStall % 3 != 0
+
     # CHECK IF THE PLAYER IS ALLOWED TO ATTACK
     if not bar.GCDStatus and not player.ChanAbil:
 
-        # if logger.FindCycle and not logger.CycleFound and 1 == 2:  # Used for debugging
-        if settings.FindCycle and not logger.CycleFound:
-            Cycle.CycleCheck(bar, player, dummy, logger)
+        if not mustStall:
+            # Check for available ability
+            bar.FireNextAbility(player, logger)
 
-        # Check for available ability
-        bar.FireNextAbility(player, logger)
+            # if logger.FindCycle and not logger.CycleFound and 1 == 2:  # Used for debugging
+            if settings.FindCycle and not logger.CycleFound and not mustStall:
+                Cycle.CycleCheck(bar, player, dummy, logger)
 
         # Do stuff based on whether an ability was available or not
         if bar.FireStatus:
+            player.nStall = 0
 
             FireAbility = bar.Rotation[bar.FireN]
 
@@ -56,24 +60,26 @@ def useAbility(bar, player, dummy, logger, settings):
             determineHits(FireAbility, player, dummy, logger)
 
         else:
-            if logger.CycleFound:
-                if len(logger.Rotation) != 0 and 'STALL' in logger.Rotation[-1]:
-                    logger.nStall += 1
-                    logger.Rotation[-1] = f'<span style="color: {logger.TextColor["cycle"]}">STALL {logger.nStall}x</span>'
-                else:
-                    logger.nStall = 1
-                    logger.Rotation.extend([f'<span style="color: {logger.TextColor["cycle"]}">STALL {logger.nStall}x</span>'])
+            player.nStall += 1
 
             if logger.DebugMode:
-                logger.write(38)
+                if mustStall:
+                    logger.write(50)
+                else:
+                    logger.write(38)
 
-    elif player.ChanAbil:
-        if logger.DebugMode:
-            logger.write(39)
+            if mustStall:
+                bar.FireStatus = False
 
-    elif bar.GCDStatus:
+            if logger.CycleFound:
+                logger.check_stall()
+
+    else:
         if logger.DebugMode:
-            logger.write(40)
+            if player.ChanAbil:
+                logger.write(39)
+            elif bar.GCDStatus:
+                logger.write(40)
 
     return FireAbility
 
@@ -415,7 +421,7 @@ def doDamage(CurrentHits, bar, dummy, player, logger, settings):
                 logger.write(29, [PHit.Name, PHit.Type, int(PHit.Target), round(PHit.Damage, 3)])
 
         # Critical hit chance checks
-        if PHit.Name in {'Concentrated Blast', 'Fury'}:
+        if PHit.Name in {'Concentrated Blast', 'Greater Concentrated Blast', 'Fury'}:
             if player.CritStack == 3:  # If the stack reached 3, reset
                 player.CritStack = 0
             player.CritStack += 1  # Increase stack

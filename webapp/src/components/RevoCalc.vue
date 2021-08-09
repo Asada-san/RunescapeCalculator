@@ -74,8 +74,10 @@
                 <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V2.00.0 - 7-8-2021</strong></p>
                 <ul style="margin-top: 10px; margin-right: 15px;">
                   <li>Restyled everything</li>
+                  <li>Added Greater Concentrated Blast</li>
                   <li>Improved code: check to determine hits that do damage in current tick is only performed once per tick</li>
-                  <li>Removed useless "delay" column on the ability <a href="https://github.com/Asada-san/RunescapeCalculator/blob/master/AbilityInfo.xlsx" target="_blank" style="color: #4CAF50"><strong>spreadsheet</strong></a></li>
+                  <li><a href="https://github.com/Asada-san/RunescapeCalculator/blob/master/AbilityInfo.xlsx" target="_blank" style="color: #4CAF50"><strong>spreadsheet</strong></a>:
+                    Removed useless "delay" column and set values in BleedToMove column to 0 for channeled abilities</li>
                 </ul>
 
                 <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.06.1 - 3-7-2021</strong></p>
@@ -403,6 +405,9 @@
           <img :src="require('@/assets/AbilityImages/Concentrated_Blast.png')" class="Ability" draggable="true" @dragstart="drag($event)" id="Concentrated_Blast" alt="Concentrated_Blast" width="60" height="60" @click="abilClick($event)" title="Concentrated Blast">
         </div>
         <div class="mag">
+          <img :src="require('@/assets/AbilityImages/Greater_Concentrated_Blast.png')" class="Ability" draggable="true" @dragstart="drag($event)" id="Greater_Concentrated_Blast" alt="Greater_Concentrated_Blast" width="60" height="60" @click="abilClick($event)" title="Greater Concentrated Blast">
+        </div>
+        <div class="mag">
           <img :src="require('@/assets/AbilityImages/Combust.png')" class="Ability" draggable="true" @dragstart="drag($event)" id="Combust" alt="Combust" width="60" height="60" @click="abilClick($event)" title="Combust">
         </div>
         <div class="mag">
@@ -678,6 +683,7 @@
           <b-form-checkbox class="switch mt-1" id="StrengthCape" v-model="StrengthCape" switch v-b-tooltip.hover.right="'The Strength cape\'s perk causes Dismember\'s damage over time to last an extra 3.6 seconds (an extra 3 hits for a total of 8)'">Strength Cape</b-form-checkbox>
           <b-form-checkbox class="switch mt-1" id="MSoA" v-model="MSoA" switch v-b-tooltip.hover.right="'Melee damage over time abilities (bleeds) have their duration extended by 50%, rounded down to the nearest whole number'">Masterwork Spear of Annihilation</b-form-checkbox>
           <b-form-checkbox class="switch mt-1" id="Grimoire" v-model="Grimoire" switch v-b-tooltip.hover.right="'Every non-bleed hit has a 12% chance to be forced to become a critical hit and the player\'s damage cap for critical hits is increased to 15,000, up from 12,000'">Erethdor's Grimoire</b-form-checkbox>
+<!--          <b-form-checkbox class="switch mt-1" id="KerapacWristWraps" v-model="KerapacWristWraps" switch v-b-tooltip.hover.right="'For six seconds after using the Dragon Breath ability, the Combust ability will deal 25% more damage - and deal it instantly'">Kerapac's wrist wraps</b-form-checkbox>-->
 
           <b-form-select class="mt-1" id="Ring" v-model="Ring" size="sm">
             <b-form-select-option v-for="ring in optRing" :key="ring.value" :id="ring.value" :value="ring.value" v-b-tooltip.hover.right :title="ring.title">{{ ring.text }}</b-form-select-option>
@@ -963,6 +969,7 @@ export default {
       StrengthCape: { value: 'StrengthCape', text: 'Strength Cape' },
       MSoA: { value: 'MSoA', text: 'Masterwork Spear of Annihilation' },
       Grimoire: { value: 'Grimoire', text: 'Erethdor\'s Grimoire' },
+      // KerapacWristWraps: { value: 'KerapacWristWraps', text: 'Kerapac\'s wrist wraps' },
       Ring: null,
       optRing: [
         { value: null, text: 'Ring', disabled: true, selected: true, hidden: true},

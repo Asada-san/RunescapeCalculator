@@ -62,13 +62,13 @@ class AbilityBar():
             ['Lesser Combust', 'Combust'],
             ['Lesser Dragon Breath', 'Dragon Breath'],
             ['Lesser Sonic Wave', 'Sonic Wave'],
-            ['Lesser Concentrated Blast', 'Concentrated Blast'],
+            ['Lesser Concentrated Blast', 'Concentrated Blast', 'Greater Concentrated Blast'],
             ['Lesser Snipe', 'Snipe'],
             ['Lesser Fragmentation Shot', 'Fragmentation Shot'],
             ['Lesser Needle Strike', 'Needle Strike'],
             ['Lesser Dazing Shot', 'Dazing Shot', 'Greater Dazing Shot'],
             ['Ricochet', 'Greater Ricochet'],
-            ['Chain', 'Greater Chain']
+            ['Chain', 'Greater Chain'],
         ]
 
     def TimerCheck(self, logger):

@@ -218,6 +218,8 @@ def PostAttackStatuses(bar, player, dummy, FireAbility, logger):
     # Status checks
     if FireAbility.Name in {'Meteor Strike', 'Tsunami', 'Incendiary Shot'}:
         player.CritAdrenalineBuffTime = 50
+    # elif player.KerapacWristWraps and FireAbility.Name == 'Dragon Breath':
+    #     player.DragonBreathCombustTime = 10
 
     if FireAbility.Boost:
         player.Boost = True

@@ -7,6 +7,7 @@ class Player:
     """
 
     def __init__(self, userInput):
+        self.nStall = 0
         self.Cooldown = []                          # List of abilities which are currently on cooldown
         self.ChanAbil = False                       # When True, the player used a channeled ability
         self.ChanTime = 0                           # Duration of the channeled ability
@@ -21,17 +22,20 @@ class Player:
         self.Boost1 = False                         # True if the player does more damage on the next ability only
         self.Boost1X = 1                            # Damage output multiplier for the next ability only
         self.AbilCritBuff = 0                       # Critical hit buff for next ability
-        self.CritStack = 0                          # Critical hit stack used for Fury and Concentrated Blast
+        self.CritStack = 0                          # Critical hit stack used for Fury and (Greater) Concentrated Blast
         self.ChannelCritStack = 0                   # Critical hit stack used for magic channeling abilities whilst wearing the Channeler's Ring
         self.GreaterFuryCritCheck = False           # True if Greater Fury was used in an attack cycle
         self.CritAdrenalineBuff = False             # True if Meteor Strike, Tsunami or Incendiary Shot were used in an attack cycle
         self.CritAdrenalineBuffTime = 0             # Timer for adrenaline buff due to the above ^
         self.BasicAdrenalineGain = 0                # Adrenaline boost for basic abilities due to the above ^
         self.DragonBreathGain = False               # True if Dragon Breath is on the bar and there are more than 2 dummies
+        # self.DragonBreathCombustTime = 0            # Timer for Combust boost due to the Dragon Breath ability
 
-        self.Switcher = userInput['switchStatus']       # True if the user want to use both 2h and dual weapons
-        self.Afk = not userInput['afkStatus']           # True if the player intends to afk
-        self.StrengthCape = userInput['StrengthCape']   # True if the user selected the Strength Cape
+        self.Switcher = userInput['switchStatus']                   # True if the user want to use both 2h and dual weapons
+        self.Afk = not userInput['afkStatus']                       # True if the player intends to afk
+        self.StrengthCape = userInput['StrengthCape']               # True if the user selected the Strength Cape
+        # self.KerapacWristWraps = userInput['KerapacWristWraps']     # True if the user selected Kerapac's Wrist Wraps
+
         self.MSoA = userInput['MSoA']                   # True if the user selected the Masterwork Spear of Annihilation
         self.Ring = userInput['Ring']                   # Ring selected by the user
 
@@ -207,6 +211,14 @@ class Player:
 
                 if logger.DebugMode:
                     logger.write(26)
+
+        # # If the player has a Greater Chain effect going on
+        # if self.DragonBreathCombustTime:
+        #     self.DragonBreathCombustTime -= 1
+        #
+        #     if self.DragonBreathCombustTime == 0:
+        #         if logger.DebugMode:
+        #             logger.write(49)
 
     def resetGreaterChain(self):
         self.GreaterChainDuration = 0

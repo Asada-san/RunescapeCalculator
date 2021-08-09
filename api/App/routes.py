@@ -28,7 +28,7 @@ def get_tradeable_itemIDs():
         end_loop = False
         time.sleep(10)
 
-        # For every page in a given category (make sure the pages don't go over 10) starting at 1
+        # For every page in a given category (make sure the pages don't go over 20 offline) starting at 1
         for j in range(1, max_amount_of_pages + 1):
             # The url of category i and page j
             url = f"http://services.runescape.com/m=itemdb_rs/catalogue?cat={i}&page={j}"
@@ -69,10 +69,10 @@ def get_tradeable_itemIDs():
                 else:
                     item_list.update({id: item})
 
-            time.sleep(3)
-
             if end_loop:
                 break
+            else:
+                time.sleep(3)
 
     # Save the list
     with open('api/App/itemIDs.json', 'w') as file:

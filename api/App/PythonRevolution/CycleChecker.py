@@ -12,7 +12,7 @@ def CycleCheck(bar, player, dummy, logger):
     :param logger: The Logger object.
     """
 
-    cdTimes = [ability.cdTime for ability in player.Cooldown]
+    cdTimes = [ability.cdTime for ability in bar.Rotation]
 
     # Tuple consisting of list of cd times, loop time, adrenaline and puncture stack
     condition = (cdTimes,

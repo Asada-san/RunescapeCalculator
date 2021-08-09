@@ -1,5 +1,7 @@
 from App import create_app, db
+from flask import send_file
 import click
+import os
 from flask.cli import with_appcontext
 # from App.models import Counter
 
@@ -7,10 +9,12 @@ app = create_app()
 
 
 @app.route('/')
-@app.route('/bar')
-@app.route('/item_ids')
 def index():
-    print()
+    return app.send_static_file('index.html')
+
+
+@app.errorhandler(404)
+def page_not_found(e):
     return app.send_static_file('index.html')
 
 
@@ -51,4 +55,4 @@ def index():
 # ctx.pop()  # exit from the app
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()

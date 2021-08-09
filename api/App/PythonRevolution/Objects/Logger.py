@@ -70,12 +70,13 @@ class Logger:
             8: 'greater chain effect'
         }
 
-    # @staticmethod
-    # def getInstance(opt=None):
-    #     """ Static access method. """
-    #     if HTML.__instance is None:
-    #         HTML(opt)
-    #     return HTML.__instance
+    def check_stall(self):
+        if len(self.Rotation) != 0 and 'STALL' in self.Rotation[-1]:
+            self.nStall += 1
+            self.Rotation[-1] = f'<span style="color: {self.TextColor["cycle"]}">STALL {self.nStall}x</span>'
+        else:
+            self.nStall = 1
+            self.Rotation.extend([f'<span style="color: {self.TextColor["cycle"]}">STALL {self.nStall}x</span>'])
 
     def write(self, x, var=None):
 
@@ -210,7 +211,7 @@ class Logger:
             string = f'<li style="color: {self.TextColor["initialisation"]};">Not enough Adrenaline for {var}</li>'
 
         elif x == 38:
-            string = f'<li style="color: {self.TextColor["important"]};">No ability available, skip attack</li>'
+            string = f'<li style="color: {self.TextColor["important"]};">Skip attack: No ability available</li>'
 
         elif x == 39:
             string = f'<li style="color: {self.TextColor["important"]};">Player is using a channeled ability</li>'
@@ -250,12 +251,12 @@ class Logger:
         elif x == 48:
             string = f'<li style="color: {self.TextColor["cycle"]};">VERIFICATION LOOP COMPLETED: RETURN RESULTS</li>'
 
-        # elif x == 49:
-        #     string =
-        #
-        # elif x == 50:
-        #     string =
-        #
+        elif x == 49:
+            string = f'<li style="color: {self.TextColor["normal"]};">Player Dragon Breath (Kerapac\'s Wrist Wraps) effect has worn off</li>'
+
+        elif x == 50:
+            string = f'<li style="color: {self.TextColor["important"]};">Skip attack: Extra stall due to jagex clunkyness</li>'
+
         # elif x == 51:
         #     string =
         #
