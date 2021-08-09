@@ -71,9 +71,10 @@
           <b-collapse id="accordion-3" accordion="my-accordion" role="tabpanel">
             <b-card-body>
               <b-card-text>
-                <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V2.00.0 - 7-8-2021</strong></p>
+                <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V2.00.0 - 9-8-2021</strong></p>
                 <ul style="margin-top: 10px; margin-right: 15px;">
                   <li>Restyled everything</li>
+                  <li>If a stall happens because all abilities were on cooldown, you will now be stalled for 3 consecutive ticks before attempting to fire an ability again</li>
                   <li>Added Greater Concentrated Blast</li>
                   <li>Improved code: check to determine hits that do damage in current tick is only performed once per tick</li>
                   <li><a href="https://github.com/Asada-san/RunescapeCalculator/blob/master/AbilityInfo.xlsx" target="_blank" style="color: #4CAF50"><strong>spreadsheet</strong></a>:
