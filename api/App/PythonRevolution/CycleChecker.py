@@ -107,3 +107,4 @@ def CycleRotation(bar, player, dummy, logger, settings):
 #                     loop.CycleConvergenceTime = loop.CycleStart - loop.CycleTime    # Convergence time
 #
 #                     # HTML.write(35, round(loop.CycleTime * .6, 1))
+
