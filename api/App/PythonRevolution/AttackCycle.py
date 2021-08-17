@@ -278,13 +278,26 @@ def AoECheck(dummy, player, FA):
     # but halved. Do it here because dummy.nPH is needed and is only set just above.
     if FA.Name == 'Greater Ricochet' and dummy.nTarget < 3 + player.Cr:
         NewHit = deepcopy(dummy.PHits[dummy.nPH - 1])
-        NewHit.DamMax /= 2
-        NewHit.DamMin /= 2
-        NewHit.Damage /= 2
         NewHit.Time += 1  # Hit on target delayed with 1 tick
         NewHit.Target = 1
 
+        HitNumber = dummy.nTarget + 1
+        MaxValue = NewHit.DamMax
+        MinValue = NewHit.DamMin
+        AvgValue = NewHit.Damage
+
         for i in range(0, int(3 + player.Cr - dummy.nTarget)):
+            if HitNumber <= 3:
+                NewHit.DamMax = MaxValue * 0.5
+                NewHit.DamMin = MinValue * 0.5
+                NewHit.Damage = AvgValue * 0.5
+            else:
+                NewHit.DamMax = MaxValue * 0.15
+                NewHit.DamMin = MinValue * 0.25
+                NewHit.Damage = AvgValue / 6
+
+            HitNumber += 1
+
             dummy.PHits[dummy.nPH] = deepcopy(NewHit)  # Apply the hit on main target
             dummy.nPH += 1
 
