@@ -2,7 +2,7 @@
   <div :style="centerStyle">
     <div class="accordion" role="tablist">
       <b-card no-body class="mb-1" id="card-header" bg-variant="dark" text-variant="white" style="text-align: left;">
-        <h2 style="text-align: center; margin-bottom: 15px; margin-top: 15px;">Revolution Bar <span style="font-size:small;">V2.00.0</span></h2>
+        <h2 style="text-align: center; margin-bottom: 15px; margin-top: 15px;">Revolution Bar <span style="font-size:small;">V2.00.1</span></h2>
 <!--        <p style="text-align: center; margin-left: 15px; margin-right: 15px; color: pink;">If something doesn't work please contact me on Discord:-->
 <!--            <strong style="color: #4CAF50">Micky#5858</strong>, Reddit:-->
 <!--            <a style="color: #4CAF50" href="https://www.reddit.com/user/ftwmickywtf"><strong>u/FTWmickyWTF</strong></a>-->
