@@ -33,8 +33,13 @@ class Player:
 
         self.Switcher = userInput['switchStatus']                   # True if the user want to use both 2h and dual weapons
         self.Afk = not userInput['afkStatus']                       # True if the player intends to afk
-        self.StrengthCape = userInput['StrengthCape']               # True if the user selected the Strength Cape
+
         # self.KerapacWristWraps = userInput['KerapacWristWraps']     # True if the user selected Kerapac's Wrist Wraps
+
+        self.Cape = userInput['Cape']                   # Cape selected by the user
+
+        if self.Cape == 0:
+            self.Cape = ''
 
         self.MSoA = userInput['MSoA']                   # True if the user selected the Masterwork Spear of Annihilation
         self.Ring = userInput['Ring']                   # Ring selected by the user

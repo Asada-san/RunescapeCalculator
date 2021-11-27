@@ -729,7 +729,6 @@
 
         <div id="PlayerOptions" class="optsect">
           <p style="margin-left: 15px; margin-top: 15px; text-align: center; font-weight: bold;">Equipment</p>
-          <b-form-checkbox class="switch mt-1" id="StrengthCape" v-model="StrengthCape" switch v-b-tooltip.hover.right="'The Strength cape\'s perk causes Dismember\'s damage over time to last an extra 3.6 seconds (an extra 3 hits for a total of 8)'">Strength Cape</b-form-checkbox>
           <b-form-checkbox class="switch mt-1" id="MSoA" v-model="MSoA" switch v-b-tooltip.hover.right="'Melee damage over time abilities (bleeds) have their duration extended by 50%, rounded down to the nearest whole number'">Masterwork Spear of Annihilation</b-form-checkbox>
           <b-form-checkbox class="switch mt-1" id="Grimoire" v-model="Grimoire" switch v-b-tooltip.hover.right="'Every non-bleed hit has a 12% chance to be forced to become a critical hit and the player\'s damage cap for critical hits is increased to 15,000, up from 12,000'">Erethdor's Grimoire</b-form-checkbox>
 <!--          <b-form-checkbox class="switch mt-1" id="KerapacWristWraps" v-model="KerapacWristWraps" switch v-b-tooltip.hover.right="'For six seconds after using the Dragon Breath ability, the Combust ability will deal 25% more damage - and deal it instantly'">Kerapac's wrist wraps</b-form-checkbox>-->
@@ -741,6 +740,10 @@
 
           <b-form-select class="mt-1" id="Aura" v-model="Aura" size="sm">
             <b-form-select-option v-for="aura in optAura" :key="aura.value" :id="aura.value" :value="aura.value" v-b-tooltip.hover.right :title="aura.title">{{ aura.text }}</b-form-select-option>
+          </b-form-select>
+
+          <b-form-select class="mt-1" id="Cape" v-model="Cape" size="sm">
+            <b-form-select-option v-for="cape in optCape" :key="cape.value" :id="cape.value" :value="cape.value" v-b-tooltip.hover.right :title="cape.title">{{ cape.text }}</b-form-select-option>
           </b-form-select>
 
           <p style="margin-left: 15px; margin-top: 15px; text-align: center; font-weight: bold;">Bash Ability</p>
@@ -815,7 +818,7 @@
     </div>
 
     <div>
-      <b-card hidden @click="showExtra" id="result-card-warning" bg-variant="warning" text-variant="white" header="Warning" class="text-center output-card" v-b-tooltip.hover.right="'Click here for more in depth information!'">
+      <b-card hidden @click="showExtra" id="result-card-warning" bg-variant="warning" text-variant="black" header="Warning" class="text-center output-card" v-b-tooltip.hover.right="'Click here for more in depth information!'">
         <b-card-text id="result-text-warning"></b-card-text>
       </b-card>
 
@@ -1038,6 +1041,15 @@ export default {
         { value: 'Berserker', text: 'Berserker', title: 'Boosts Attack and Strength by 10%' },
         { value: 'Maniacal', text: 'Maniacal', title: 'Boosts Magic by 10%' },
         { value: 'Reckless', text: 'Reckless', title: 'Boosts Range by 10%' }
+      ],
+      Cape: null,
+      optCape: [
+        { value: null, text: 'Cape', disabled: true, selected: true, hidden: true},
+        { value: null, text: 'none'},
+        { value: 'StrengthCape', text: 'Strength Cape', title: 'The Strength cape\'s perk causes Dismember\'s damage over time to last an extra 3.6 seconds (an extra 3 hits for a total of 8)' },
+        { value: 'IgneousKal-Ket', text: 'Igneous Kal-Ket', title: 'Reduces the adrenaline cost of Overpower to 60% and the ability hits the target twice' },
+        { value: 'IgneousKal-Mej', text: 'Igneous Kal-Mej', title: 'Reduces the adrenaline cost of Omnipower to 60% and the ability hits the target four times, each hit dealing 90-180% ability damage' },
+        { value: 'IgneousKal-Xil', text: 'Igneous Kal-Xil', title: 'Reduces the adrenaline cost of Deadshot to 60% and causes it to deal 42-210% of initial damage plus 70% ability damage every 1.2 seconds over the next 8.4 seconds' }
       ],
       afkStatus: { value: 'afkStatus', text: 'Efficient' },
       switchStatus: { value: 'switchStatus', text: 'Switcher' },

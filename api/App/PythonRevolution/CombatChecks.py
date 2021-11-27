@@ -189,6 +189,10 @@ def AbilityBar_verifier(userInput, AbilityBook, bar, dummy, player, logger):
     for ability in bar.Rotation:
         ability.AbilityUpgrades(player, logger)
 
+        # Set final hits due to AoE shenanigans
+        if any([ability.Name == 'Greater Ricochet', all([dummy.nTarget > 1 and ability.AoE])]):
+            ability.AoECheck(dummy, player)
+
     return error, error_mes, warning
 
 

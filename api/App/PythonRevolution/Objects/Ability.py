@@ -1,5 +1,6 @@
 from App.PythonRevolution import AverageDamageCalculator as AVGCalc
 import numpy as np
+from copy import deepcopy
 
 
 class Ability:
@@ -76,6 +77,10 @@ class Ability:
         self.Special = abil_stats[39]               # True if the ability is a special cunt
         self.AoE = abil_stats[40]                   # True if the ability does AoE damage
 
+        self.FinalHit = []
+        self.FinalTotal = 0
+        self.GreaterChainTargets = []
+
     def AbilityUpgrades(self, player, logger):
         """
         Further initialises the Ability objects and applies upgrades depending on the
@@ -90,6 +95,14 @@ class Ability:
         if self.Name in {'Shadow Tendrils'}:
             self.DamMax[0] = 0.1 * self.DamMax[0] * 2 + .18 * self.DamMax[0] * 3 + .216 * self.DamMax[0] * 4 + .504 * self.DamMax[0] * 5
             self.DamMin[0] = 0.1 * self.DamMin[0] * 2 + .18 * self.DamMin[0] * 3 + .216 * self.DamMin[0] * 4 + .504 * self.DamMin[0] * 5
+
+        # Remove last hit from concentrated blast if the user is not afk
+        if not player.Afk and self.Name in {'Lesser Concentrated Blast', 'Concentrated Blast'}:
+            self.nT = 2
+            self.nS = 2
+
+            self.DamMax = self.DamMax[:2]
+            self.DamMin = self.DamMin[:2]
 
         # Stun ability changes due to perks
         if player.PerkFlanking:
@@ -121,7 +134,7 @@ class Ability:
 
             self.DoTMax += 0.2 * player.Lr / self.nD  # Increase max hit by 0.2 for every rank
 
-        if player.StrengthCape and self.Name == 'Dismember':
+        if player.Cape == 'StrengthCape' and self.Name == 'Dismember':
             nExtend += 3  # Add 3 hits to the Dismember ability
 
             self.DoTMax = np.append(self.DoTMax, self.DoTMax[-4: -1])
@@ -129,6 +142,40 @@ class Ability:
 
             if logger.DebugMode:
                 logger.write(14, self.Name)
+
+        if player.Cape == 'IgneousKal-Ket' and self.Name == 'Overpower':
+            self.DamMax = np.append(self.DamMax, self.DamMax)
+            self.DamMin = np.append(self.DamMin, self.DamMin)
+            self.Timings = np.append(self.Timings, self.Timings)
+            self.nS += 1
+            self.nT += 1
+
+            if logger.DebugMode:
+                logger.write(51, self.Name)
+
+        if player.Cape == 'IgneousKal-Xil' and self.Name == 'Deadshot':
+            self.DamMax[0] = 2.1
+            self.DamMin[0] = 0.42
+
+            self.DoTMax = np.full(7, 0.7)
+            self.DoTMin = np.full(7, 0.7)
+
+            nExtend += 2
+
+            if logger.DebugMode:
+                logger.write(52, self.Name)
+
+        if player.Cape == 'IgneousKal-Mej' and self.Name == 'Omnipower':
+            self.DamMax = np.full(4, 1.8)
+            self.DamMin = np.full(4, 0.9)
+
+            self.Timings = np.append(self.Timings, [self.Timings + 1] * 3)
+            
+            self.nS = 4
+            self.nT = 4
+
+            if logger.DebugMode:
+                logger.write(53, self.Name)
 
         if player.MSoA and self.Name in {'Dismember', 'Blood Tendrils', 'Slaughter'}:
             nExtend += 2  # Add 2 hits to the Dismember, Blood Tendrils and Slaughter abilities
@@ -143,9 +190,9 @@ class Ability:
             self.nD += nExtend
             self.nT += nExtend
 
-        # Extend the Timings array if nExtend > 0
-        for i in range(0, nExtend):
-            self.Timings = np.append(self.Timings, [self.Timings[-1] + 2])
+            # Extend the Timings array
+            for i in range(0, nExtend):
+                self.Timings = np.append(self.Timings, [self.Timings[-1] + 2])
 
         # Other ability changes
         if player.PerkReflexes and self.Name == 'Anticipation':
@@ -189,6 +236,92 @@ class Ability:
                 Type = 4
 
             self.DoTHits.extend([self.Hit(self, AvgDam, Type, i, self.nS + i) for i in range(0, self.nD)])
+
+        self.FinalHit = np.append(deepcopy(self.Hits), deepcopy(self.DoTHits))
+        self.FinalTotal = len(self.FinalHit)
+
+    def AoECheck(self, dummy, player):
+        """
+        Duplicates hits if the ability does AoE damage and there are more than 1 target.
+
+        :param player: The Player object.
+        :param dummy: The Dummy object.
+        """
+
+        if dummy.nTarget > 9 and self.Name not in {'Corruption Blast', 'Corruption Shot'}:
+            nDT = 9
+        else:
+            nDT = dummy.nTarget
+
+        if self.Name == 'Quake':  # DamMax = 1.88, DamMin = 0.376, DamAvg = 1.128 for side targets
+            for i in range(0, nDT - 1):
+                self.FinalHit = np.append(self.FinalHit, deepcopy(self.HitsSideTarget))
+                self.FinalHit[-1].Target = i + 2
+
+        elif self.Name == 'Greater Flurry':  # DamMax = 0.94, DamMin = 0.2, DamAvg = 0.57 for ALL! targets
+            for i in range(0, nDT - 1):
+                self.FinalHit = np.append(self.FinalHit, deepcopy(self.HitsSideTarget))
+
+                for j in range(0, self.nT - 1):
+                    self.FinalHit[self.nT*(i + 1) + j].Target = i + 2
+
+        elif self.Name == 'Hurricane':  # First hit on main target equals the hit for all other targets
+            for i in range(0, nDT - 1):
+                self.FinalHit = np.append(self.FinalHit, deepcopy(self.Hits[0]))
+                self.FinalHit[-1].Target = i + 2
+
+        elif self.Name in {'Corruption Blast', 'Corruption Shot'}:  # First hit main target only, than spreading to all other targets
+            for i in range(0, nDT - 1):
+                self.FinalHit = np.append(self.FinalHit, deepcopy(self.DoTHits[1:]))
+
+                for j in range(0, 4):
+                    self.FinalHit[self.nD + (self.nD - 1) * i + j].Target = i + 2
+
+        elif self.Name in {'Chain', 'Greater Chain', 'Ricochet', 'Greater Ricochet'}:  # Ricochet and Chain only hit up to 3 targets (except when perk)
+            N = self.nT
+
+            if nDT > 3 + player.Cr:  # If number of damageable targets is larger than 3, set nDT to 3.
+                nDT = int(3 + player.Cr)
+
+            for i in range(0, nDT - 1):
+                self.FinalHit = np.append(self.FinalHit, deepcopy(self.Hits))
+
+                for j in range(0, N):
+                    self.FinalHit[self.nT*(i + 1) + j].Target = i + 2
+                    self.FinalHit[self.nT*(i + 1) + j].Time += 1
+
+            if self.Name == 'Greater Chain':
+                self.GreaterChainTargets = list(range(2, nDT + 1))
+
+            # Apply Hits of greater Ricochet for which no targets are available back to target 1
+            # but halved. Do it here because dummy.nPH is needed and is only set just above.
+            if self.Name == 'Greater Ricochet' and dummy.nTarget < 3 + player.Cr:
+                HitNumber = dummy.nTarget + 1
+
+                for i in range(0, int(3 + player.Cr - dummy.nTarget)):
+                    self.FinalHit = np.append(self.FinalHit, deepcopy(self.Hits))
+                    if HitNumber <= 3:
+                        self.FinalHit[HitNumber - 1].DamMax *= 0.5
+                        self.FinalHit[HitNumber - 1].DamMin *= 0.5
+                        self.FinalHit[HitNumber - 1].Damage *= 0.5
+                    else:
+                        self.FinalHit[HitNumber - 1].DamMax *= 0.15
+                        self.FinalHit[HitNumber - 1].DamMin *= 0.25
+                        self.FinalHit[HitNumber - 1].Damage /= 6
+
+                    HitNumber += 1
+
+        else:
+            if self.Name == 'Dragon Breath' and dummy.nTarget > 4:
+                nDT = 4
+
+            for i in range(0, nDT - 1):
+                self.FinalHit = np.append(self.FinalHit, deepcopy(self.Hits))
+
+                for j in range(0, self.nT):
+                    self.FinalHit[self.nT * (i + 1) + j].Target = i + 2
+
+        self.FinalTotal = len(self.FinalHit)
 
     class Hit:
         """

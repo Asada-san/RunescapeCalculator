@@ -1,5 +1,6 @@
 from App.PythonRevolution import AverageDamageCalculator as AVGCalc, CycleChecker as Cycle
 from copy import deepcopy
+import numpy as np
 import pprint
 
 
@@ -96,31 +97,21 @@ def determineHits(FA, player, dummy, logger):
     """
 
     # Depending on the type of ability, get its hits and append them to the dummy
-    if FA.Standard or FA.Channeled:
+    if FA.Puncture:
+        dummy.PHits[dummy.nPH: dummy.nPH + FA.FinalTotal] = PunctureCheck(dummy, player, FA, logger)
+
+    elif FA.Standard or FA.Channeled or FA.Bleed:
         if not all([FA.StunBindDam,  any([dummy.Stun, dummy.Bind])]):
-            dummy.PHits[dummy.nPH: dummy.nPH + FA.nS] = deepcopy(FA.Hits)
+            dummy.PHits[dummy.nPH: dummy.nPH + FA.FinalTotal] = deepcopy(FA.FinalHit)
         else:
-            dummy.PHits[dummy.nPH: dummy.nPH + FA.nS] = deepcopy(FA.HitsStunBind)
-
-        if any([FA.Bleed, FA.Puncture]):
-            EffectCheck(dummy, player, FA, logger)
-
-    elif FA.Bleed:
-        EffectCheck(dummy, player, FA, logger)
-
-    else:  # The ability doesn't do any damage: end this function
+            dummy.PHits[dummy.nPH: dummy.nPH + FA.FinalTotal] = deepcopy(FA.HitsStunBind)
+    else:
         return
 
     # Determine amount of hits pending for dummy, some abilities are cut short to maximise dps
-    if not player.Afk and FA.Name == 'Concentrated Blast':
-        dummy.nPH += FA.nT - 1
-    else:
-        dummy.nPH += FA.nT
+    dummy.nPH += FA.FinalTotal
 
-    # Check for AoE shenanigans
-    if any([FA.Name == 'Greater Ricochet', all([dummy.nTarget > 1 and FA.AoE])]):
-        AoECheck(dummy, player, FA)
-
+    # Set Channeling Time on Player object
     if FA.Channeled:
         player.ChanAbil = True
 
@@ -130,176 +121,113 @@ def determineHits(FA, player, dummy, logger):
         else:
             player.ChanTime = FA.EfficientWaitTime
 
+    # Determine hits with Greater Chain effect
+    if FA.Name == 'Greater Chain':
+        player.GreaterChain = True
+        player.GreaterChainDuration = 10
+        player.GreaterChainTargets = FA.GreaterChainTargets
+
+    elif player.GreaterChain:  # Check for Greater Chain effect
+        if (FA.Standard or FA.Channeled or FA.Bleed) and FA.Name != 'Sunshine':
+            NewHits = np.array([])
+            nHits = 0
+
+            # Corruption shot only the first hit is now also transmitted to the other targets
+            if FA.Name == 'Corruption Blast':
+                NewHits = np.append(NewHits, deepcopy(FA.FinalHit[0]))
+                nHits += 1
+            else:
+                for i in range(0, FA.FinalTotal):
+                    if FA.FinalHit[i].Target == 1:  # Only take hits meant for the first target
+                        NewHits = np.append(NewHits, deepcopy(FA.FinalHit[i]))
+                        nHits += 1
+
+            for target in player.GreaterChainTargets:
+                NewHitsOneTarget = deepcopy(NewHits)
+
+                for i in range(0, len(NewHits)):
+                    if NewHitsOneTarget[i].Type != 3:  # Halved damage
+                        NewHitsOneTarget[i].DamMax /= 2
+                        NewHitsOneTarget[i].DamMin /= 2
+                        NewHitsOneTarget[i].Damage /= 2
+                    else:  # Bleeds do their normal damage
+                        NewHitsOneTarget[i].DoTMax /= 1
+                        NewHitsOneTarget[i].DoTMin /= 1
+                        NewHitsOneTarget[i].Damage /= 1
+
+                    NewHitsOneTarget[i].Target = target
+                    NewHitsOneTarget[i].Name = 'Greater Chain'
+
+                dummy.PHits[dummy.nPH: dummy.nPH + nHits] = NewHitsOneTarget
+                dummy.nPH += nHits
+
+            # Reset properties related the Greater Chain
+            player.resetGreaterChain()
+
     return
 
 
-def EffectCheck(dummy, player, FA, logger):
+def PunctureCheck(dummy, player, FA, logger):
     """
-    Puts the hits from the current activated ability on the dummy with timers (only
-    bleeds and punctures).
+    - Removes puncture hits already on the dummy stack
+    - Depending on ability:
+        Salt the Wound: Determine ability damage depending on puncture stack
+        Greater Dazing Shot: Increase puncture stack and determin puncture damage
 
     :param player: The Player object.
     :param dummy: The Dummy object.
     :param FA: The Ability activated in the current attack cycle.
     :param logger: The DoList object.
+    :return: NewHit(s) --> The hits with newly calculated min, max and damage to be
+                applied to the dummy
     """
 
-    # Determine whether ability has bleed or puncture effect
-    if FA.Bleed:
-        dummy.PHits[dummy.nPH + FA.nS: dummy.nPH + FA.nT] = deepcopy(FA.DoTHits)
+    # Delete puncture effect from pending hits
 
-    elif FA.Puncture:
-        # Delete puncture effect from pending hits
-        # Standard attack already has been added, thus add it to nDoT during the removal
-        dummy.nPH += FA.nS
+    # Check every ability for puncture type, if so move the hit to idx dummy.nPH - 1 and move i + 1: dummy.nPH 1 slot to the left
+    for i in range(dummy.nPH - 1, -1, -1):
+        if dummy.PHits[i].Type == 4:
+            dummy.PHits[i: dummy.nPH - 1], dummy.PHits[dummy.nPH - 1] = dummy.PHits[i + 1: dummy.nPH], dummy.PHits[i]
+            dummy.nPH -= 1
 
-        # Check every ability for puncture type, if so move the hit to idx dummy.nPH - 1 and move i + 1: dummy.nPH 1 slot to the left
-        for i in range(dummy.nPH - 1, -1, -1):
-            if dummy.PHits[i].Type == 4:
-                dummy.PHits[i: dummy.nPH - 1], dummy.PHits[dummy.nPH - 1] = dummy.PHits[i + 1: dummy.nPH], dummy.PHits[i]
-                dummy.nPH -= 1
+    # Salt the Wound ability effect
+    if FA.Name == 'Salt the Wound':
+        NewHit = deepcopy(FA.FinalHit)  # Copy the hit from the ability to fire
 
-        # Decrease nDoT by 1 again for consistency with other effects
-        dummy.nPH -= FA.nS
+        # Calculate its new average
+        NewHit[0].DamMax += .18 * dummy.nPuncture  # PunctureStack
+        NewHit[0].DamMin += .036 * dummy.nPuncture  # PunctureStack
 
-        # Salt the Wound ability effect
-        if FA.Name == 'Salt the Wound':
-            Hit = deepcopy(FA.Hits[0])  # Copy the hit from the ability to fire
+        NewHit[0].Damage = AVGCalc.StandardChannelDamAvgCalc(NewHit[0], player, logger)[0]
 
-            # Calculate its new average
-            Hit.DamMax[0] += .18 * dummy.nPuncture  # PunctureStack
-            Hit.DamMin[0] += .036 * dummy.nPuncture  # PunctureStack
+        # dummy.PHits[dummy.nPH] = Hit  # Put the hit with the new average in the pending hits
+        dummy.nPuncture = 0  # Reset stack
+        dummy.PunctureDuration = 0
+        dummy.Puncture = False
 
-            Hit.Damage = AVGCalc.StandardChannelDamAvgCalc(Hit, player, logger)[0]
+        if logger.DebugMode:
+            logger.write(21)
 
-            dummy.PHits[dummy.nPH] = Hit  # Put the hit with the new average in the pending hits
-            dummy.nPuncture = 0  # Reset stack
-            dummy.PunctureDuration = 0
-            dummy.Puncture = False
+        return NewHit
 
-            if logger.DebugMode:
-                logger.write(21)
+    else:  # Else the Greater Dazing Shot ability has been used, change stack value accordingly
+        dummy.PunctureDuration = 15
+        dummy.Puncture = True
 
-            return
-        else:  # Else the Greater Dazing Shot ability has been used, change stack value accordingly
-            dummy.PunctureDuration = 15
-            dummy.Puncture = True
+        # Set puncture stack
+        if dummy.nPuncture < 10:  # Stacks are capped at 10
+            dummy.nPuncture += 1
 
-            # Set puncture stack
-            if dummy.nPuncture < 10:  # Stacks are capped at 10
-                dummy.nPuncture += 1
+        if logger.DebugMode:
+            logger.write(34, dummy.nPuncture)
 
-            if logger.DebugMode:
-                logger.write(34, dummy.nPuncture)
+        NewHits = deepcopy(FA.FinalHit)
+        for i in range(0, len(NewHits)-1):
+            NewHits[i+1].DoTMax *= dummy.nPuncture
+            NewHits[i+1].DoTMin *= dummy.nPuncture
+            NewHits[i+1].Damage *= dummy.nPuncture
 
-        dummy.PHits[dummy.nPH + FA.nS: dummy.nPH + FA.nT] = deepcopy(FA.DoTHits)
-
-
-def AoECheck(dummy, player, FA):
-    """
-    Duplicates hits if the ability does AoE damage and there are more than 1 target.
-
-    :param player: The Player object.
-    :param dummy: The Dummy object.
-    :param FA: The Ability activated in the current attack cycle.
-    """
-
-    if dummy.nTarget > 9 and FA.Name not in {'Corruption Blast', 'Corruption Shot'}:
-        nDT = 9
-    else:
-        nDT = dummy.nTarget
-
-    if FA.Name == 'Quake':  # DamMax = 1.88, DamMin = 0.376, DamAvg = 1.128 for side targets
-        N = FA.nT
-
-        for i in range(0, nDT - 1):
-            dummy.PHits[dummy.nPH + i: dummy.nPH + i] = deepcopy(FA.HitsSideTarget)
-            dummy.PHits[dummy.nPH + i].Target = i + 2
-
-    elif FA.Name == 'Greater Flurry':  # DamMax = 0.94, DamMin = 0.2, DamAvg = 0.57 for ALL! targets
-        N = FA.nT
-
-        for i in range(0, nDT):
-            dummy.PHits[dummy.nPH + (i - 1) * N: dummy.nPH + i * N] = deepcopy(FA.HitsSideTarget)
-
-            if i > 0:
-                for j in range(0, N):
-                    dummy.PHits[dummy.nPH + (i - 1) * N + j].Target = i + 1
-
-    elif FA.Name == 'Hurricane':  # First hit on main target equals the hit for all other targets
-        N = FA.nT - 1
-
-        for i in range(0, nDT - 1):
-            dummy.PHits[dummy.nPH + i] = deepcopy(dummy.PHits[dummy.nPH - 2])
-            dummy.PHits[dummy.nPH + i].Target = i + 2
-
-    elif FA.Name in {'Corruption Blast', 'Corruption Shot'}:  # First hit main target only, than spreading to all other targets
-        N = FA.nT - 1
-
-        for i in range(0, nDT - 1):
-            dummy.PHits[dummy.nPH + i * N: dummy.nPH + (i + 1) * N] = deepcopy(dummy.PHits[dummy.nPH - N: dummy.nPH])
-
-            for j in range(0, N):
-                dummy.PHits[dummy.nPH + i * N + j].Target = i + 2
-
-    elif FA.Name in {'Chain', 'Greater Chain', 'Ricochet', 'Greater Ricochet'}:  # Ricochet and Chain only hit up to 3 targets (except when perk)
-        N = FA.nT
-
-        if nDT > 3 + player.Cr:  # If number of damageable targets is larger than 3, set nDT to 3.
-            nDT = int(3 + player.Cr)
-
-        for i in range(0, nDT - 1):
-            dummy.PHits[dummy.nPH + i * N: dummy.nPH + (i + 1) * N] = deepcopy(dummy.PHits[dummy.nPH - N: dummy.nPH])
-
-            for j in range(0, N):
-                dummy.PHits[dummy.nPH + i * N + j].Target = i + 2
-
-        if FA.Name == 'Greater Chain':
-            player.GreaterChain = True
-            player.GreaterChainDuration = 10
-            player.GreaterChainTargets = list(range(2, nDT + 1))
-
-    else:
-        N = FA.nT
-
-        if FA.Name == 'Dragon Breath' and dummy.nTarget > 4:
-            nDT = 4
-
-        for i in range(0, nDT - 1):
-            dummy.PHits[dummy.nPH + i * N: dummy.nPH + (i + 1) * N] = deepcopy(dummy.PHits[dummy.nPH - N: dummy.nPH])
-
-            for j in range(0, N):
-                dummy.PHits[dummy.nPH + i * N + j].Target = i + 2
-    
-    # Increase dummy.nPH by the amount of hits N every other target nDT - 1 receives
-    dummy.nPH += (nDT - 1) * N
-
-    # Apply Hits of greater Ricochet for which no targets are available back to target 1
-    # but halved. Do it here because dummy.nPH is needed and is only set just above.
-    if FA.Name == 'Greater Ricochet' and dummy.nTarget < 3 + player.Cr:
-        NewHit = deepcopy(dummy.PHits[dummy.nPH - 1])
-        NewHit.Time += 1  # Hit on target delayed with 1 tick
-        NewHit.Target = 1
-
-        HitNumber = dummy.nTarget + 1
-        MaxValue = NewHit.DamMax
-        MinValue = NewHit.DamMin
-        AvgValue = NewHit.Damage
-
-        for i in range(0, int(3 + player.Cr - dummy.nTarget)):
-            if HitNumber <= 3:
-                NewHit.DamMax = MaxValue * 0.5
-                NewHit.DamMin = MinValue * 0.5
-                NewHit.Damage = AvgValue * 0.5
-            else:
-                NewHit.DamMax = MaxValue * 0.15
-                NewHit.DamMin = MinValue * 0.25
-                NewHit.Damage = AvgValue / 6
-
-            HitNumber += 1
-
-            dummy.PHits[dummy.nPH] = deepcopy(NewHit)  # Apply the hit on main target
-            dummy.nPH += 1
+        return NewHits
 
 
 def PHitCheck(bar, dummy, player, logger, settings):
@@ -405,18 +333,6 @@ def doDamage(CurrentHits, bar, dummy, player, logger, settings):
         else:
             dummy.PunctureDamage += PHit.Damage
 
-        # Check for Greater Chain effect
-        if player.GreaterChain:
-            AbilNames = [PHit.Name for PHit in CurrentHits]
-
-            if 'Greater Chain' not in AbilNames:
-
-                if player.ChanAbil and PHit.Type == 2:
-                    CurrentHits.extend(getGreaterChainHits(PHit, player))
-                elif PHit.Name != 'Sunshine':
-                    CurrentHits.extend(getGreaterChainHits(PHit, player))
-                    player.resetGreaterChain()
-
         # Set some cycle data
         if logger.CycleFound or not settings.FindCycle:
             logger.AbilInfo[PHit.Name]['damage'] += PHit.Damage
@@ -460,26 +376,3 @@ def doDamage(CurrentHits, bar, dummy, player, logger, settings):
         dummy.DamageNames.append(PHit.Name)
 
     return None
-
-
-def getGreaterChainHits(PHit, player):
-    """
-    Copies the Hit object and puts it in a list GreaterChainTargets times.
-
-    :param PHit: The Hit object.
-    :param player: The Player object.
-    :return PHitList: List containing copied Hits.
-    """
-
-    PHitList = []
-
-    NewHit = deepcopy(PHit)
-    NewHit.Damage /= 2
-
-    # NewHit.Type = 8
-
-    for target in player.GreaterChainTargets:
-        NewHit.Target = target
-        PHitList.append(NewHit)
-
-    return PHitList

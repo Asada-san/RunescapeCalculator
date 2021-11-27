@@ -62,13 +62,14 @@ def fight_dummy(userInput, AbilityBook):
 
         EQUIPMENT
 
-        StrengthCape: boolean
-        Ring: string                --> 'RoV', 'ChampionsRing', 'ChannelersRing', 'ReaversRing', 'StalkersRing'
         MSoA: boolean               --> Masterwork Spear of Annihilation
-        Aura: string                --> 'Berserker', 'Maniacal', 'Reckless', 'Equilibrium'
         Grimoire: boolean
+        Ring: string                --> 'RoV', 'ChampionsRing', 'ChannelersRing', 'ReaversRing', 'StalkersRing'
+        Aura: string                --> 'Berserker', 'Maniacal', 'Reckless', 'Equilibrium'
+        Cape: string                --> 'StrengthCape', 'Igneous Kal-Ket', 'Igneous Kal-Mej', 'Igneous Kal-Xil'
 
-        ARCHAEOloggerY RELICS
+
+        ARCHAEOLOGY RELICS
 
         HeightenedSenses: boolean
         FotS: boolean               --> Fury of the Small

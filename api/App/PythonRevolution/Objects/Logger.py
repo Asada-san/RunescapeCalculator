@@ -257,11 +257,14 @@ class Logger:
         elif x == 50:
             string = f'<li style="color: {self.TextColor["important"]};">Skip attack: Extra stall due to jagex clunkyness</li>'
 
-        # elif x == 51:
-        #     string =
-        #
-        # elif x == 52:
-        #     string =
+        elif x == 51:
+            string = f'<li style="color: {self.TextColor["initialisation"]};">Ability change: Extended {var} by 1 hit</li>'
+
+        elif x == 52:
+            string = f'<li style="color: {self.TextColor["initialisation"]};">Ability change: Extended {var} by 2 DoT hits</li>'
+
+        elif x == 53:
+            string = f'<li style="color: {self.TextColor["initialisation"]};">Ability change: Extended {var} by 3 hits hits</li>'
 
         else:
             string = f'NO CORRESPONDING STRING FOUND!'

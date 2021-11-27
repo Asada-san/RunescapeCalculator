@@ -116,12 +116,19 @@ class AbilityBar():
                     self.Adrenaline -= self.Threshold
                     self.FireStatus = True
 
-                elif Ability.Type == 'Ultimate' and self.Adrenaline >= 100:
-                    if player.PerkUltimatums and Ability.Name in {'Overpower', 'Frenzy', 'Unload', 'Omnipower'} and 100 - self.Ultimate < player.Ur * 5:
-                        self.Adrenaline -= 100 - player.Ur * 5
-                    else:
-                        self.Adrenaline -= self.Ultimate
-                    self.FireStatus = True
+                elif Ability.Type == 'Ultimate':
+                    if self.Adrenaline >= 60 and 'Igneous' in player.Cape and Ability.Name in {'Overpower', 'Deadshot', 'Omnipower'}:
+                        self.Adrenaline -= 60
+                        self.FireStatus = True
+
+                    elif self.Adrenaline >= 100:
+                        if player.PerkUltimatums and Ability.Name in {'Overpower', 'Frenzy', 'Unload', 'Omnipower'} and 100 - self.Ultimate < player.Ur * 5:
+                            self.Adrenaline -= 100 - player.Ur * 5
+                        else:
+                            self.Adrenaline -= self.Ultimate
+                        self.FireStatus = True
+
+
 
                 else:
                     self.FireStatus = False

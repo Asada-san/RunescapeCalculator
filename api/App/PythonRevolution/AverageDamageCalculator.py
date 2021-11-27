@@ -146,8 +146,8 @@ def PunctureDamAvgCalc(Object, player, logger):
 
     Avg = []
     if Object.Puncture and Object.Name == 'Greater Dazing Shot':
-        Max = np.array([7 / 15 * 0.072, 5 / 15 * 0.072, 2 / 15 * 0.072, 1 / 15 * 0.72]) * player.BaseBoost * player.BaseDamage
-        Min = np.array([7 / 15 * 0.058, 5 / 15 * 0.058, 2 / 15 * 0.058, 1 / 15 * 0.58]) * player.BaseBoost * player.BaseDamage
+        Max = np.array([7 / 15 * 0.072, 5 / 15 * 0.072, 2 / 15 * 0.072, 1 / 15 * 0.072]) * player.BaseBoost * player.BaseDamage
+        Min = np.array([7 / 15 * 0.058, 5 / 15 * 0.058, 2 / 15 * 0.058, 1 / 15 * 0.058]) * player.BaseBoost * player.BaseDamage
 
         for i in range(0, Object.nD):
             Avg.append((Max[i] + Min[i]) / 2)
