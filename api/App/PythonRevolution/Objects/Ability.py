@@ -75,7 +75,9 @@ class Ability:
         self.BoostTime = abil_stats[37]             # Boost duration
         self.BoostX = abil_stats[38]                # Boost multiplier
         self.Special = abil_stats[39]               # True if the ability is a special cunt
+
         self.AoE = abil_stats[40]                   # True if the ability does AoE damage
+        self.MaxTargets = abil_stats[41]            # Maximum amount of targets damaged by AoE abilities
 
         self.FinalHit = []
         self.FinalTotal = 0
@@ -103,6 +105,10 @@ class Ability:
 
             self.DamMax = self.DamMax[:2]
             self.DamMin = self.DamMin[:2]
+
+        # Increase of damageable targets due to Caroming Perk
+        if player.PerkCaroming and self.Name in {'Chain', 'Greater Chain', 'Ricochet', 'Greater Ricochet'}:
+            self.MaxTargets += player.Cr
 
         # Stun ability changes due to perks
         if player.PerkFlanking:
@@ -248,21 +254,16 @@ class Ability:
         :param dummy: The Dummy object.
         """
 
-        if dummy.nTarget > 9 and self.Name not in {'Corruption Blast', 'Corruption Shot'}:
-            nDT = 9
+        if dummy.nTarget > self.MaxTargets:
+            nDT = int(self.MaxTargets)
         else:
             nDT = dummy.nTarget
 
-        if self.Name == 'Quake':  # DamMax = 1.88, DamMin = 0.376, DamAvg = 1.128 for side targets
-            for i in range(0, nDT - 1):
-                self.FinalHit = np.append(self.FinalHit, deepcopy(self.HitsSideTarget))
-                self.FinalHit[-1].Target = i + 2
-
-        elif self.Name == 'Greater Flurry':  # DamMax = 0.94, DamMin = 0.2, DamAvg = 0.57 for ALL! targets
+        if self.Name in {'Quake', 'Greater Flurry'}:  # DamMax = 0.94, DamMin = 0.2, DamAvg = 0.57 for ALL! targets
             for i in range(0, nDT - 1):
                 self.FinalHit = np.append(self.FinalHit, deepcopy(self.HitsSideTarget))
 
-                for j in range(0, self.nT - 1):
+                for j in range(0, self.nT):
                     self.FinalHit[self.nT*(i + 1) + j].Target = i + 2
 
         elif self.Name == 'Hurricane':  # First hit on main target equals the hit for all other targets
@@ -274,19 +275,14 @@ class Ability:
             for i in range(0, nDT - 1):
                 self.FinalHit = np.append(self.FinalHit, deepcopy(self.DoTHits[1:]))
 
-                for j in range(0, 4):
+                for j in range(0, self.nD - 1):
                     self.FinalHit[self.nD + (self.nD - 1) * i + j].Target = i + 2
 
         elif self.Name in {'Chain', 'Greater Chain', 'Ricochet', 'Greater Ricochet'}:  # Ricochet and Chain only hit up to 3 targets (except when perk)
-            N = self.nT
-
-            if nDT > 3 + player.Cr:  # If number of damageable targets is larger than 3, set nDT to 3.
-                nDT = int(3 + player.Cr)
-
             for i in range(0, nDT - 1):
                 self.FinalHit = np.append(self.FinalHit, deepcopy(self.Hits))
 
-                for j in range(0, N):
+                for j in range(0, self.nT):
                     self.FinalHit[self.nT*(i + 1) + j].Target = i + 2
                     self.FinalHit[self.nT*(i + 1) + j].Time += 1
 
@@ -294,11 +290,11 @@ class Ability:
                 self.GreaterChainTargets = list(range(2, nDT + 1))
 
             # Apply Hits of greater Ricochet for which no targets are available back to target 1
-            # but halved. Do it here because dummy.nPH is needed and is only set just above.
-            if self.Name == 'Greater Ricochet' and dummy.nTarget < 3 + player.Cr:
+            # but reduced.
+            if self.Name == 'Greater Ricochet' and dummy.nTarget < self.MaxTargets:
                 HitNumber = dummy.nTarget + 1
 
-                for i in range(0, int(3 + player.Cr - dummy.nTarget)):
+                for i in range(0, int(self.MaxTargets - dummy.nTarget)):
                     self.FinalHit = np.append(self.FinalHit, deepcopy(self.Hits))
                     if HitNumber <= 3:
                         self.FinalHit[HitNumber - 1].DamMax *= 0.5
@@ -310,13 +306,12 @@ class Ability:
                         self.FinalHit[HitNumber - 1].Damage /= 6
 
                     HitNumber += 1
-
         else:
-            if self.Name == 'Dragon Breath' and dummy.nTarget > 4:
-                nDT = 4
-
             for i in range(0, nDT - 1):
-                self.FinalHit = np.append(self.FinalHit, deepcopy(self.Hits))
+                if self.Name != 'Magma Tempest':
+                    self.FinalHit = np.append(self.FinalHit, deepcopy(self.Hits))
+                else:
+                    self.FinalHit = np.append(self.FinalHit, deepcopy(self.DoTHits))
 
                 for j in range(0, self.nT):
                     self.FinalHit[self.nT * (i + 1) + j].Target = i + 2

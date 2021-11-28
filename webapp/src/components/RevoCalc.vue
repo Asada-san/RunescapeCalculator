@@ -312,9 +312,9 @@
         <div class="att">
           <img :src="require('@/assets/AbilityImages/Sever.png')" class="Ability" draggable="true" @dragstart="drag($event)" id="Sever" alt="Sever" width="60" height="60" @click="abilClick($event)" title="Sever">
         </div>
-        <div class="att">
-          <img :src="require('@/assets/AbilityImages/Bladed_Dive.png')" class="Ability" draggable="true" @dragstart="drag($event)" id="Bladed_Dive" alt="Bladed_Dive" width="60" height="60" @click="abilClick($event)" title="Bladed Dive">
-        </div>
+<!--        <div class="att">-->
+<!--          <img :src="require('@/assets/AbilityImages/Bladed_Dive.png')" class="Ability" draggable="true" @dragstart="drag($event)" id="Bladed_Dive" alt="Bladed_Dive" width="60" height="60" @click="abilClick($event)" title="Bladed Dive">-->
+<!--        </div>-->
       </div>
 
       <div class="attbox">
@@ -350,9 +350,9 @@
         <div class="att">
           <img :src="require('@/assets/AbilityImages/Meteor_Strike.png')" class="Ability" draggable="true" @dragstart="drag($event)" id="Meteor_Strike" alt="Meteor_Strike" width="60" height="60" @click="abilClick($event)" title="Meteor Strike">
         </div>
-        <div class="att">
-          <img :src="require('@/assets/AbilityImages/Balanced_Strike.png')" class="Ability" draggable="true" @dragstart="drag($event)" id="Balanced_Strike" alt="Balanced_Strike" width="60" height="60" @click="abilClick($event)" title="Balanced Strike">
-        </div>
+<!--        <div class="att">-->
+<!--          <img :src="require('@/assets/AbilityImages/Balanced_Strike.png')" class="Ability" draggable="true" @dragstart="drag($event)" id="Balanced_Strike" alt="Balanced_Strike" width="60" height="60" @click="abilClick($event)" title="Balanced Strike">-->
+<!--        </div>-->
       </div>
 
       <div class="attbox">
@@ -459,14 +459,17 @@
         <div class="mag">
           <img :src="require('@/assets/AbilityImages/Combust.png')" class="Ability" draggable="true" @dragstart="drag($event)" id="Combust" alt="Combust" width="60" height="60" @click="abilClick($event)" title="Combust">
         </div>
-        <div class="mag">
-          <img :src="require('@/assets/AbilityImages/Surge.png')" class="Ability" draggable="true" @dragstart="drag($event)" id="Surge" alt="Surge" width="60" height="60" @click="abilClick($event)" title="Surge">
-        </div>
+<!--        <div class="mag">-->
+<!--          <img :src="require('@/assets/AbilityImages/Surge.png')" class="Ability" draggable="true" @dragstart="drag($event)" id="Surge" alt="Surge" width="60" height="60" @click="abilClick($event)" title="Surge">-->
+<!--        </div>-->
         <div class="mag">
           <img :src="require('@/assets/AbilityImages/Chain.png')" class="Ability" draggable="true" @dragstart="drag($event)" id="Chain" alt="Chain" width="60" height="60" @click="abilClick($event)" title="Chain">
         </div>
         <div class="mag">
           <img :src="require('@/assets/AbilityImages/Greater_Chain.png')" class="Ability" draggable="true" @dragstart="drag($event)" id="Greater_Chain" alt="Greater_Chain" width="60" height="60" @click="abilClick($event)" title="Greater Chain">
+        </div>
+        <div class="mag">
+          <img :src="require('@/assets/AbilityImages/Magma_Tempest.png')" class="Ability" draggable="true" @dragstart="drag($event)" id="Magma_Tempest" alt="Magma_Tempest" width="60" height="60" @click="abilClick($event)" title="Magma Tempest">
         </div>
         <div class="mag">
           <img :src="require('@/assets/AbilityImages/Corruption_Blast.png')" class="Ability" draggable="true" @dragstart="drag($event)" id="Corruption_Blast" alt="Corruption_Blast" width="60" height="60" @click="abilClick($event)" title="Corruption Blast">
@@ -484,9 +487,9 @@
         <div class="mag">
           <img :src="require('@/assets/AbilityImages/Horror.png')" class="Ability" draggable="true" @dragstart="drag($event)" id="Horror" alt="Horror" width="60" height="60" @click="abilClick($event)" title="Horror">
         </div>
-        <div class="mag">
-          <img :src="require('@/assets/AbilityImages/Detonate.png')" class="Ability" draggable="true" @dragstart="drag($event)" id="Detonate" alt="Detonate" width="60" height="60" @click="abilClick($event)" title="Detonate">
-        </div>
+<!--        <div class="mag">-->
+<!--          <img :src="require('@/assets/AbilityImages/Detonate.png')" class="Ability" draggable="true" @dragstart="drag($event)" id="Detonate" alt="Detonate" width="60" height="60" @click="abilClick($event)" title="Detonate">-->
+<!--        </div>-->
         <div class="mag">
           <img :src="require('@/assets/AbilityImages/Wild_Magic.png')" class="Ability" draggable="true" @dragstart="drag($event)" id="Wild_Magic" alt="Wild_Magic" width="60" height="60" @click="abilClick($event)" title="Wild Magic">
         </div>
@@ -555,9 +558,9 @@
         <div class="ran">
           <img :src="require('@/assets/AbilityImages/Fragmentation_Shot.png')" class="Ability" draggable="true" @dragstart="drag($event)" id="Fragmentation_Shot" alt="Fragmentation_Shot" width="60" height="60" @click="abilClick($event)" title="Fragmentation Shot">
         </div>
-        <div class="ran">
-          <img :src="require('@/assets/AbilityImages/Escape.png')" class="Ability" draggable="true" @dragstart="drag($event)" id="Escape" alt="Escape" width="60" height="60" @click="abilClick($event)" title="Escape">
-        </div>
+<!--        <div class="ran">-->
+<!--          <img :src="require('@/assets/AbilityImages/Escape.png')" class="Ability" draggable="true" @dragstart="drag($event)" id="Escape" alt="Escape" width="60" height="60" @click="abilClick($event)" title="Escape">-->
+<!--        </div>-->
         <div class="ran">
           <img :src="require('@/assets/AbilityImages/Ricochet.png')" class="Ability" draggable="true" @dragstart="drag($event)" id="Ricochet" alt="Ricochet" width="60" height="60" @click="abilClick($event)" title="Ricochet">
         </div>
@@ -632,7 +635,6 @@
         <div class="AbilType" style="background-color: var(--conColor); color: #FFFFFF">Basic</div>
         <div class="con">
           <img :src="require('@/assets/AbilityImages/Sacrifice.png')" class="Ability" draggable="true" @dragstart="drag($event)" id="Sacrifice" alt="Sacrifice" width="60" height="60" @click="abilClick($event)" title="Sacrifice">
-
         </div>
         <div class="con">
           <img :src="require('@/assets/AbilityImages/Tuska\'s_Wrath.png')" class="Ability" draggable="true" @dragstart="drag($event)" id="Tuska's_Wrath" alt="Tuska's_Wrath" width="60" height="60" @click="abilClick($event)" title="Tuska's Wrath">
@@ -764,7 +766,7 @@
           <b-form-checkbox class="switch mt-1" id="movementStatus" v-model="movementStatus" switch v-b-tooltip.hover.right="'Assumes the dummy is stuck in place, meaning bleed damage won\'t be multiplied. When not ticked, bleed damage is multiplied for all hits (unless the dummy is stunned and/or bound).'">Stationary</b-form-checkbox>
           <b-form-checkbox class="switch mt-1" id="stunbindStatus" v-model="stunbindStatus" switch v-b-tooltip.hover.right="'Assumes the dummy is immune to stuns and binds from abilities'">Stun&Bind Immune</b-form-checkbox>
 
-          <b-form-input size="sm" class="mt-1" id="nTargets" placeholder="Number of Dummies" type="number" min="1" max="10" v-b-tooltip.hover.right="'Number of dummies affected by AoE abilities'"></b-form-input>
+          <b-form-input size="sm" class="mt-1" id="nTargets" placeholder="Number of Dummies" type="number" min="1" max="30" v-b-tooltip.hover.right="'Number of dummies affected by AoE abilities'"></b-form-input>
         </div>
 
         <div class="optsect" style="width: 10px;"></div>
