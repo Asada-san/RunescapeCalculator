@@ -35,6 +35,10 @@ def AbilityBar_verifier(userInput, AbilityBook, bar, dummy, player, logger):
         logger.AbilInfo.update({ability.Name: {'damage': 0,
                                                'activations': 0,
                                                'shared%': 0}})
+        logger.PreviousAbilInfo = deepcopy(logger.AbilInfo)
+
+        logger.CycleAbilityDamagePerTick.update({ability.Name: {'damage': [],
+                                                                'activations': 0}})
 
         if ability.Revolution or not player.Afk:
             bar.Rotation.append(ability)

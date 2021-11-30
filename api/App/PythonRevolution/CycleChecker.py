@@ -1,4 +1,6 @@
 from App.PythonRevolution import CombatChecks, AttackCycle as Attack
+from copy import deepcopy
+import numpy as np
 import time
 
 
@@ -51,8 +53,29 @@ def CycleRotation(bar, player, dummy, logger, settings):
     :param logger: The Logger object.
     :param settings: The Settings object.
     """
+    # The below is not performed in the last tick when cooldowns are checked again, causing small inaccuracies
 
+    # Get damage done in current tick
+    tickDamage = (logger.CycleDamage + logger.CyclePunctureDamage) - logger.CycleDamagePreviousTick
+    logger.CycleDamagePerTick.append(tickDamage)
+
+    # Subtract tick time
     logger.Cycle1More -= 1
+
+    # Calculate new total damage up until current tick
+    logger.CycleDamagePreviousTick = logger.CycleDamage + logger.CyclePunctureDamage
+    logger.CycleDamageIncrement.append(logger.CycleDamagePreviousTick)
+
+    for key, value in logger.AbilInfo.items():
+        if key != 'Boosted':
+            # tickAbilityDamage = logger.AbilInfo[key]['damage'] - \
+            #                                         logger.PreviousAbilInfo[key]['damage']
+
+            logger.CycleAbilityDamagePerTick[key]['damage'].append(logger.AbilInfo[key]['damage'])
+            # if tickAbilityDamage != 0:
+            #     logger.CycleAbilityDamagePerTick[key]['activations'] += 1
+
+    logger.PreviousAbilInfo = deepcopy(logger.AbilInfo)
 
     if logger.Cycle1More == 0:
         # !!! important for accurate results, check 1 more time for possible bleeds/punctures

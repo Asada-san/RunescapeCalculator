@@ -193,7 +193,7 @@ def fight_dummy(userInput, AbilityBook):
                 logger.AbilInfo[entry]['shared%'] = round(logger.AbilInfo[entry]['damage'] / logger.CycleDamage * 100, 2)
             else:
                 logger.AbilInfo[entry]['shared%'] = 0
-
+    print(logger.CycleDamagePerTick)
     Results = {  # The output of main
         'AADPTPercentage': round(logger.CycleDamage / logger.CycleTime / player.BaseDamage * 100, 3),
         'AADPT': round(logger.CycleDamage / logger.CycleTime, 3),
@@ -202,10 +202,13 @@ def fight_dummy(userInput, AbilityBook):
         'CycleTime': round(logger.CycleTime, 1),
         'CycleConvergenceTime': round(logger.CycleConvergenceTime, 1),
         'CycleDamage': round(logger.CycleDamage, 2),
+        'CycleDamagePerTick': logger.CycleDamagePerTick,
+        'CycleDamageIncrement': logger.CycleDamageIncrement,
         'CycleRotation': logger.Rotation,
         'CycleRedundant': logger.Redundant,
         'CycleBar': bar.AbilNames,
         'AbilityInfo': logger.AbilInfo,
+        'AbilityInfoPerTick': logger.CycleAbilityDamagePerTick,
         'LoggerText': logger.Text
     }
 

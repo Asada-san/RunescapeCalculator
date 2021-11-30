@@ -820,21 +820,54 @@
     </div>
 
     <div>
-      <b-card hidden @click="showExtra" id="result-card-warning" bg-variant="warning" text-variant="black" header="Warning" class="text-center output-card" v-b-tooltip.hover.right="'Click here for more in depth information!'">
-        <b-card-text id="result-text-warning"></b-card-text>
+      <b-card hidden @click="showExtra" id="result-card-warning" bg-variant="warning" text-variant="black" header="Warning" class="text-center output-card">
+        <div class="chart-selector">
+          <b-button @click="displayChart(0)" variant="secondary" v-b-tooltip.hover.top="'Displays the total damage over time'">Chart 1</b-button>
+          <b-button @click="displayChart(1)" variant="secondary" v-b-tooltip.hover.top="'Displays the total damage over time per ability'">Chart 2</b-button>
+          <b-button @click="displayChart(2)" variant="secondary" v-b-tooltip.hover.top="'Displays the total damage per tick over time'">Chart 3</b-button>
+        </div>
+        <b-card-text id="result-text-warning" v-b-tooltip.hover.right="'Click here for more in depth information!'"></b-card-text>
+        <div class="data-download-button">
+          <b-button @click="downloadData()" variant="secondary" v-b-tooltip.hover.top="'Download data corresponding to current result'">Download data</b-button>
+        </div>
       </b-card>
 
       <b-card hidden @click="showExtra" id="result-card-danger" bg-variant="danger" text-variant="white" header="Error" class="text-center output-card">
         <b-card-text id="result-text-danger"></b-card-text>
       </b-card>
 
-      <b-card hidden @click="showExtra" id="result-card" header="Result" bg-variant="dark" text-variant="white" class="text-center output-card" v-b-tooltip.hover.right="'Click here for more in depth information!'">
-        <b-card-text id="result-text"></b-card-text>
+      <b-card hidden id="result-card" header="Result" bg-variant="dark" text-variant="white" class="text-center output-card">
+        <div class="chart-selector">
+          <b-button @click="displayChart(0)" variant="secondary" v-b-tooltip.hover.top="'Displays the total damage over time'">Chart 1</b-button>
+          <b-button @click="displayChart(1)" variant="secondary" v-b-tooltip.hover.top="'Displays the total damage over time per ability'">Chart 2</b-button>
+          <b-button @click="displayChart(2)" variant="secondary" v-b-tooltip.hover.top="'Displays the total damage per tick over time'">Chart 3</b-button>
+        </div>
+        <b-card-text @click="showExtra" id="result-text" class="result-card-text" v-b-tooltip.hover.right="'Click here for more in depth information!'"></b-card-text>
+        <div class="data-download-button">
+          <b-button @click="downloadData()" variant="secondary" v-b-tooltip.hover.top="'Download data corresponding to current result'">Download data</b-button>
+        </div>
       </b-card>
     </div>
 
+    <b-card hidden id="line-chart-card-1" bg-variant="dark" text-variant="white" class="text-left output-card-chart">
+      <div id="line-chart-1">
+        <line-chart id="damage-total" :chart-data="dataLineChart1"></line-chart>
+      </div>
+    </b-card>
+
+    <b-card hidden id="line-chart-card-2" bg-variant="dark" text-variant="white" class="text-left output-card-chart">
+      <div id="line-chart-2">
+        <line-chart id="damage-per-tick-per-ability" :chart-data="dataLineChart2"></line-chart>
+      </div>
+    </b-card>
+
+    <b-card hidden id="bar-chart-card-1" bg-variant="dark" text-variant="white" class="text-left output-card-chart">
+      <div id="bar-chart-1">
+        <bar-chart id="damage-per-tick" :chart-data="dataBarChart1"></bar-chart>
+      </div>
+    </b-card>
+
     <b-card hidden id="result-card-extra" header="Result" bg-variant="dark" text-variant="white" class="text-left output-card-extra">
-      <b-card-text id="result-text-extra"></b-card-text>
     </b-card>
 
     <p id="counter"></p>
@@ -842,10 +875,13 @@
 </template>
 
 <script>
+import LineChart from './LineChart.vue';
+import BarChart from './BarChart.vue';
 let LastIdx = null;
 let BarAbilities = [];
 let RevolutionBar = document.getElementsByClassName("RevoBar");
 let PreviousBarInfo;
+let FightData = [];
 
 let origin
 if (window.origin === 'http://localhost:8080') {
@@ -857,6 +893,10 @@ let klog = 16;
 // let AlreadyRan = false;
 
 export default {
+  components: {
+    LineChart,
+    BarChart
+  },
   created: async function(){
     await fetch(`${origin}/api/return_counter`, {
         method: "GET",
@@ -881,6 +921,9 @@ export default {
   },
   data: function() {
     return {
+      dataLineChart1: null,
+      dataBarChart1: null,
+      dataLineChart2: null,
       centerStyle: {
         alignItems: 'center',
         textAlign: 'center'
@@ -1060,10 +1103,90 @@ export default {
       HeightenedSenses: { value: 'HeightenedSenses', text: 'Heightened Senses' },
       FotS: { value: 'FotS', text: 'Fury of the Small' },
       CoE: { value: 'CoE', text: 'Conservation of Energy' },
-      Debug: { value: 'Debug', text: 'Print more info' }
+      Debug: { value: 'Debug', text: 'Print more info' },
+      ChartType: null,
+      optChartType: [
+        { value: null, text: 'Charts', disabled: true, selected: true, hidden: true},
+        { value: null, text: 'none'},
+        { value: 'Line', text: 'Line'},
+        { value: 'Bar', text: 'Bar'}
+      ]
     }
   },
+  mounted () {
+    // this.fillData()
+  },
   methods: {
+    fillData: function (data) {
+      let lineChart1 = document.getElementById('line-chart-card-1');
+      let lineChart2 = document.getElementById('line-chart-card-2');
+      let barChart = document.getElementById('bar-chart-card-1');
+      console.log(barChart.hidden)
+
+      if (!lineChart1.hidden) {
+        this.dataLineChart1 = {
+          labels: Array.from({length: data['CycleDamageIncrement'].length}, (_, i) => i + 1),
+          datasets: [
+            {
+              label: 'Total damage',
+              data: data['CycleDamageIncrement'],
+              fill: false,
+              borderColor: '#4CAF50',
+              backgroundColor: '#4CAF50',
+              borderWidth: 1
+            }, {
+              label: 'Trendline',
+              data: Array.from({length: data['CycleDamageIncrement'].length}, (_, i) => i + 1).map(x => x * data['AADPT']),
+              fill: false,
+              borderColor: '#900C3F',
+              backgroundColor: '#900C3F',
+              borderWidth: 1,
+              pointRadius: 0
+            }
+          ]
+        }
+      }
+
+      if (!lineChart2.hidden) {
+        let lines = [];
+        let colors = ['#FF9999', '#FFCC99', '#FFFF99', '#CCFF99', '#99FF99', '#99FFCC',
+          '#99FFFF', '#99CCFF', '#9999FF', '#CC99FF', '#FF99FF', '#FF99CC', '#E0E0E0', '#FFFFFF'];
+        let i = 0;
+
+        for (const key in data['AbilityInfoPerTick']) {
+          lines.push({
+            label: key,
+            data: data['AbilityInfoPerTick'][key]['damage'],
+            fill: false,
+            borderColor: colors[i],
+            backgroundColor: colors[i],
+            borderWidth: 1
+          });
+          i++;
+        }
+
+        this.dataLineChart2 = {
+          labels: Array.from({length: data['AbilityInfoPerTick'][Object.keys(data['AbilityInfoPerTick'])[0]]['damage'].length}, (_, i) => i + 1),
+          datasets: lines
+        }
+      }
+
+      if (!barChart.hidden) {
+        this.dataBarChart1 = {
+          labels: Array.from({length: data['CycleDamagePerTick'].length}, (_, i) => i + 1),
+          datasets: [
+            {
+              label: 'Line Chart',
+              data: data['CycleDamagePerTick'],
+              fill: false,
+              borderColor: '#4CAF50',
+              backgroundColor: '#4CAF50',
+              borderWidth: 1
+            }
+          ]
+        }
+      }
+    },
     collapse: function (id) {
       let ScrollIdx = id;
 
@@ -1273,6 +1396,8 @@ export default {
       let resultCardWarning = document.getElementById('result-card-warning');
       let resultCardDanger = document.getElementById('result-card-danger');
 
+      let vm = this;
+
       // get an array with the bar abilities in correct order
       let InputAbilities = [];
 
@@ -1327,6 +1452,8 @@ export default {
 
           response.json().then(function (data) {
             let message;
+
+            FightData = data;
 
             // if an error occured during calculating the DPT, print error
             if (data['error']) {
@@ -1459,6 +1586,7 @@ export default {
 
             document.getElementById('result-card-extra').innerHTML = CycleText + LoopText;
 
+            vm.fillData(data);
             // if (DPTNote.style.maxHeight && DPTNoteOut == true){
             //     DPTNote.style.maxHeight = DPTNote.scrollHeight + "px";
             // }
@@ -1485,6 +1613,42 @@ export default {
       if (klog > 0) {
         let id = 'update' + klog;
         document.getElementById(id).style.display = 'inline-block';
+      }
+    },
+
+    displayChart: function (option) {
+      let chart_ids = ['line-chart-card-1', 'line-chart-card-2', 'bar-chart-card-1'];
+
+      let chartCard = document.getElementById(chart_ids[option]);
+      chartCard.hidden = !chartCard.hidden;
+
+      if (!chartCard.hidden) {
+        this.fillData(FightData);
+      }
+    },
+
+    downloadData: function () {
+      //Convert JSON Array to string.
+      let json = JSON.stringify(FightData);
+
+      //Convert JSON string to BLOB.
+      json = [json];
+      let blob1 = new Blob(json, { type: "text/plain;charset=utf-8" });
+      console.log(blob1)
+
+      //Check the Browser.
+      let isIE = !!document.documentMode;
+      if (isIE) {
+        window.navigator.msSaveBlob(blob1, "Data.json");
+      } else {
+        let url = window.URL || window.webkitURL;
+        let link = url.createObjectURL(blob1);
+        let a = document.createElement("a");
+        a.download = "Data.json";
+        a.href = link;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
       }
     }
   }
@@ -1673,7 +1837,9 @@ export default {
     margin-top: 20px;
     display: inline-block;
     width: 500px;
-    height: 150px;
+    height: 180px;
+  }
+  .result-card-text {
     cursor: pointer;
   }
   .output-card-extra {
@@ -1683,9 +1849,13 @@ export default {
     display: inline-block;
     width: 800px;
   }
-  #result-text-extra {
-    width: inherit;
+  .output-card-chart {
+    margin-top: 20px;
+    padding: 15px;
+    text-align: left;
     display: inline-block;
+    width: 800px;
+    /*height: 500px;*/
   }
   .accordion-button {
     height: 30px;
@@ -1717,5 +1887,35 @@ export default {
     margin-top: 20px;
     color: white;
     font-size: 11px;
+  }
+  .chart-selector {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+  }
+  #line-chart-1 {
+    width: 100%;
+    height: 100%;
+  }
+  #line-chart-2 {
+    width: 100%;
+    height: 100%;
+  }
+  #damage-total {
+    width: 100%;
+    height: 100%;
+  }
+  #damage-per-tick {
+    width: 100%;
+    height: 100%;
+  }
+  #damage-per-tick-per-ability {
+    width: 100%;
+    height: 100%;
+  }
+  .data-download-button {
+    position: absolute;
+    bottom: 0;
+    margin-left: 0;
   }
 </style>

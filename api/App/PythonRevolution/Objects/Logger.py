@@ -29,6 +29,9 @@ class Logger:
         self.Rotation = []                      # Array containing the cycle rotation
         self.CycleTime = 0                      # Cycle time in TICKS
         self.CycleDamage = 0                    # Damage done during 1 cycle time - puncture damage
+        self.CycleDamagePerTick = []            # Damage done during 1 cycle time per tick
+        self.CycleDamagePreviousTick = 0        # Total damage done before current tick
+        self.CycleDamageIncrement = []          # Increase damage as ticks go on
         self.CyclePunctureDamage = 0            # Puncture damage done during 1 cycle time
         self.CycleFound = False                 # True if a cycle has been found
         self.Cycle1More = 0                     # Starts at t = CycleTime and when it runs out, runLoop is set to False
@@ -44,6 +47,9 @@ class Logger:
         self.AbilInfo = {'Boosted': {'damage': 0,
                                      'activations': 'NA',
                                      'shared%': 0}}
+
+        self.PreviousAbilInfo = {}
+        self.CycleAbilityDamagePerTick = {}
 
         self.Text = ''
 
