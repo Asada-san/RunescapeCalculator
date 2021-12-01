@@ -849,19 +849,19 @@
       </b-card>
     </div>
 
-    <b-card hidden id="line-chart-card-1" bg-variant="dark" text-variant="white" class="text-left output-card-chart">
+    <b-card hidden :id="chart_ids[0]" bg-variant="dark" text-variant="white" class="text-left output-card-chart">
       <div id="line-chart-1">
         <line-chart id="damage-total" :chart-data="dataLineChart1"></line-chart>
       </div>
     </b-card>
 
-    <b-card hidden id="line-chart-card-2" bg-variant="dark" text-variant="white" class="text-left output-card-chart">
+    <b-card hidden :id="chart_ids[1]" bg-variant="dark" text-variant="white" class="text-left output-card-chart">
       <div id="line-chart-2">
         <line-chart id="damage-per-tick-per-ability" :chart-data="dataLineChart2"></line-chart>
       </div>
     </b-card>
 
-    <b-card hidden id="bar-chart-card-1" bg-variant="dark" text-variant="white" class="text-left output-card-chart">
+    <b-card hidden :id="chart_ids[2]" bg-variant="dark" text-variant="white" class="text-left output-card-chart">
       <div id="bar-chart-1">
         <bar-chart id="damage-per-tick" :chart-data="dataBarChart1"></bar-chart>
       </div>
@@ -921,6 +921,7 @@ export default {
   },
   data: function() {
     return {
+      chart_ids: ['line-chart-card-1', 'line-chart-card-2', 'bar-chart-card-1'],
       dataLineChart1: null,
       dataBarChart1: null,
       dataLineChart2: null,
@@ -1118,9 +1119,9 @@ export default {
   },
   methods: {
     fillData: function (data) {
-      let lineChart1 = document.getElementById('line-chart-card-1');
-      let lineChart2 = document.getElementById('line-chart-card-2');
-      let barChart = document.getElementById('bar-chart-card-1');
+      let lineChart1 = document.getElementById(this.chart_ids[0]);
+      let lineChart2 = document.getElementById(this.chart_ids[1]);
+      let barChart = document.getElementById(this.chart_ids[2]);
       console.log(barChart.hidden)
 
       if (!lineChart1.hidden) {
@@ -1187,6 +1188,7 @@ export default {
         }
       }
     },
+
     collapse: function (id) {
       let ScrollIdx = id;
 
@@ -1617,9 +1619,7 @@ export default {
     },
 
     displayChart: function (option) {
-      let chart_ids = ['line-chart-card-1', 'line-chart-card-2', 'bar-chart-card-1'];
-
-      let chartCard = document.getElementById(chart_ids[option]);
+      let chartCard = document.getElementById(this.chart_ids[option]);
       chartCard.hidden = !chartCard.hidden;
 
       if (!chartCard.hidden) {
