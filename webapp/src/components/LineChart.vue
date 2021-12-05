@@ -14,6 +14,11 @@
     data () {
       return {
         options: {
+          // title: {
+          //   display: true,
+          //   text: 'Total damage over time',
+          //   fontColor: "#FFFFFF",
+          // },
           scales: {
             yAxes: [{
               ticks: {

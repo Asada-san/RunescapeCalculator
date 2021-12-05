@@ -69,10 +69,12 @@ def get_tradeable_itemIDs():
                 else:
                     item_list.update({id: item})
 
+            print(i, j)
+
             if end_loop:
                 break
             else:
-                time.sleep(3)
+                time.sleep(10)
 
     # Save the list
     with open('api/App/itemIDs.json', 'w') as file:

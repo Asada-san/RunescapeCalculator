@@ -2,7 +2,7 @@
   <div :style="centerStyle">
     <div class="accordion" role="tablist">
       <b-card no-body class="mb-1" id="card-header" bg-variant="dark" text-variant="white" style="text-align: left;">
-        <h2 style="text-align: center; margin-bottom: 15px; margin-top: 15px;">Revolution Bar <span style="font-size:small;">V2.00.1</span></h2>
+        <h2 style="text-align: center; margin-bottom: 15px; margin-top: 15px;">Revolution Bar <span v-html="latestVersion" style="font-size:small;"></span></h2>
 <!--        <p style="text-align: center; margin-left: 15px; margin-right: 15px; color: pink;">If something doesn't work please contact me on Discord:-->
 <!--            <strong style="color: #4CAF50">Micky#5858</strong>, Reddit:-->
 <!--            <a style="color: #4CAF50" href="https://www.reddit.com/user/ftwmickywtf"><strong>u/FTWmickyWTF</strong></a>-->
@@ -14,7 +14,7 @@
             <b-button-group class="accordion-button-group">
               <b-button v-b-toggle.accordion-1 class="accordion-button" variant="secondary">General Info</b-button>
               <b-button v-b-toggle.accordion-2 class="accordion-button" variant="secondary">Important Notes</b-button>
-              <b-button v-b-toggle.accordion-3 class="accordion-button" variant="secondary">Changelog</b-button>
+              <b-button v-b-toggle.accordion-3 class="accordion-button" variant="secondary" @click="changelogVisibility(false)">Changelog</b-button>
             </b-button-group>
           </b-card-header>
           <b-collapse id="accordion-1" accordion="my-accordion" role="tabpanel">
@@ -70,208 +70,10 @@
 
           <b-collapse id="accordion-3" accordion="my-accordion" role="tabpanel">
             <b-card-body>
-              <b-card-text>
-                <div id="update16">
-                  <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V2.00.1 - 17-8-2021</strong></p>
-                  <ul style="margin-top: 10px; margin-right: 15px;">
-                    <li>Changes in line with the main game update on the 16th of August:
-                      <ul>
-                        <li>Greater Concentrated Blast: Decreased average damage for all 3 hits</li>
-                        <li>Greater Ricochet: Decreased average damage of extra hits due to caroming perk when inflicted on main target</li>
-                      </ul>
-                    </li>
-                    <li>Spreadsheet links work once again</li>
-                  </ul>
-                </div>
-
-                <div id="update15" style="display: none;">
-                  <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V2.00.0 - 9-8-2021</strong></p>
-                  <ul style="margin-top: 10px; margin-right: 15px;">
-                    <li>Restyled everything</li>
-                    <li>If a stall happens because all abilities were on cooldown, you will now be stalled for 3 consecutive ticks before attempting to fire an ability again</li>
-                    <li>Added Greater Concentrated Blast</li>
-                    <li>Improved code: check to determine hits that do damage in current tick is only performed once per tick</li>
-                    <li><a href="https://github.com/Asada-san/RunescapeCalculator/blob/master/api/AbilityInfo.xlsx" target="_blank" style="color: #4CAF50"><strong>spreadsheet</strong></a>:
-                      Removed useless "delay" column and set values in BleedToMove column to 0 for channeled abilities</li>
-                  </ul>
-                </div>
-
-                <div id="update14" style="display: none;">
-                  <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.06.1 - 3-7-2021</strong></p>
-                  <ul style="margin-top: 10px; margin-right: 15px;">
-                    <li>Greater Ricochet effect now works properly</li>
-                    <li>Bleeds now work properly when using Berserker/Maniacal/Reckless aura</li>
-                  </ul>
-                </div>
-
-                <div id="update13" style="display: none;">
-                  <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.06.0 - 27-6-2021</strong></p>
-                  <ul style="margin-top: 10px; margin-right: 15px;">
-                    <li>Added the following options:
-                      <ul>
-                        <li>Channeler's ring</li>
-                        <li>Champion's ring</li>
-                        <li>Reaver's ring</li>
-                        <li>Stalker's ring</li>
-                      </ul>
-                    </li>
-                    <li>Wild Magic is no longer a channeling ability</li>
-                    <li>Asphyxiate now stuns</li>
-                    <li>Fixed several stun and/or bind durations in line with the updated ability tooltips ingame</li>
-                    <li>Added some more tooltips to the options</li>
-                    <li>Sped up and simplified the cycle searching algorithm</li>
-                    <li>Cleaned up other parts of the code making it faster and more readable</li>
-                    <li>Changed the way critical hit chance increases are handled due to ability/items</li>
-                    <li>Cleaned up the <a href="https://github.com/Asada-san/RunescapeCalculator/blob/master/api/AbilityInfo.xlsx" target="_blank" style="color: #4CAF50"><strong>spreadsheet</strong></a> and the way its loaded</li>
-                    <li>Added SideTargetDam/SideTargetDamMin/SideTargetDamMax to spreadsheet instead of them being hardcoded</li>
-                  </ul>
-                </div>
-
-                <div id="update12" style="display: none;">
-                  <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.05.7 - 1-4-2021</strong></p>
-                  <ul style="margin-top: 10px; margin-right: 15px;">
-                    <li>Individual ability damage and redundant abilities are now tracked when setting a custom simulation time</li>
-                    <li>DPT calculation when setting a custom simulation time is now done properly</li>
-                    <li>Phased out the use of ticks within the code such that it is more efficient</li>
-                  </ul>
-                </div>
-
-                <div id="update11" style="display: none;">
-                  <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.05.61 - 31-3-2021</strong></p>
-                  <ul style="margin-top: 10px; margin-right: 15px;">
-                    <li>Changed some "TrueEfficientWait" times in the spreadsheet to reflect the latest improvements to revolution</li>
-                    <li>Damage boosting aura's can once again be used</li>
-                  </ul>
-                </div>
-
-                <div id="update10" style="display: none;">
-                  <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.05.6 - 4-3-2021</strong></p>
-                  <ul style="margin-top: 10px; margin-right: 15px;">
-                    <li>Added the ability name to the tooltip of the ability images</li>
-                    <li>Removed the options info section and instead added tooltips to the options</li>
-                    <li>Moved the options section for a slightly better user experience</li>
-                    <li>Fixed some formatting issues when clicking on the resulting output</li>
-                    <li>Greater Dazing Shot stack timer is now more accurate</li>
-                    <li>Salt the Wound can once again be used and now works properly when there is a boost active</li>
-                  </ul>
-                </div>
-
-                <div id="update9" style="display: none;">
-                  <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.05.5 - 25-1-2021</strong></p>
-                  <ul style="margin-top: 10px; margin-right: 15px;">
-                    <li>Sunshine and Death Swiftness duration is no longer infinite when using Planted Feet</li>
-                    <li>Changed some efficient wait times (used when using the 'efficient' option) </li>
-                    <li>Greater Chain now works correctly with channeled abilities</li>
-                  </ul>
-                </div>
-
-                <div id="update8" style="display: none;">
-                  <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.05.4 - 22-1-2021</strong></p>
-                  <ul style="margin-top: 10px; margin-right: 15px;">
-                    <li>Simulation counter now hopefully works properly</li>
-                    <li>Ring of Vigour and Conservation of Energy now stack</li>
-                    <li>Added the Ultimatums and Impatient perks</li>
-                    <li>linking to wiki (CTRL+left click on image) now takes precedence over adding it to the bar</li>
-                    <li>Block of information when clicking on AADPT number now stays open when running another simulation (click on AADPT number again to close it)</li>
-                  </ul>
-                </div>
-
-                <div id="update7" style="display: none;">
-                  <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.05.3 - 21-12-2020</strong></p>
-                  <ul style="margin-top: 10px; margin-right: 15px;">
-                    <li>Added a counter</li>
-                  </ul>
-                </div>
-
-                <div id="update6" style="display: none;">
-                  <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.05.2 - 14-12-2020</strong></p>
-                  <ul style="margin-top: 10px; margin-right: 15px;">
-                    <li>Added Greater Chain and Greater Ricochet</li>
-                    <li>Fixed an issue with Wild Magic</li>
-                    <li>Set Dragon Breath target cap to 4 and increased its adrenaline gain to 10 when it hits 2 or more targets</li>
-                  </ul>
-                </div>
-
-                <div id="update5" style="display: none;">
-                  <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.05.1 - 18-10-2020</strong></p>
-                  <ul style="margin-top: 10px; margin-right: 15px;">
-                    <li>Added the Devotion ability</li>
-                  </ul>
-                </div>
-
-                <div id="update4" style="display: none;">
-                  <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.05.0 - 11-8-2020</strong></p>
-                  <ul style="margin-top: 10px; margin-right: 15px;">
-                    <li>Left clicking on abilities in their respective sections now puts them in the first
-                      available slot on the bar</li>
-                    <li>Left clicking + CTRL now links to the ability's wiki page</li>
-                    <li>Added a new ability info table which can be seen when clicked on the resulting AADPT number</li>
-                    <li>Added the Archaeology relics: Heightened Senses, Fury of the Small, Conservation of
-                      Energy and Berserker's Fury</li>
-                    <li>Added Perks: Shield Bashing</li>
-                    <li>Fixed an issue where bleed abilities would be nulled when using the Planted Feet perk</li>
-                    <li>Limited AoE abilities to be able to damage max 9 targets except for corruption shot&blast</li>
-                    <li>Changed seconds to ticks within the code for clarity</li>
-                  </ul>
-                </div>
-
-                <div id="update3" style="display: none;">
-                  <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.04.0</strong></p>
-                  <ul style="margin-top: 10px; margin-right: 15px;">
-                    <li>Added Caroming, Ruthless (as a flat damage bonus) and Reflexes perk</li>
-                    <li>Increased maximum amount of targets to 10</li>
-                    <li>Added Freedom and Anticipation abilities</li>
-                    <li>Fixed an issue where planted feet wasn't working</li>
-                  </ul>
-                </div>
-
-                <div id="update2" style="display: none;">
-                  <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.03.1</strong></p>
-                  <ul style="margin-top: 10px; margin-right: 15px;">
-                    <li>Cleaned out/changed/created several directories</li>
-                    <li>Added Hurricane + Destroy to the shared ability cooldown list</li>
-                    <li>Fixed an issue where certain abilities would be on cooldown indefinitely</li>
-                  </ul>
-                </div>
-
-                <div id="update1" style="display: none;">
-                  <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.03.0</strong></p>
-                  <ul style="margin-top: 10px; margin-right: 15px;">
-                    <li>All average ability damages are now calculated properly within the code instead of reading
-                      values from an excel sheet</li>
-                    <li>Added Precise, Equilibrium, Biting, Flanking and Lunging perks</li>
-                    <li>Moved the options block and increased its size</li>
-                    <li>Rewrote code so all player equipment related options are now assigned to the player object instead of them
-                      being all over the place</li>
-                    <li>Added Concentrated Blast, Fury and Greater Fury effects related to critical hits</li>
-                    <li>Added a fourth condition for the cycle finder: Forced critical hit boost has to be equal too</li>
-                    <li>Added Meteor Strike, Sunshine and Incendiary adrenaline boosting effect due to crits --- might be wonky</li>
-                    <li>Added the aftershock perk and therefore also added the base damage back, and this time properly!</li>
-                    <li>Added level 20 gear option and Erethdor's Grimoire</li>
-                    <li>Added 2 defensive abilities: Debilitate and Bash</li>
-                    <li>Base Ability Damage Boosts are now applied properly and in the right place</li>
-                    <li>Added Equilibrium aura and made the average hit calculator more accurate</li>
-                    <li>Widened certain blocks</li>
-                    <li>Added Berserker, Maniacal and Reckless aura's</li>
-                    <li>Added Damage boosts from level increasing boosts like the aura's above or potions</li>
-                    <li>Added Prayer boosts</li>
-                    <li>Added print more info button in options for python script</li>
-                    <li>Rewrote code resulting in a slight decrease in python script runtime but increasing the readability of the
-                      script</li>
-                    <li>Made it so ability info is read from excel only once upon startup instead of every time the FIGHT! button is
-                      pressed resulting in a significant decrease in execution time, especially for bars with
-                      small cycle times</li>
-                    <li>Moved host from DigitalOcean (paid) to Heroku (free)</li>
-                    <li>Added Options Info section</li>
-                  </ul>
-
-                  <p style="margin-top: 10px; margin-left: 15px; margin-right: 15px;"><strong>V1.02.x and earlier not available</strong></p>
-                </div>
-
-                <div style="text-align: center;">
-                  <b-button @click="changelogVisibility" variant="secondary">Show more</b-button>
-                </div>
-              </b-card-text>
+              <b-card-text id="changelog-card"></b-card-text>
+              <div style="text-align: center;">
+                <b-button @click="changelogVisibility(true)" variant="secondary">Show more</b-button>
+              </div>
             </b-card-body>
           </b-collapse>
         </b-card>
@@ -286,9 +88,14 @@
       <b-button id="ConBtn" @click="collapse(4)" variant="secondary">Constitution</b-button>
       <b-button id="DefBtn" @click="collapse(5)" variant="secondary">Defence</b-button>
       <b-button id="OptBtn" @click="collapse(6)" variant="secondary">Options</b-button>
+      <b-dropdown text="Charts" variant="secondary">
+        <b-dropdown-item v-on:click="displayChart(0)" switch v-b-tooltip.hover.right="'Displays the total damage over time'">Total damage</b-dropdown-item>
+        <b-dropdown-item v-on:click="displayChart(1)" switch v-b-tooltip.hover.right="'Displays the total damage over time per ability'">Total damage per ability</b-dropdown-item>
+        <b-dropdown-item v-on:click="displayChart(2)" switch v-b-tooltip.hover.right="'Displays the total damage per tick over time'">Total damage per tick</b-dropdown-item>
+      </b-dropdown>
     </b-button-group>
 
-    <div id="attAbils" class="content AbilBlock" style="margin-top:20px;">
+    <div id="attAbils" class="scrollContent AbilBlock" style="margin-top:20px;">
       <div class="attbox">
         <div class="AbilType">Basic</div>
         <div class="att">
@@ -369,7 +176,7 @@
       </div>
     </div>
 
-    <div id="strAbils" class="content AbilBlock">
+    <div id="strAbils" class="scrollContent AbilBlock">
       <div class="strbox">
         <div class="AbilType" style="background-color: var(--strColor);">Basic</div>
         <div class="str">
@@ -432,7 +239,7 @@
       </div>
     </div>
 
-    <div id="magAbils" class="content AbilBlock">
+    <div id="magAbils" class="scrollContent AbilBlock">
       <div class="magbox">
         <div class="AbilType" style="background-color: var(--magColor); color: #FFFFFF">Basic</div>
         <div class="mag">
@@ -487,9 +294,9 @@
         <div class="mag">
           <img :src="require('@/assets/AbilityImages/Horror.png')" class="Ability" draggable="true" @dragstart="drag($event)" id="Horror" alt="Horror" width="60" height="60" @click="abilClick($event)" title="Horror">
         </div>
-<!--        <div class="mag">-->
-<!--          <img :src="require('@/assets/AbilityImages/Detonate.png')" class="Ability" draggable="true" @dragstart="drag($event)" id="Detonate" alt="Detonate" width="60" height="60" @click="abilClick($event)" title="Detonate">-->
-<!--        </div>-->
+        <div class="mag">
+          <img :src="require('@/assets/AbilityImages/Detonate.png')" class="Ability" draggable="true" @dragstart="drag($event)" id="Detonate" alt="Detonate" width="60" height="60" @click="abilClick($event)" title="Detonate">
+        </div>
         <div class="mag">
           <img :src="require('@/assets/AbilityImages/Wild_Magic.png')" class="Ability" draggable="true" @dragstart="drag($event)" id="Wild_Magic" alt="Wild_Magic" width="60" height="60" @click="abilClick($event)" title="Wild Magic">
         </div>
@@ -531,7 +338,7 @@
       </div>
     </div>
 
-    <div id="ranAbils" class="content AbilBlock">
+    <div id="ranAbils" class="scrollContent AbilBlock">
       <div class="ranbox">
         <div class="AbilType" style="background-color: var(--ranColor); color: #FFFFFF">Basic</div>
         <div class="ran">
@@ -630,7 +437,7 @@
       </div>
     </div>
 
-    <div id="conAbils" class="content AbilBlock">
+    <div id="conAbils" class="scrollContent AbilBlock">
       <div class="conbox">
         <div class="AbilType" style="background-color: var(--conColor); color: #FFFFFF">Basic</div>
         <div class="con">
@@ -654,7 +461,7 @@
       </div>
     </div>
 
-    <div id="defAbils" class="content AbilBlock">
+    <div id="defAbils" class="scrollContent AbilBlock">
       <div class="defbox">
         <div class="AbilType" style="background-color: var(--defColor); color: #FFFFFF">Basic</div>
         <div class="def">
@@ -687,7 +494,7 @@
       </div>
     </div>
 
-    <div id="optBlock" class="content OptionBlock" style="margin-bottom: 20px;">
+    <div id="optBlock" class="scrollContent OptionBlock" style="margin-bottom: 20px;">
       <form id="optmenu" name="optmenu" method="get">
         <div class="optsect" style="width: 20px;"></div>
 
@@ -820,54 +627,41 @@
     </div>
 
     <div>
-      <b-card hidden @click="showExtra" id="result-card-warning" bg-variant="warning" text-variant="black" header="Warning" class="text-center output-card">
-        <div class="chart-selector">
-          <b-button @click="displayChart(0)" variant="secondary" v-b-tooltip.hover.top="'Displays the total damage over time'">Chart 1</b-button>
-          <b-button @click="displayChart(1)" variant="secondary" v-b-tooltip.hover.top="'Displays the total damage over time per ability'">Chart 2</b-button>
-          <b-button @click="displayChart(2)" variant="secondary" v-b-tooltip.hover.top="'Displays the total damage per tick over time'">Chart 3</b-button>
-        </div>
-        <b-card-text id="result-text-warning" v-b-tooltip.hover.right="'Click here for more in depth information!'"></b-card-text>
-        <div class="data-download-button">
-          <b-button @click="downloadData()" variant="secondary" v-b-tooltip.hover.top="'Download data corresponding to current result'">Download data</b-button>
-        </div>
-      </b-card>
-
-      <b-card hidden @click="showExtra" id="result-card-danger" bg-variant="danger" text-variant="white" header="Error" class="text-center output-card">
-        <b-card-text id="result-text-danger"></b-card-text>
-      </b-card>
-
-      <b-card hidden id="result-card" header="Result" bg-variant="dark" text-variant="white" class="text-center output-card">
-        <div class="chart-selector">
-          <b-button @click="displayChart(0)" variant="secondary" v-b-tooltip.hover.top="'Displays the total damage over time'">Chart 1</b-button>
-          <b-button @click="displayChart(1)" variant="secondary" v-b-tooltip.hover.top="'Displays the total damage over time per ability'">Chart 2</b-button>
-          <b-button @click="displayChart(2)" variant="secondary" v-b-tooltip.hover.top="'Displays the total damage per tick over time'">Chart 3</b-button>
-        </div>
+      <b-card hidden id="result-card" :header="resultCardHeader" :bg-variant="resultCardBackgroundVariant" :text-variant="resultCardTextColorVariant" class="text-center output-card result">
         <b-card-text @click="showExtra" id="result-text" class="result-card-text" v-b-tooltip.hover.right="'Click here for more in depth information!'"></b-card-text>
-        <div class="data-download-button">
-          <b-button @click="downloadData()" variant="secondary" v-b-tooltip.hover.top="'Download data corresponding to current result'">Download data</b-button>
+
+        <div @click="downloadData()" id="data-download-button" v-b-tooltip.hover.top="'Download data corresponding to current result'">
+          <img :src="require('@/assets/download.png')" id="download-image-1" alt="download-image">
         </div>
       </b-card>
+
+      <b-button-group hidden id="chart-buttons" class="user-select-button-group result">
+
+      </b-button-group>
     </div>
 
-    <b-card hidden :id="chart_ids[0]" bg-variant="dark" text-variant="white" class="text-left output-card-chart">
-      <div id="line-chart-1">
-        <line-chart id="damage-total" :chart-data="dataLineChart1"></line-chart>
+    <b-card hidden @mousedown="startDrag($event, 0)" bg-variant="dark" text-variant="white" class="text-left output-card-chart result">
+      <div class="close-container" v-on:click="displayChart(0)">x</div>
+      <div class="container-100wh">
+        <line-chart :chart-data="dataLineChart1"></line-chart>
       </div>
     </b-card>
 
-    <b-card hidden :id="chart_ids[1]" bg-variant="dark" text-variant="white" class="text-left output-card-chart">
-      <div id="line-chart-2">
-        <line-chart id="damage-per-tick-per-ability" :chart-data="dataLineChart2"></line-chart>
+    <b-card hidden @mousedown="startDrag($event, 1)" bg-variant="dark" text-variant="white" class="text-left output-card-chart result">
+      <div class="close-container" v-on:click="displayChart(1)">x</div>
+      <div class="container-100wh">
+        <line-chart :chart-data="dataLineChart2"></line-chart>
       </div>
     </b-card>
 
-    <b-card hidden :id="chart_ids[2]" bg-variant="dark" text-variant="white" class="text-left output-card-chart">
-      <div id="bar-chart-1">
-        <bar-chart id="damage-per-tick" :chart-data="dataBarChart1"></bar-chart>
+    <b-card hidden @mousedown="startDrag($event, 2)" bg-variant="dark" text-variant="white" class="text-left output-card-chart result">
+      <div class="close-container" v-on:click="displayChart(2)">x</div>
+      <div class="container-100wh">
+        <bar-chart :chart-data="dataBarChart1"></bar-chart>
       </div>
     </b-card>
 
-    <b-card hidden id="result-card-extra" header="Result" bg-variant="dark" text-variant="white" class="text-left output-card-extra">
+    <b-card hidden id="result-card-extra" header="Result" bg-variant="dark" text-variant="white" class="text-left output-card-extra result">
     </b-card>
 
     <p id="counter"></p>
@@ -877,11 +671,12 @@
 <script>
 import LineChart from './LineChart.vue';
 import BarChart from './BarChart.vue';
+import { updateInfo } from '@/assets/js/Updates';
+
 let LastIdx = null;
 let BarAbilities = [];
 let RevolutionBar = document.getElementsByClassName("RevoBar");
 let PreviousBarInfo;
-let FightData = [];
 
 let origin
 if (window.origin === 'http://localhost:8080') {
@@ -889,8 +684,6 @@ if (window.origin === 'http://localhost:8080') {
 } else {
   origin = window.origin;
 }
-let klog = 16;
-// let AlreadyRan = false;
 
 export default {
   components: {
@@ -921,10 +714,34 @@ export default {
   },
   data: function() {
     return {
-      chart_ids: ['line-chart-card-1', 'line-chart-card-2', 'bar-chart-card-1'],
+      latestVersion: updateInfo[0]['version'],
+      changelogOpen: false,
+      kLog: 0,
+      chartElements: document.getElementsByClassName("output-card-chart"),
       dataLineChart1: null,
       dataBarChart1: null,
       dataLineChart2: null,
+      fightData: {},
+      resultCardBackgroundVariant: 'dark',
+      resultCardTextColorVariant: 'white',
+      resultCardHeader: 'Result',
+      dragData: {},
+      poppedUp: Array(this.chartElements).fill(0),
+      resized: Array(this.chartElements).fill(0),
+      zIndexCharts: 1000,
+      initData: {
+        labels: [],
+        datasets: [
+          {
+            label: 'data',
+            data: [],
+            fill: false,
+            borderColor: '#4CAF50',
+            backgroundColor: '#4CAF50',
+            borderWidth: 1
+          }
+        ]
+      },
       centerStyle: {
         alignItems: 'center',
         textAlign: 'center'
@@ -1118,26 +935,57 @@ export default {
     // this.fillData()
   },
   methods: {
-    fillData: function (data) {
-      let lineChart1 = document.getElementById(this.chart_ids[0]);
-      let lineChart2 = document.getElementById(this.chart_ids[1]);
-      let barChart = document.getElementById(this.chart_ids[2]);
-      console.log(barChart.hidden)
+    fillData: function (option) {
+      // option: Number of chart(s) that needs updating
+      //  -1: All charts
+      //   0: Line chart with total damage
+      //   1: Line chart with total damage per ability
+      //   2: Bar chart with total damage per tick
 
-      if (!lineChart1.hidden) {
+      let lineChartPointRadius = 3;
+
+      // If no fights have been simulated yet
+      if (Object.keys(this.fightData).length === 0) {
+        if (!this.chartElements[0].hidden && [-1, 0].includes(option)) {
+          this.dataLineChart1 = this.initData;
+        }
+
+        if (!this.chartElements[1].hidden && [-1, 1].includes(option)) {
+          this.dataLineChart2 = this.initData;
+        }
+
+        if (!this.chartElements[2].hidden && [-1, 2].includes(option)) {
+          this.dataBarChart1 = this.initData;
+        }
+
+        return;
+      }
+
+
+      if ([-1, 0, 1].includes(option)) {
+        let nDataPoints = this.fightData['CycleDamageIncrement'].length;
+
+        if (nDataPoints > 100) {
+          lineChartPointRadius = 0;
+        }
+      }
+
+      // Line chart with total damage
+      if (!this.chartElements[0].hidden && [-1, 0].includes(option)) {
         this.dataLineChart1 = {
-          labels: Array.from({length: data['CycleDamageIncrement'].length}, (_, i) => i + 1),
+          labels: Array.from({length: this.fightData['CycleDamageIncrement'].length}, (_, i) => i + 1),
           datasets: [
             {
               label: 'Total damage',
-              data: data['CycleDamageIncrement'],
+              data: this.fightData['CycleDamageIncrement'],
               fill: false,
               borderColor: '#4CAF50',
               backgroundColor: '#4CAF50',
-              borderWidth: 1
+              borderWidth: 1,
+              pointRadius: lineChartPointRadius
             }, {
               label: 'Trendline',
-              data: Array.from({length: data['CycleDamageIncrement'].length}, (_, i) => i + 1).map(x => x * data['AADPT']),
+              data: Array.from({length: this.fightData['CycleDamageIncrement'].length}, (_, i) => i + 1).map(x => x * this.fightData['AADPT']),
               fill: false,
               borderColor: '#900C3F',
               backgroundColor: '#900C3F',
@@ -1148,37 +996,42 @@ export default {
         }
       }
 
-      if (!lineChart2.hidden) {
+      // Line chart with total damage per ability
+      if (!this.chartElements[1].hidden && [-1, 1].includes(option)) {
         let lines = [];
         let colors = ['#FF9999', '#FFCC99', '#FFFF99', '#CCFF99', '#99FF99', '#99FFCC',
           '#99FFFF', '#99CCFF', '#9999FF', '#CC99FF', '#FF99FF', '#FF99CC', '#E0E0E0', '#FFFFFF'];
         let i = 0;
 
-        for (const key in data['AbilityInfoPerTick']) {
+        // Create plot for every ability used in the rotation
+        for (const key in this.fightData['AbilityInfoPerTick']) {
           lines.push({
             label: key,
-            data: data['AbilityInfoPerTick'][key]['damage'],
+            data: this.fightData['AbilityInfoPerTick'][key]['damage'],
             fill: false,
             borderColor: colors[i],
             backgroundColor: colors[i],
-            borderWidth: 1
+            borderWidth: 1,
+            pointRadius: lineChartPointRadius
           });
+
           i++;
         }
 
         this.dataLineChart2 = {
-          labels: Array.from({length: data['AbilityInfoPerTick'][Object.keys(data['AbilityInfoPerTick'])[0]]['damage'].length}, (_, i) => i + 1),
+          labels: Array.from({length: this.fightData['AbilityInfoPerTick'][Object.keys(this.fightData['AbilityInfoPerTick'])[0]]['damage'].length}, (_, i) => i + 1),
           datasets: lines
         }
       }
 
-      if (!barChart.hidden) {
+      // Bar chart with total damage per tick
+      if (!this.chartElements[2].hidden && [-1, 2].includes(option)) {
         this.dataBarChart1 = {
-          labels: Array.from({length: data['CycleDamagePerTick'].length}, (_, i) => i + 1),
+          labels: Array.from({length: this.fightData['CycleDamagePerTick'].length}, (_, i) => i + 1),
           datasets: [
             {
-              label: 'Line Chart',
-              data: data['CycleDamagePerTick'],
+              label: 'Damage',
+              data: this.fightData['CycleDamagePerTick'],
               fill: false,
               borderColor: '#4CAF50',
               backgroundColor: '#4CAF50',
@@ -1188,34 +1041,19 @@ export default {
         }
       }
     },
-
     collapse: function (id) {
       let ScrollIdx = id;
 
-      let attContent = document.getElementById("attAbils");
-      let strContent = document.getElementById("strAbils");
-      let magContent = document.getElementById("magAbils");
-      let ranContent = document.getElementById("ranAbils");
-      let conContent = document.getElementById("conAbils");
-      let defContent = document.getElementById("defAbils");
-      let optContent = document.getElementById("optBlock");
-
-      let cbContent = [attContent,
-        strContent,
-        magContent,
-        ranContent,
-        conContent,
-        defContent,
-        optContent];
+      let scrollContent = document.getElementsByClassName("scrollContent")
 
       let ScrollOut;
 
       // if the content is already showing
-      if (cbContent[ScrollIdx].style.maxHeight) {
-        cbContent[ScrollIdx].style.maxHeight = null;
+      if (scrollContent[ScrollIdx].style.maxHeight) {
+        scrollContent[ScrollIdx].style.maxHeight = null;
         ScrollOut = false;
       } else { // else ScrollOut the content
-        cbContent[ScrollIdx].style.maxHeight = cbContent[ScrollIdx].scrollHeight + "px";
+        scrollContent[ScrollIdx].style.maxHeight = scrollContent[ScrollIdx].scrollHeight + "px";
         ScrollOut = true;
       }
 
@@ -1225,25 +1063,26 @@ export default {
       if (LastIdx !== null && LastIdx !== ScrollIdx) {
         // basically do the opposite for the previous content compared to the new content
         if (ScrollOut) {
-          cbContent[LastIdx].style.maxHeight = null;
+          scrollContent[LastIdx].style.maxHeight = null;
         } else {
-          cbContent[LastIdx].style.maxHeight = cbContent[LastIdx].scrollHeight + "px";
+          scrollContent[LastIdx].style.maxHeight = scrollContent[LastIdx].scrollHeight + "px";
         }
       }
 
       // update the button which has previously been clicked on
       LastIdx = ScrollIdx;
     },
-    // Prevent from weird shenanigans happening when dragging the element
     drag: function (event) {
+      // Prevent weird shenanigans from happening when dragging the element
       event.dataTransfer.setData("abilityName", event.target.id);
     },
-    // Prevent from weird shenanigans happening when dropping the element
     allowDrop: function (event) {
+      // Prevent weird shenanigans from happening when dropping the element
       event.preventDefault();
     },
-    // Function for dropping abilities into the rev bar slot
     drop: function (event) {
+      // Function for dropping abilities into the rev bar slot
+
       // Prevent default action from happening
       event.preventDefault();
 
@@ -1317,7 +1156,6 @@ export default {
         }
       }
     },
-
     abilClick: function (event) {
       let element = event.target;
       let url;
@@ -1356,7 +1194,6 @@ export default {
         element.remove(element);
       }
     },
-
     clearBar: function () {
       for (let k = 0; k < RevolutionBar.length; k++) {
         // if the slot has a child element which is the ability image, delete it
@@ -1368,37 +1205,20 @@ export default {
         BarAbilities.splice(0, BarAbilities.length)
       }
 
-      let resultCard = document.getElementById('result-card');
-      let resultCardWarning = document.getElementById('result-card-warning');
-      let resultCardDanger = document.getElementById('result-card-danger');
-      let resultCardExtra = document.getElementById('result-card-extra');
+      // Hide all the result elements
+      let resultElements = document.getElementsByClassName("result");
 
-      // Close result box if its open
-      if (!resultCard.hidden) {
-          resultCard.hidden = !resultCard.hidden
-      } else if (!resultCardWarning.hidden) {
-        resultCardWarning.hidden = !resultCardWarning.hidden
-      } else if (!resultCardDanger.hidden) {
-        resultCardDanger.hidden = !resultCardDanger.hidden
-      }
-
-      if (!resultCardExtra.hidden) {
-        resultCardExtra.hidden = !resultCardExtra.hidden
-      }
+      resultElements.forEach(element => {
+        if (!element.hidden) {
+          element.hidden = !element.hidden;
+        }
+      })
     },
-
     calcDPT: async function () {
-      // get the run button element
-      // var calcDPT = document.getElementById("calcbutton");
-      // var LoopText;
-      // var CycleText;
-      // var AbilityTable;
-      // var DPTNoteOut = false;
       let resultCard = document.getElementById('result-card');
-      let resultCardWarning = document.getElementById('result-card-warning');
-      let resultCardDanger = document.getElementById('result-card-danger');
+      let downloadButton = document.getElementById('data-download-button');
 
-      let vm = this;
+      let vm = this; // Necessary so that "this" can still be used after server request
 
       // get an array with the bar abilities in correct order
       let InputAbilities = [];
@@ -1455,18 +1275,27 @@ export default {
           response.json().then(function (data) {
             let message;
 
-            FightData = data;
+            // Unhide result card
+            resultCard.hidden = false;
 
             // if an error occured during calculating the DPT, print error
             if (data['error']) {
-              message = data['error_message']
-              resultCard.hidden = true;
-              resultCardWarning.hidden = true;
-              resultCardDanger.hidden = false;
+              downloadButton.hidden = true;
 
-              document.getElementById('result-text-danger').innerHTML = message;
+              vm.resultCardBackgroundVariant = 'danger';
+              vm.resultCardTextColorVariant = 'white';
+              vm.resultCardHeader = 'ERROR';
+
+              message = data['error_message']
+
+              document.getElementById('result-text').innerHTML = message;
               return;
+            } else {
+              downloadButton.hidden = false;
             }
+
+            // Set current data as the global data since there is no error
+            vm.fightData = data;
 
             // create a link using the DPT number, links to test page
             let linkStr = `<span style="color: #4CAF50;"><strong>${data['AADPT']} (${data['AADPTPercentage']}%)</strong></span>`;
@@ -1560,9 +1389,9 @@ export default {
 
             // if theres a warning, extend the message
             if (data['warning'].length !== 0) {
-                resultCard.hidden = true;
-                resultCardWarning.hidden = false;
-                resultCardDanger.hidden = true;
+                vm.resultCardBackgroundVariant = 'warning';
+                vm.resultCardTextColorVariant = 'black';
+                vm.resultCardHeader = 'Result';
 
                 // for every warning
                 for (let i = 0; i < data['warning'].length; i++) {
@@ -1570,17 +1399,14 @@ export default {
                 }
 
                 message += '</span>';
-
-                // print the message in the right place
-                document.getElementById('result-text-warning').innerHTML = message;
             } else {
-                resultCard.hidden = false;
-                resultCardWarning.hidden = true;
-                resultCardDanger.hidden = true;
-
-                // print the message in the right place
-                document.getElementById('result-text').innerHTML = message;
+                vm.resultCardBackgroundVariant = 'dark';
+                vm.resultCardTextColorVariant = 'white';
+                vm.resultCardHeader = 'Result';
             }
+
+            // Print the message in the right place
+            document.getElementById('result-text').innerHTML = message;
 
 
             // the loop text which shows what happens for each tick
@@ -1588,7 +1414,12 @@ export default {
 
             document.getElementById('result-card-extra').innerHTML = CycleText + LoopText;
 
-            vm.fillData(data);
+            vm.fillData(-1);
+
+            let chartButtons = document.getElementById("chart-buttons");
+            chartButtons.hidden = false;
+
+
             // if (DPTNote.style.maxHeight && DPTNoteOut == true){
             //     DPTNote.style.maxHeight = DPTNote.scrollHeight + "px";
             // }
@@ -1604,37 +1435,92 @@ export default {
       //   });
       // }
     },
-
     showExtra: function () {
       let resultCardExtra = document.getElementById('result-card-extra');
       resultCardExtra.hidden = !resultCardExtra.hidden;
     },
+    changelogVisibility: function (showMore) {
+      // showMore = true --> clicked on "show more" button within changelog card
+      // showMore = false --> clicked on "Changelog"
+      if (!showMore) {
+        this.changelogOpen = !this.changelogOpen;
 
-    changelogVisibility: function () {
-      klog -= 1;
-      if (klog > 0) {
-        let id = 'update' + klog;
-        document.getElementById(id).style.display = 'inline-block';
+        // Reset log items
+        if (this.changelogOpen) {
+          document.getElementById('changelog-card').innerHTML = '';
+          this.kLog = 0;
+        }
       }
-    },
 
+      // If everything is showing, return
+      if (this.kLog === updateInfo.length) {
+        return;
+      }
+
+      let updateToShow = updateInfo[this.kLog];
+
+      let updateDiv = document.createElement("div");
+
+      let title = document.createElement("p");
+      title.innerHTML = updateToShow['version'] + ' - ' + updateToShow['date']
+
+      title.style.marginTop = (10) + 'px';
+      title.style.fontSize = (20) + 'px';
+      title.style.fontWeight = 'bold';
+
+      updateDiv.appendChild(title);
+
+      let categories = updateToShow['items'];
+      for (let i in categories) {
+        let header = document.createElement("p");
+
+        header.innerHTML = categories[i]['header'];
+
+        header.style.marginTop = (10) + 'px';
+
+        updateDiv.appendChild(header);
+
+        let ul = document.createElement("ul");
+
+        ul.style.marginTop = (10) + 'px';
+
+        let subItems = categories[i]['subItems']
+        for (let j in subItems) {
+          let li = document.createElement("li");
+          li.innerHTML = subItems[j];
+          ul.appendChild(li);
+        }
+
+        updateDiv.appendChild(ul);
+      }
+
+      document.getElementById('changelog-card').appendChild(updateDiv).focus();
+
+      this.kLog++;
+    },
     displayChart: function (option) {
-      let chartCard = document.getElementById(this.chart_ids[option]);
+      let chartCard = this.chartElements[option];
+
+      if (!this.poppedUp[option]) {
+        chartCard.style.left = ((window.innerWidth - 800)/2) + 'px';
+
+        this.poppedUp[option] = 1;
+      }
+
       chartCard.hidden = !chartCard.hidden;
 
       if (!chartCard.hidden) {
-        this.fillData(FightData);
+        chartCard.style.zIndex = ++this.zIndexCharts;
+        this.fillData(option);
       }
     },
-
     downloadData: function () {
       //Convert JSON Array to string.
-      let json = JSON.stringify(FightData);
+      let json = JSON.stringify(this.fightData);
 
       //Convert JSON string to BLOB.
       json = [json];
       let blob1 = new Blob(json, { type: "text/plain;charset=utf-8" });
-      console.log(blob1)
 
       //Check the Browser.
       let isIE = !!document.documentMode;
@@ -1650,6 +1536,52 @@ export default {
         a.click();
         document.body.removeChild(a);
       }
+    },
+    startDrag: function (e, option) {
+      e.preventDefault();
+
+      if (e.ctrlKey) {
+        return;
+      }
+
+      this.dragData = {
+        x: e.clientX,
+        y: e.clientY,
+        screenX: window.scrollX,
+        screenY: window.scrollY,
+        option: option,
+        element: this.chartElements[option]
+      };
+
+      this.dragData['element'].style.zIndex = ++this.zIndexCharts;
+
+      document.onmouseup = this.endDrag;
+      document.onmousemove = this.onDrag;
+    },
+    onDrag: function(e) {
+      e.preventDefault();
+
+      let clientXdif = this.dragData['x'] - e.clientX;
+      let clientYdif = this.dragData['y'] - e.clientY;
+      let screenXdif = this.dragData['screenX'] - window.scrollX;
+      let screenYdif = this.dragData['screenY'] - window.scrollY;
+
+      let mousePosition = {
+          x : clientXdif + screenXdif,
+          y : clientYdif + screenYdif
+      };
+
+      this.dragData['x'] = e.clientX;
+      this.dragData['y'] = e.clientY;
+      this.dragData['screenX'] = window.scrollX;
+      this.dragData['screenY'] = window.scrollY;
+
+      this.dragData['element'].style.left = (this.dragData['element'].offsetLeft - mousePosition['x']) + 'px';
+      this.dragData['element'].style.top = (this.dragData['element'].offsetTop - mousePosition['y']) + 'px';
+    },
+    endDrag: function () {
+      document.onmouseup = null;
+      document.onmousemove = null;
     }
   }
 }
@@ -1740,13 +1672,13 @@ export default {
   }
   .AbilBlock {
     margin: auto;
-    width: 1045px; /* 989 */
+    width: 995px; /* 989 */
     height: 300px; /* 314 */
   }
   .AbilType {
     color: #000000;
     display: flex;
-    width: 200px;
+    width: 150px;
     height: 70px;
     justify-content: center;
     align-items: center;
@@ -1765,7 +1697,7 @@ export default {
   .Ability:active{
     transform: scale(1);
   }
-  .content {
+  .scrollContent {
     display: block;
     overflow: hidden;
     max-height: 0;
@@ -1837,7 +1769,7 @@ export default {
     margin-top: 20px;
     display: inline-block;
     width: 500px;
-    height: 180px;
+    height: 150px;
   }
   .result-card-text {
     cursor: pointer;
@@ -1848,14 +1780,6 @@ export default {
     text-align: left;
     display: inline-block;
     width: 800px;
-  }
-  .output-card-chart {
-    margin-top: 20px;
-    padding: 15px;
-    text-align: left;
-    display: inline-block;
-    width: 800px;
-    /*height: 500px;*/
   }
   .accordion-button {
     height: 30px;
@@ -1888,34 +1812,43 @@ export default {
     color: white;
     font-size: 11px;
   }
-  .chart-selector {
+  .container-100wh {
+    width: 100%;
+    height: 100%;
+  }
+  #data-download-button {
     position: absolute;
-    bottom: 0;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    top: 5px;
+    right: 5px;
+  }
+  #download-image-1 {
+    width: inherit;
+    height: inherit;
+  }
+  .output-card-chart {
+    z-index: 100;
+    position: absolute;
+    width: 800px;
+    top: 25%;
+    padding: 0;
+    text-align: left;
+    margin: auto;
+    /*resize: both;*/
+    /*overflow: auto;*/
+  }
+  .close-container {
+    position: absolute;
+    width: 20px;
+    height: 15px;
+    cursor: pointer;
+    background-color: inherit;
+    color: #B0B0B0;
+    top: 0;
     right: 0;
-  }
-  #line-chart-1 {
-    width: 100%;
-    height: 100%;
-  }
-  #line-chart-2 {
-    width: 100%;
-    height: 100%;
-  }
-  #damage-total {
-    width: 100%;
-    height: 100%;
-  }
-  #damage-per-tick {
-    width: 100%;
-    height: 100%;
-  }
-  #damage-per-tick-per-ability {
-    width: 100%;
-    height: 100%;
-  }
-  .data-download-button {
-    position: absolute;
-    bottom: 0;
-    margin-left: 0;
+    text-align: center;
+    font-weight: 18;
   }
 </style>

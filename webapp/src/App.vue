@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <navbar />
+    <sideBar />
 <!--    <RevoCalc v-if="page === 'RevoCalc'"/>-->
 <!--    <ItemIDs v-if="page === 'ItemIDs'"/>-->
 <!--    <ItemIDs />-->
@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import navbar from './components/navbar.vue'
+import sideBar from './components/SideBar.vue'
 
 export default {
     // components: {
@@ -28,7 +28,7 @@ export default {
     //     this.flaskGreeting = gObject.greeting;
     // },
     components: {
-      navbar, // register component=
+      sideBar, // register component=
     }
 }
 

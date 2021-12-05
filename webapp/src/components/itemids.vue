@@ -3,7 +3,7 @@
     <b-card no-body class="mb-1" id="card-header" bg-variant="dark" text-variant="white" style="text-align: left;">
       <h2 style="text-align: center; margin-bottom: 15px; margin-top: 15px;">Item IDs (tradeable)</h2>
       <p style="text-align: center;">
-          Last updated: 7-8-2021
+          Last updated: 12-12-2021
       </p>
     </b-card>
 
