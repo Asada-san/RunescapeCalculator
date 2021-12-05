@@ -9,7 +9,6 @@ class Dummy:
 
     def __init__(self, userInput):
         self.Damage = 0                 # The amount of damage done - puncture damage
-        self.PunctureDamage = 0         # The amount of puncture damage done
         self.Stun = False               # When True, the dummy is in a stunned state
         self.StunTime = 0               # Time before a stun wears of
         self.Bind = False               # When True, the dummy is in a bind state

@@ -328,20 +328,20 @@ def doDamage(CurrentHits, bar, dummy, player, logger, settings):
             PHit.Damage = AVGCalc.BleedDamAvgCalc(PHit, player, logger)[0]
 
         # Add the damage to the total damage
-        if PHit.Type != 4:
-            dummy.Damage += PHit.Damage
-        else:
-            dummy.PunctureDamage += PHit.Damage
+        dummy.Damage += PHit.Damage
+
+        if player.PerkAftershock and PHit.Type != 4 and PHit.Name != 'Aftershock':
+            player.ArDamage += PHit.Damage
 
         # Set some cycle data
         if logger.CycleFound or not settings.FindCycle:
             logger.AbilInfo[PHit.Name]['damage'] += PHit.Damage
             logger.AbilInfo['Boosted']['damage'] += PHit.Damage - standardDamage
 
-            if PHit.Type != 4:
-                logger.CycleDamage += PHit.Damage
-            else:
-                logger.CyclePunctureDamage += PHit.Damage
+            logger.CycleDamage += PHit.Damage
+
+            if player.PerkAftershock and PHit.Type != 4 and PHit.Name != 'Aftershock':
+                logger.CycleArDamage += PHit.Damage
 
         if logger.DebugMode:
             if dummy.nTarget == 1:

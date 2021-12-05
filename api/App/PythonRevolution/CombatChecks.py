@@ -37,7 +37,7 @@ def AbilityBar_verifier(userInput, AbilityBook, bar, dummy, player, logger):
                                                'shared%': 0}})
         logger.PreviousAbilInfo = deepcopy(logger.AbilInfo)
 
-        logger.CycleAbilityDamagePerTick.update({ability.Name: {'damage': [],
+        logger.CycleAbilityDamagePerTick.update({ability.Name: {'damage': [0],
                                                                 'activations': 0}})
 
         if ability.Revolution or not player.Afk:
@@ -189,6 +189,26 @@ def AbilityBar_verifier(userInput, AbilityBook, bar, dummy, player, logger):
     if dummy.nTarget > 1 and 'Dragon Breath' in bar.AbilNames:
         player.DragonBreathGain = True
 
+    # If the Aftershock perk has been selected, get its hit
+    if player.PerkAftershock:
+        ArHit = deepcopy(AbilityBook['Aftershock'])
+        ArHit.AbilityUpgrades(player, logger)
+
+        # Set final hits due to AoE shenanigans
+        if all([dummy.nTarget > 1 and ArHit.AoE]):
+            ArHit.AoECheck(dummy, player)
+
+        player.SpecialAbils.update({'Aftershock': ArHit})
+
+        logger.AbilInfo.update({'Aftershock': {'damage': 0,
+                                               'activations': 0,
+                                               'shared%': 0}})
+
+        logger.PreviousAbilInfo = deepcopy(logger.AbilInfo)
+
+        logger.CycleAbilityDamagePerTick.update({'Aftershock': {'damage': [],
+                                                                'activations': 0}})
+
     # Upgrade abilities
     for ability in bar.Rotation:
         ability.AbilityUpgrades(player, logger)
@@ -281,5 +301,28 @@ def PostAttackCleanUp(bar, player, dummy, logger):
 
     # Clear the list of abilities which have inflicted damage on the dummy in the current tick
     dummy.DamageNames.clear()
+
+    # Check for Aftershock perk activation
+    if player.PerkAftershock:
+        Aftershock = player.SpecialAbils['Aftershock']
+
+        if not Aftershock.cdStatus:
+
+            if player.ArDamage > 50000:
+                dummy.PHits[dummy.nPH: dummy.nPH + Aftershock.FinalTotal] = deepcopy(Aftershock.FinalHit)
+                dummy.nPH += Aftershock.FinalTotal
+
+                # Reset Aftershock damage
+                player.ArDamage = 0
+
+                if logger.CycleFound:
+                    logger.AbilInfo['Aftershock']['activations'] += 1
+
+            # Put it on cooldown whether it has been activated or not
+            Aftershock.cdStatus = True
+            Aftershock.cdTime = Aftershock.cdMax
+            player.Cooldown.append(Aftershock)
+
+
 
 

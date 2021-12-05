@@ -214,14 +214,19 @@ class Ability:
         Type = 0
 
         if self.nS > 0:
-            DamAvg = AVGCalc.StandardChannelDamAvgCalc(self, player, logger)
+            if self.Style == 'Special':
+                DamAvg = AVGCalc.SpecialDamAvgCalc(self, player, logger)
+                Type = 10
+                self.Hits.extend([self.Hit(self, DamAvg, Type, i, i) for i in range(0, self.nS)])
+            else:
+                DamAvg = AVGCalc.StandardChannelDamAvgCalc(self, player, logger)
 
-            if self.Standard:
-                Type = 1
-            elif self.Channeled:
-                Type = 2
+                if self.Standard:
+                    Type = 1
+                elif self.Channeled:
+                    Type = 2
 
-            self.Hits.extend([self.Hit(self, DamAvg, Type, i, i) for i in range(0, self.nS)])
+                self.Hits.extend([self.Hit(self, DamAvg, Type, i, i) for i in range(0, self.nS)])
 
         if self.StunBindDam:
             StunBindDamAvg = AVGCalc.StandardChannelDamAvgCalc(self, player, logger, 'StunBind')
@@ -345,5 +350,6 @@ class Ability:
             self.Target = 1                                         # Target on which each hit should be applied, initialised as #1
             self.Index = HitIndex                                   # Index of the hit
             self.Name = Abil.Name                                   # Name of the ability causing the hit
+
 
 

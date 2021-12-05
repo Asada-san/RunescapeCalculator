@@ -20,7 +20,8 @@ def CycleCheck(bar, player, dummy, logger):
     condition = (cdTimes,
                  bar.Adrenaline,
                  dummy.nPuncture,
-                 player.AbilCritBuff)
+                 player.AbilCritBuff,
+                 player.ArDamage)
 
     logger.Counter.append(logger.n)
 
@@ -56,14 +57,14 @@ def CycleRotation(bar, player, dummy, logger, settings):
     # The below is not performed in the last tick when cooldowns are checked again, causing small inaccuracies
 
     # Get damage done in current tick
-    tickDamage = (logger.CycleDamage + logger.CyclePunctureDamage) - logger.CycleDamagePreviousTick
+    tickDamage = logger.CycleDamage - logger.CycleDamagePreviousTick
     logger.CycleDamagePerTick.append(tickDamage)
 
     # Subtract tick time
     logger.Cycle1More -= 1
 
     # Calculate new total damage up until current tick
-    logger.CycleDamagePreviousTick = logger.CycleDamage + logger.CyclePunctureDamage
+    logger.CycleDamagePreviousTick = logger.CycleDamage
     logger.CycleDamageIncrement.append(logger.CycleDamagePreviousTick)
 
     for key, value in logger.AbilInfo.items():

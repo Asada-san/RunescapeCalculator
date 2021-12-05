@@ -20,8 +20,8 @@ export var updateInfo = [{
     items: [{
         header: 'Abilities:',
         subItems: [
-            'Removed the following abilities which are not activated by revolution: Bladed Dive, Surge, Detonate, Escape, Balanced Strike',
-            'Added the effects of Deadshot, Omnipower and Overpower when wearing a Igneous cape',
+            'Removed the following abilities which are not activated by revolution: Bladed Dive, Surge, Escape, Balanced Strike (Detonate can still be used with the "Efficient" option)',
+            'Added the Igneous cape effects of Deadshot, Omnipower and Overpower',
             '(Greater) Chain and (Greater) Ricochet secondary hits are now delayed by 1 tick',
             'Fourth puncture hit is now .1x its previous value',
             'Wild magic is now a channeled ability',
@@ -29,14 +29,14 @@ export var updateInfo = [{
         ]}, {
         header: 'Options:',
         subItems: [
-            'Added the 3 Igneous capes from the Zuk fight and moved them under 1 option together with the strength cape as "Cape"',
+            'Added the 3 Igneous capes (TzKal-Zuk) and moved them under 1 option together with the strength cape as "Cape"',
             'Increased the maximum amount of dummies to 30 (up from 10)'
         ]}, {
         header: 'Calculations:',
         subItems: [
-            'Damaging AoE hits are now calculated once instead of every time an AoE ability is activated',
-            'Greater Chain effect now is applied to the correct targets',
-            'Greater Chain effect is now applied as soon as the next ability after Greater Chain has been fired instead of when the damage actually occures on the target, simplifying shit a lot',
+            'Damaging AoE hits are now instantiated once instead of every time an AoE ability is activated in the rotation',
+            'Greater Chain effect is now applied to the correct targets',
+            'Greater Chain effect is now applied as soon as the next ability after Greater Chain has been fired instead of when the damage actually occures on the target',
             'Damage done on secondary targets due to the Greater chain effect is now seen as Greater Chain damage instead of whatever the fired ability was'
         ]}, {
         header: 'Layout:',
@@ -58,7 +58,7 @@ export var updateInfo = [{
         ]}, {
         header: 'Other:',
         subItems: [
-            'Added a download data button on the result card with which .json file can be downloaded containing data resulting from the simulated fight'
+            'Added a download data button on the result card with which a .json file can be downloaded containing data resulting from the simulated fight'
         ]}
     ]}, {
     version: 'V2.00.1',

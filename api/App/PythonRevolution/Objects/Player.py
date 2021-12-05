@@ -29,6 +29,7 @@ class Player:
         self.CritAdrenalineBuffTime = 0             # Timer for adrenaline buff due to the above ^
         self.BasicAdrenalineGain = 0                # Adrenaline boost for basic abilities due to the above ^
         self.DragonBreathGain = False               # True if Dragon Breath is on the bar and there are more than 2 dummies
+        self.SpecialAbils = {}                      # Dict containing special "abilities" originating from equipment and such
         # self.DragonBreathCombustTime = 0            # Timer for Combust boost due to the Dragon Breath ability
 
         self.Switcher = userInput['switchStatus']                   # True if the user want to use both 2h and dual weapons
@@ -90,6 +91,7 @@ class Player:
 
         self.Ar = userInput['Aftershock']               # Aftershock rank
         self.PerkAftershock = self.Ar > 0               # True if the user selected the Aftershock perk
+        self.ArDamage = 0                               # Damage counting for the Aftershock perk activation
 
         self.SBr = userInput['ShieldBashing']           # Shield Bashing rank
         self.PerkShieldBashing = self.SBr > 0           # True if the user selected the Shield Bashing perk
@@ -171,6 +173,16 @@ class Player:
 
                 self.Cooldown.pop(i)  # Delete it from the cooldown list
 
+        # # If Aftershock is on cooldown
+        # if self.PerkAftershock and self.ArHit.cdStatus:
+        #     self.ArHit.cdTime -= 1
+        #
+        #     if self.ArHit.cdTime == 0:
+        #         self.ArHit.cdStatus = False
+        #
+        #         if logger.DebugMode:
+        #             logger.write(22, self.ArHit.Name)
+
         # If the player has an adrenaline buff going
         if self.CritAdrenalineBuffTime:
             self.CritAdrenalineBuffTime -= 1
@@ -217,7 +229,7 @@ class Player:
                 if logger.DebugMode:
                     logger.write(26)
 
-        # # If the player has a Greater Chain effect going on
+        # If the player has a Greater Chain effect going on
         # if self.DragonBreathCombustTime:
         #     self.DragonBreathCombustTime -= 1
         #

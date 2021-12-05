@@ -11,7 +11,7 @@ rows, columns = tab_excel.shape  # Shape of excel table
 
 AbilityBook = {}
 rowIDX = 0
-nTables = 6  # There are 6 tables each corresponding to a different cb skill
+nTables = 7  # There are 6 tables each corresponding to a different cb skill
 
 for i in range(0, nTables):
     # Store the name and the corresponding row in a dict

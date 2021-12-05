@@ -164,28 +164,20 @@ def fight_dummy(userInput, AbilityBook):
         # Print total damage and logger time depending if a cycle has been found or not
         if not logger.CycleFound:
             if logger.DebugMode:
-                logger.write(46, [round(dummy.Damage + dummy.PunctureDamage, 3), round(logger.n * .6, 1)])
+                logger.write(46, [round(dummy.Damage, 3), round(logger.n * .6, 1)])
         else:
             logger.CycleLoopTime += 1  # Add tick time
 
             if logger.DebugMode:
-                logger.write(47, [round(logger.CycleDamage + logger.CyclePunctureDamage, 3), round(logger.CycleLoopTime * .6, 1)])
+                logger.write(47, [round(logger.CycleDamage, 3), round(logger.CycleLoopTime * .6, 1)])
         # -----------------------------------------------------
 
     if not logger.CycleFound:  # If no cycle has been found, change some result variables
         logger.CycleTime = logger.n
         logger.CycleDamage = dummy.Damage
-        logger.CyclePunctureDamage = dummy.PunctureDamage
 
         if settings.FindCycle:
             logger.Rotation.extend([f'<span style="color: {logger.TextColor["cycle"]}">NO CYCLE HAS BEEN FOUND AFTER 6000 TICKS!!! DPT RESULT GIVEN INSTEAD!</span>'])
-
-    if player.PerkAftershock:
-        # Increase max by 0.396 per rank and min 0.24 per rank
-        AS_DamAvg = (0.396 * player.Ar + 0.24 * player.Ar) / 2 * player.BaseDamageEffective
-        logger.CycleDamage += (logger.CycleDamage * AS_DamAvg / 50000) * dummy.nTarget
-
-    logger.CycleDamage += logger.CyclePunctureDamage
 
     if logger.CycleDamage != 0:
         for entry in logger.AbilInfo:
@@ -193,7 +185,7 @@ def fight_dummy(userInput, AbilityBook):
                 logger.AbilInfo[entry]['shared%'] = round(logger.AbilInfo[entry]['damage'] / logger.CycleDamage * 100, 2)
             else:
                 logger.AbilInfo[entry]['shared%'] = 0
-    print(logger.CycleDamagePerTick)
+
     Results = {  # The output of main
         'AADPTPercentage': round(logger.CycleDamage / logger.CycleTime / player.BaseDamage * 100, 3),
         'AADPT': round(logger.CycleDamage / logger.CycleTime, 3),

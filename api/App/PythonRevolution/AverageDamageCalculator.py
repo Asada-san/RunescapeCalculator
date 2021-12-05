@@ -156,3 +156,32 @@ def PunctureDamAvgCalc(Object, player, logger):
                 logger.write(17, [Object.Name, round(Avg[i], 2)])
 
     return Avg
+
+
+def SpecialDamAvgCalc(Object, player, logger):
+    """
+    Calculates the average hit of a bleed effect of an ability.
+
+    :param Object: Hit OR Ability class object.
+    :param player: The Player object
+    :param logger: The Logger object
+    :return: Average bleed hits
+    """
+
+    Max = Object.DamMax.copy()
+    Min = Object.DamMin.copy()
+
+    Avg = []
+    # If the player has a boost from berserker or w/e, the aura boost is replaced by the ability boost
+    if player.PerkAftershock:
+        Max *= player.Ar * player.BaseDamage
+        Min *= player.Ar * player.BaseDamage
+
+    for i in range(0, len(Max)):
+        ################## Calculate averages ########################
+        Avg.append((Max[i] + Min[i]) / 2)
+
+        if logger.DebugMode:
+            logger.write(54, [Object.Name, Avg[i]])
+
+    return Avg

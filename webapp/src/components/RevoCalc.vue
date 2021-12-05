@@ -973,7 +973,8 @@ export default {
       // Line chart with total damage
       if (!this.chartElements[0].hidden && [-1, 0].includes(option)) {
         this.dataLineChart1 = {
-          labels: Array.from({length: this.fightData['CycleDamageIncrement'].length}, (_, i) => i + 1),
+          labels: Array.from(Array(this.fightData['CycleDamageIncrement'].length).keys()),
+          //labels: Array.from({length: }, (_, i) => i + 1),
           datasets: [
             {
               label: 'Total damage',
@@ -1019,7 +1020,7 @@ export default {
         }
 
         this.dataLineChart2 = {
-          labels: Array.from({length: this.fightData['AbilityInfoPerTick'][Object.keys(this.fightData['AbilityInfoPerTick'])[0]]['damage'].length}, (_, i) => i + 1),
+          labels: Array.from(Array(this.fightData['AbilityInfoPerTick'][Object.keys(this.fightData['AbilityInfoPerTick'])[0]]['damage'].length).keys()),
           datasets: lines
         }
       }
@@ -1027,7 +1028,7 @@ export default {
       // Bar chart with total damage per tick
       if (!this.chartElements[2].hidden && [-1, 2].includes(option)) {
         this.dataBarChart1 = {
-          labels: Array.from({length: this.fightData['CycleDamagePerTick'].length}, (_, i) => i + 1),
+          labels: Array.from(Array(this.fightData['CycleDamagePerTick'].length).keys()),
           datasets: [
             {
               label: 'Damage',
@@ -1494,7 +1495,7 @@ export default {
         updateDiv.appendChild(ul);
       }
 
-      document.getElementById('changelog-card').appendChild(updateDiv).focus();
+      document.getElementById('changelog-card').appendChild(updateDiv);
 
       this.kLog++;
     },

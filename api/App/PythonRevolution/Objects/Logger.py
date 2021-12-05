@@ -32,7 +32,7 @@ class Logger:
         self.CycleDamagePerTick = []            # Damage done during 1 cycle time per tick
         self.CycleDamagePreviousTick = 0        # Total damage done before current tick
         self.CycleDamageIncrement = []          # Increase damage as ticks go on
-        self.CyclePunctureDamage = 0            # Puncture damage done during 1 cycle time
+        self.CycleArDamage = 0                  # Damage counting for the Aftershock perk activation
         self.CycleFound = False                 # True if a cycle has been found
         self.Cycle1More = 0                     # Starts at t = CycleTime and when it runs out, runLoop is set to False
         self.ConditionList = []                 # List containing 4 condition to be satisfied
@@ -73,7 +73,8 @@ class Logger:
             5: 'stun&bind',
             6: 'side target',
             7: 'greater ricochet effect',
-            8: 'greater chain effect'
+            8: 'greater chain effect',
+            10: 'special'
         }
 
     def check_stall(self):
@@ -271,6 +272,12 @@ class Logger:
 
         elif x == 53:
             string = f'<li style="color: {self.TextColor["initialisation"]};">Ability change: Extended {var} by 3 hits hits</li>'
+
+        elif x == 54:
+            string = f'<li style="color: {self.TextColor["initialisation"]};">Special Ability Calculation: Avg hit of {var[0]} to {var[1]}</li>'
+
+        elif x == 55:
+            string = f'<li style="color: {self.TextColor["normal"]};">{var} no longer on cd</li>'
 
         else:
             string = f'NO CORRESPONDING STRING FOUND!'
