@@ -31,7 +31,7 @@
             }],
             xAxes: [{
               ticks: {
-                beginAtZero: true,
+                beginAtZero: false,
                 fontColor: "#FFFFFF",
               },
               gridLines: {

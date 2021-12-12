@@ -1,6 +1,7 @@
 import numpy as np
 from App.PythonRevolution.Objects.Settings import Settings
 import os
+from copy import deepcopy
 
 
 class Logger:
@@ -21,20 +22,10 @@ class Logger:
 
         self.n = 0                              # Number of ticks in the while loop (iterations)
         self.nCheck = 0                         # Number of ticks after a cycle has been found (iterations)
-
-        # Array consisting of boolean values, a value is true if an ability corresponding to the
-        # same idx of the bar has been fired
-        self.nFA = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], dtype=np.bool)
-
-        self.Rotation = []                      # Array containing the cycle rotation
+        self.Rotation = []                      # Array containing ability names in order of activation
+        self.RotationTick = []                  # Array containing tick number in which the abilities in logger.Rotation have been activated
         self.CycleTime = 0                      # Cycle time in TICKS
-        self.CycleDamage = 0                    # Damage done during 1 cycle time - puncture damage
-        self.CycleDamagePerTick = []            # Damage done during 1 cycle time per tick
-        self.CycleDamagePreviousTick = 0        # Total damage done before current tick
-        self.CycleDamageIncrement = []          # Increase damage as ticks go on
-        self.CycleArDamage = 0                  # Damage counting for the Aftershock perk activation
         self.CycleFound = False                 # True if a cycle has been found
-        self.Cycle1More = 0                     # Starts at t = CycleTime and when it runs out, runLoop is set to False
         self.ConditionList = []                 # List containing 4 condition to be satisfied
         self.Counter = []                       # List that contains loop.n every CycleChecker iteration
         self.Redundant = []                     # Array containing abilities which are not used in the cycle
@@ -42,13 +33,11 @@ class Logger:
         self.CycleStart = 0                     # Starting time of the extra cycle
         self.nStall = 0                         # Number of consecutive stalls
         self.CycleConvergenceTime = 0           # The convergence time to the cycle
+        self.Cooldowns = []
 
         # Dict with total damage contribution per ability
-        self.AbilInfo = {'Boosted': {'damage': 0,
-                                     'activations': 'NA',
-                                     'shared%': 0}}
+        self.AbilInfo = {}
 
-        self.PreviousAbilInfo = {}
         self.CycleAbilityDamagePerTick = {}
 
         self.Text = ''
@@ -56,6 +45,7 @@ class Logger:
         self.TextColor = {
             'important': 'red',  # Red color for important messages
             'attack': 'yellow',  # Yellow color for Ability activation and adrenaline
+            'charge': '#87B0E6',  # Turquoise for abilities/effects that are charging (Like Jas effect)
             'loop': '#4CAF50',  # Green-ish color for loop total damage/time information
             'damage': 'orange',  # Orange color for ability damage
             'normal': '#D0D0D0',  # White-ish color for less important info
@@ -72,18 +62,57 @@ class Logger:
             4: 'puncture',
             5: 'stun&bind',
             6: 'side target',
-            7: 'greater ricochet effect',
-            8: 'greater chain effect',
             10: 'special'
         }
+
+    def initAbility(self, name):
+        self.AbilInfo.update({name: {'damage': 0,
+                                     'activations': 0,
+                                     'shared%': 0}})
+
+        self.CycleAbilityDamagePerTick.update({name: {'damage': [0],
+                                                      'activations': 0}})
+
+    def updateTickInfo(self):
+        for key, value in self.AbilInfo.items():
+            self.CycleAbilityDamagePerTick[key]['damage'].append(self.AbilInfo[key]['damage'])
+
+    def getResults(self, startTime, cycleTime):
+        endTime = startTime + cycleTime
+
+        i = 0
+        k = len(self.RotationTick)
+
+        while self.RotationTick[i] < startTime:
+            if i == k - 1:
+                break
+            else:
+                i += 1
+
+        self.Rotation = self.Rotation[i:]
+
+        for ability in self.AbilInfo.keys():
+            self.CycleAbilityDamagePerTick[ability]['damage'] = self.CycleAbilityDamagePerTick[ability]['damage'][startTime:endTime + 1]
+            self.CycleAbilityDamagePerTick[ability]['damage'] = [x - self.CycleAbilityDamagePerTick[ability]['damage'][0] for x in self.CycleAbilityDamagePerTick[ability]['damage']]
+            self.CycleAbilityDamagePerTick[ability]['activations'] = self.Rotation.count(ability)
+
+            self.AbilInfo[ability]['damage'] = self.CycleAbilityDamagePerTick[ability]['damage'][-1]
+            self.AbilInfo[ability]['activations'] = max(self.Rotation.count(ability), self.Rotation.count('<span style="color: #B65FCF">' + ability + '</span>'))
 
     def check_stall(self):
         if len(self.Rotation) != 0 and 'STALL' in self.Rotation[-1]:
             self.nStall += 1
             self.Rotation[-1] = f'<span style="color: {self.TextColor["cycle"]}">STALL {self.nStall}x</span>'
+            self.RotationTick[-1] = self.n
         else:
             self.nStall = 1
             self.Rotation.extend([f'<span style="color: {self.TextColor["cycle"]}">STALL {self.nStall}x</span>'])
+            self.RotationTick.append(self.n)
+
+    def addSpecial(self, name):
+        pre = '<span style="color: #B65FCF">'
+        post = '</span>'
+        self.Rotation.append(pre + name + post)
 
     def write(self, x, var=None):
 
@@ -179,7 +208,7 @@ class Logger:
             string = f'<li style="color: {self.TextColor["normal"]};">Player is no longer performing a channeled ability</li>'
 
         elif x == 25:
-            string = f'<li style="color: {self.TextColor["normal"]};">Player damage boost has been reset</li>'
+            string = f'<li style="color: {self.TextColor["normal"]};">Player damage boost due to {var} has been reset</li>'
 
         elif x == 26:
             string = f'<li style="color: {self.TextColor["normal"]};">Player Greater Chain effect has worn off</li>'
@@ -209,7 +238,7 @@ class Logger:
             string = f'<li style="color: {self.TextColor["status"]};">Dummy puncture stack: {var}</li>'
 
         elif x == 35:
-            string = f'<li style="color: {self.TextColor["cycle"]};">CYCLE FOUND, EXTENDING RUN BY 1x CYCLETIME: {var}s</li>'
+            string = f'<li style="color: {self.TextColor["cycle"]};">CYCLE FOUND!!! Terminating intense fight with dummy.</li>'
 
         elif x == 36:
             string = f'<li style="color: {self.TextColor["normal"]};">Attack status: {var} ready</li>'
@@ -247,13 +276,13 @@ class Logger:
             string = \
                 f'<br>\n<li style="color: {self.TextColor["loop"]}; white-space: pre-wrap;">' \
                 f'Total damage: {var[0]}' \
-                f'<span style="float: right;">Time: {var[1]}</span></li><br>'
+                f'<span style="float: right;">Tick: {var[1]}</span></li><br>'
 
-        elif x == 47:
-            string = \
-                f'<br>\n<li style="color: {self.TextColor["cycle"]}; white-space: pre-wrap;">' \
-                f'Cycle damage: {var[0]}' \
-                f'<span style="float: right;">Cycle Time: {var[1]}</span></li><br>'
+        # elif x == 47:
+        #     string = \
+        #         f'<br>\n<li style="color: {self.TextColor["cycle"]}; white-space: pre-wrap;">' \
+        #         f'Cycle damage: {var[0]}' \
+        #         f'<span style="float: right;">Cycle Time: {var[1]}</span></li><br>'
 
         elif x == 48:
             string = f'<li style="color: {self.TextColor["cycle"]};">VERIFICATION LOOP COMPLETED: RETURN RESULTS</li>'
@@ -278,6 +307,15 @@ class Logger:
 
         elif x == 55:
             string = f'<li style="color: {self.TextColor["normal"]};">{var} no longer on cd</li>'
+
+        elif x == 56:
+            string = f'<li style="color: {self.TextColor["attack"]};">Jas buff activated</li>'
+
+        elif x == 57:
+            string = f'<li style="color: {self.TextColor["charge"]};">Jas buff damage increased to: {var}</li>'
+
+        elif x == 58:
+            string = f'<li style="color: {self.TextColor["attack"]};">Ful buff activated</li>'
 
         else:
             string = f'NO CORRESPONDING STRING FOUND!'

@@ -28,17 +28,15 @@ def AbilityBar_verifier(userInput, AbilityBook, bar, dummy, player, logger):
 
         return error, error_mes, warning
 
+    noBasics = True
     # Put user abilities on the bar object
     for user_ability in userInput['Abilities']:
         ability = deepcopy(AbilityBook[user_ability])
 
-        logger.AbilInfo.update({ability.Name: {'damage': 0,
-                                               'activations': 0,
-                                               'shared%': 0}})
-        logger.PreviousAbilInfo = deepcopy(logger.AbilInfo)
+        if ability.Type == 'Basic':
+            noBasics = False
 
-        logger.CycleAbilityDamagePerTick.update({ability.Name: {'damage': [0],
-                                                                'activations': 0}})
+        logger.initAbility(ability.Name)
 
         if ability.Revolution or not player.Afk:
             bar.Rotation.append(ability)
@@ -54,6 +52,31 @@ def AbilityBar_verifier(userInput, AbilityBook, bar, dummy, player, logger):
 
             if logger.DebugMode:
                 logger.write(10, [ability.Name])
+
+    # Check ability compatibility according to equipment
+    if noBasics:
+        error = True
+        error_mes = f'A revolution bar needs at least 1 basic ability to work'
+
+        return error, error_mes, warning
+
+    # Add special abilities to the player object (purple section on the spreadsheet)
+    SpecialAbils = []
+
+    # Aftershock
+    if player.PerkAftershock:
+        SpecialAbils.append('Aftershock')
+
+    # Pocket item
+    if player.Pocket != 0:
+        SpecialAbils.append(player.Pocket)
+
+    for user_special_ability in SpecialAbils:
+        special_ability = deepcopy(AbilityBook[user_special_ability])
+
+        logger.initAbility(special_ability.Name)
+
+        player.SpecialAbils.update({special_ability.Name: special_ability})
 
     # Create a list of ability names which are on the bar and their required weapon types and styles
     bar.AbilNames = [ability.Name for ability in bar.Rotation]
@@ -189,31 +212,21 @@ def AbilityBar_verifier(userInput, AbilityBook, bar, dummy, player, logger):
     if dummy.nTarget > 1 and 'Dragon Breath' in bar.AbilNames:
         player.DragonBreathGain = True
 
-    # If the Aftershock perk has been selected, get its hit
-    if player.PerkAftershock:
-        ArHit = deepcopy(AbilityBook['Aftershock'])
-        ArHit.AbilityUpgrades(player, logger)
+    # Upgrade special abilities (option check)
+    for special_ability_name in player.SpecialAbils.keys():
+        special_ability = player.SpecialAbils[special_ability_name]
 
-        # Set final hits due to AoE shenanigans
-        if all([dummy.nTarget > 1 and ArHit.AoE]):
-            ArHit.AoECheck(dummy, player)
+        special_ability.AbilityUpgrades(player, logger)
 
-        player.SpecialAbils.update({'Aftershock': ArHit})
+        # Get AoE hits
+        if all([dummy.nTarget > 1 and special_ability.AoE]):
+            special_ability.AoECheck(dummy, player)
 
-        logger.AbilInfo.update({'Aftershock': {'damage': 0,
-                                               'activations': 0,
-                                               'shared%': 0}})
-
-        logger.PreviousAbilInfo = deepcopy(logger.AbilInfo)
-
-        logger.CycleAbilityDamagePerTick.update({'Aftershock': {'damage': [],
-                                                                'activations': 0}})
-
-    # Upgrade abilities
+    # Upgrade abilities (option check)
     for ability in bar.Rotation:
         ability.AbilityUpgrades(player, logger)
 
-        # Set final hits due to AoE shenanigans
+        # Get AoE hits
         if any([ability.Name == 'Greater Ricochet', all([dummy.nTarget > 1 and ability.AoE])]):
             ability.AoECheck(dummy, player)
 
@@ -251,8 +264,9 @@ def PostAttackStatuses(bar, player, dummy, FireAbility, logger):
 
     if FireAbility.Boost:
         player.Boost = True
-        player.BoostX = FireAbility.BoostX
-        player.BoostTime = FireAbility.BoostTime
+        player.BoostX.append(FireAbility.BoostX)
+        player.BoostTime.append(FireAbility.BoostTime)
+        player.BoostName.append(FireAbility.Name)
 
     if not dummy.StunBindImmune:
 
@@ -309,20 +323,18 @@ def PostAttackCleanUp(bar, player, dummy, logger):
         if not Aftershock.cdStatus:
 
             if player.ArDamage > 50000:
-                dummy.PHits[dummy.nPH: dummy.nPH + Aftershock.FinalTotal] = deepcopy(Aftershock.FinalHit)
-                dummy.nPH += Aftershock.FinalTotal
+                dummy.PHits[dummy.nPH: dummy.nPH + Aftershock.nHits] = deepcopy(Aftershock.Hits)
+                dummy.nPH += Aftershock.nHits
 
                 # Reset Aftershock damage
                 player.ArDamage = 0
 
-                if logger.CycleFound:
-                    logger.AbilInfo['Aftershock']['activations'] += 1
+                logger.AbilInfo[Aftershock.Name]['activations'] += 1
+
+                logger.addSpecial(Aftershock.Name)
+                logger.RotationTick.append(logger.n)
 
             # Put it on cooldown whether it has been activated or not
             Aftershock.cdStatus = True
             Aftershock.cdTime = Aftershock.cdMax
             player.Cooldown.append(Aftershock)
-
-
-
-

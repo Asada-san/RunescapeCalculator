@@ -1,4 +1,5 @@
 import numpy as np
+from copy import deepcopy
 
 
 class Player:
@@ -17,8 +18,9 @@ class Player:
         self.BaseBoost = 1                          # Base damage boost for all abilities
         self.LevelBoost = 0                         # Amount of boosted combat levels
         self.Boost = False                          # True if a damage boosting ability has been used
-        self.BoostX = 1                             # Damage output multiplier
-        self.BoostTime = 0                          # Amount of time of damage boost
+        self.BoostX = []                            # Damage output multiplier
+        self.BoostTime = []                         # Amount of time of damage boost
+        self.BoostName = []
         self.Boost1 = False                         # True if the player does more damage on the next ability only
         self.Boost1X = 1                            # Damage output multiplier for the next ability only
         self.AbilCritBuff = 0                       # Critical hit buff for next ability
@@ -29,7 +31,8 @@ class Player:
         self.CritAdrenalineBuffTime = 0             # Timer for adrenaline buff due to the above ^
         self.BasicAdrenalineGain = 0                # Adrenaline boost for basic abilities due to the above ^
         self.DragonBreathGain = False               # True if Dragon Breath is on the bar and there are more than 2 dummies
-        self.SpecialAbils = {}                      # Dict containing special "abilities" originating from equipment and such
+        self.SpecialAbils = {}                      # List containing special "abilities" originating from equipment and such
+        self.PocketHitCounter = 0                   # Used to keep track of hits before activation of the pocket item (god books)
         # self.DragonBreathCombustTime = 0            # Timer for Combust boost due to the Dragon Breath ability
 
         self.Switcher = userInput['switchStatus']                   # True if the user want to use both 2h and dual weapons
@@ -51,6 +54,13 @@ class Player:
             self.InitCritBuff = 0
 
         self.Aura = userInput['Aura']                   # Aura selected by the user
+        self.Pocket = userInput['Pocket']               # Pocket slot item selected by the user
+
+        self.JasBuffMaxDuration = 17                    # Duration of the Jas scripture buff
+        self.JasBuffDam = 0                             # Damage done during the Jas Scripture buff
+        self.JasBuff = False                            # True if the Jas Scripture buff is active
+        self.JasBuffDuration = 0                        # Current duration of Jas Scripture buff
+
         self.CoE = userInput['CoE']                     # True if the user selected the Conservation of Energy Relic
 
         if 0.1 <= userInput['BerserkersFury'] <= 5.5:
@@ -154,7 +164,7 @@ class Player:
         else:
             self.MagicPrayerBoost = userInput['MagicPrayer']          # Boost due to magic prayers
 
-    def TimerCheck(self, logger):
+    def TimerCheck(self, dummy, logger):
         """
         Checks the ability cooldowns, adrenaline buffs, boosts and channeling status.
 
@@ -172,16 +182,6 @@ class Player:
                     logger.write(22, self.Cooldown[i].Name)
 
                 self.Cooldown.pop(i)  # Delete it from the cooldown list
-
-        # # If Aftershock is on cooldown
-        # if self.PerkAftershock and self.ArHit.cdStatus:
-        #     self.ArHit.cdTime -= 1
-        #
-        #     if self.ArHit.cdTime == 0:
-        #         self.ArHit.cdStatus = False
-        #
-        #         if logger.DebugMode:
-        #             logger.write(22, self.ArHit.Name)
 
         # If the player has an adrenaline buff going
         if self.CritAdrenalineBuffTime:
@@ -210,14 +210,21 @@ class Player:
 
         # If the player has a boost going on
         if self.Boost:
-            self.BoostTime -= 1
+            for i in range(len(self.BoostTime) - 1, -1, -1):
+                if self.BoostTime[i] > 0:
+                    self.BoostTime[i] -= 1
 
-            if self.BoostTime == 0:
+                    if self.BoostTime[i] == 0:
+                        self.BoostTime.pop(i)
+                        self.BoostX.pop(i)
+
+                        if logger.DebugMode:
+                            logger.write(25, self.BoostName[i])
+
+                        self.BoostName.pop(i)
+
+            if not self.BoostX:
                 self.Boost = False
-                self.BoostX = 1
-
-                if logger.DebugMode:
-                    logger.write(25)
 
         # If the player has a Greater Chain effect going on
         if self.GreaterChain:
@@ -228,6 +235,21 @@ class Player:
 
                 if logger.DebugMode:
                     logger.write(26)
+
+        # If the player has a Jas Buff effect going on
+        if self.JasBuff:
+            self.JasBuffDuration -= 1
+
+            if self.JasBuffDuration == 0:
+                JasAbil = deepcopy(self.SpecialAbils['Scripture of Jas'])
+
+                JasAbil.Hits[0].Damage = 0.2 * self.JasBuffDam
+
+                dummy.PHits[dummy.nPH: dummy.nPH + JasAbil.nHits] = JasAbil.Hits
+                dummy.nPH += JasAbil.nHits
+
+                self.JasBuff = False
+                self.JasBuffDam = 0
 
         # If the player has a Greater Chain effect going on
         # if self.DragonBreathCombustTime:
@@ -241,3 +263,6 @@ class Player:
         self.GreaterChainDuration = 0
         self.GreaterChain = False
         self.GreaterChainTargets = []
+
+    def getBoost(self):
+        return sum(self.BoostX) + 1

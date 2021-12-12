@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def StandardChannelDamAvgCalc(Object, player, logger, Type=None):
+def StandardChannelDamAvgCalc(Object, player, logger):
     """
     Calculates the average hit of a standard/channeled effect of an ability.
 
@@ -12,18 +12,8 @@ def StandardChannelDamAvgCalc(Object, player, logger, Type=None):
     :return: Average Standard/Channeled hit.
     """
 
-    if Type is None:
-        Max = Object.DamMax.copy()
-        Min = Object.DamMin.copy()
-    elif Type == 'StunBind':
-        Max = Object.StunBindDamMax.copy()
-        Min = Object.StunBindDamMin.copy()
-    elif Type == 'SideTarget':
-        Max = Object.SideTargetMax.copy()
-        Min = Object.SideTargetMin.copy()
-    else:
-        Max = [0]
-        Min = [0]
+    Max = Object.DamMax.copy()
+    Min = Object.DamMin.copy()
 
     if Object.Name != 'Bash':  # Bash ability has its own base damage
         Max *= player.BaseDamageEffective * (1 + player.Rr * 0.025) * player.BerserkersFury
@@ -36,70 +26,68 @@ def StandardChannelDamAvgCalc(Object, player, logger, Type=None):
     Max += 8 * player.LevelBoost
     Min += 4 * player.LevelBoost
 
-    Avg = []
     CritCap = player.CritCap  # Critical hit damage cap
     DmgCap = 10000  # Normal hit damage cap
-    for i in range(0, len(Max)):
-        if player.PerkPrecise:  # Increase min by 1.5% per rank
-            PrMinIncrease = player.Pr * 0.015 * Max[i]
-            Min[i] = Min[i] + PrMinIncrease
 
-        # ---------- Formula used to calculate averages, yoinked from the rs wiki ------------
-        if player.Aura == 'Equilibrium':  # If the equilibrium aura is active
-            pNatCrit = min(Max[i] / (40 * (Max[i] - Min[i])) + 0.0125, 1)
-        elif player.PerkEquilibrium:  # Increase min by 3% per rank and decrease max by 1% per rank
-            pNatCrit = min(((25 - player.Er) * Max[i]) / (
-                        500 * (Max[i] - Min[i])) + player.Er / 2000, 1)
+    if player.PerkPrecise:  # Increase min by 1.5% per rank
+        PrMinIncrease = player.Pr * 0.015 * Max
+        Min = Min + PrMinIncrease
 
-            EqMinIncrease = player.Er * 0.03 * (Max[i] - Min[i])
-            EqMaxDecrease = player.Er * 0.01 * (Max[i] - Min[i])
-            Max[i] = Max[i] - EqMaxDecrease
-            Min[i] = Min[i] + EqMinIncrease
-        else:
-            pNatCrit = min((0.05 * Max[i]) / (Max[i] - Min[i]), 1)
+    # ---------- Formula used to calculate averages, yoinked from the rs wiki ------------
+    if player.Aura == 'Equilibrium':  # If the equilibrium aura is active
+        pNatCrit = min(Max / (40 * (Max - Min)) + 0.0125, 1)
+    elif player.PerkEquilibrium:  # Increase min by 3% per rank and decrease max by 1% per rank
+        pNatCrit = min(((25 - player.Er) * Max) / (
+                    500 * (Max - Min)) + player.Er / 2000, 1)
 
-        # If the player has a boost from Berserk or w/e, the aura boost is replaced by the ability boost
-        if player.Boost:  # If the player has a damage boost
-            Max[i] *= player.BoostX * player.Boost1X
-            Min[i] *= player.BoostX * player.Boost1X
-        else:
-            Max[i] *= player.BaseBoost * player.Boost1X
-            Min[i] *= player.BaseBoost * player.Boost1X
+        EqMinIncrease = player.Er * 0.03 * (Max - Min)
+        EqMaxDecrease = player.Er * 0.01 * (Max - Min)
+        Max = Max - EqMaxDecrease
+        Min = Min + EqMinIncrease
+    else:
+        pNatCrit = min((0.05 * Max) / (Max - Min), 1)
 
-        CritNatMin = max(Min[i] + (1 - pNatCrit) * (Max[i] - Min[i]), Min[i])
+    # If the player has a boost from Berserk or w/e, the aura boost is replaced by the ability boost
+    if player.Boost:  # If the player has a damage boost
+        Max *= player.getBoost() * player.Boost1X
+        Min *= player.getBoost() * player.Boost1X
+    else:
+        Max *= player.BaseBoost * player.Boost1X
+        Min *= player.BaseBoost * player.Boost1X
 
-        CritForcedMin = (Min[i] + 0.95 * (Max[i] - Min[i]))
-        CritForcedMax = (Min[i] + (0.95 * (Max[i] - Min[i])) / 0.95)
+    CritNatMin = max(Min + (1 - pNatCrit) * (Max - Min), Min)
 
-        z1 = (CritCap - CritForcedMin) / (CritForcedMax - CritForcedMin)
-        z2 = (CritCap - CritNatMin) / (Max[i] - CritNatMin)
+    CritForcedMin = (Min + 0.95 * (Max - Min))
+    CritForcedMax = (Min + (0.95 * (Max - Min)) / 0.95)
 
-        y = (DmgCap - Min[i]) / (CritNatMin - Min[i])
+    z1 = (CritCap - CritForcedMin) / (CritForcedMax - CritForcedMin)
+    z2 = (CritCap - CritNatMin) / (Max - CritNatMin)
 
-        pForcedCrit = min(player.ForcedCritBuff + player.AbilCritBuff + player.InitCritBuff, 1)
+    y = (DmgCap - Min) / (CritNatMin - Min)
 
-        # If the ability Greater Fury was used, calculate new CritBuff and return immediately
-        if player.GreaterFuryCritCheck:
-            player.AbilCritBuff += (pForcedCrit + (1 - pForcedCrit) * pNatCrit) + (1 - pForcedCrit) * (1 - pNatCrit) * 0.1
-            player.GreaterFuryCritCheck = False
-            return None
+    pForcedCrit = min(player.ForcedCritBuff + player.AbilCritBuff + player.InitCritBuff, 1)
 
-        # If an adrenaline buff due to Meteor Strike, Tsunami or Incendiary Shot is active, calculate extra adrenaline and return immediately
-        if player.CritAdrenalineBuff:
-            player.BasicAdrenalineGain += (pForcedCrit + (1 - pForcedCrit) * pNatCrit) * 10
-            player.CritAdrenalineBuff = False
-            return None
+    # If the ability Greater Fury was used, calculate new CritBuff and return immediately
+    if player.GreaterFuryCritCheck:
+        player.AbilCritBuff += (pForcedCrit + (1 - pForcedCrit) * pNatCrit) + (1 - pForcedCrit) * (1 - pNatCrit) * 0.1
+        player.GreaterFuryCritCheck = False
+        return None
 
-        AvgCalc1 = max(0, min(1 - z1, 1)) * CritCap + min(max(0, z1), 1) * (min(CritCap, CritForcedMin) + min(CritCap, CritForcedMax)) / 2
-        AvgCalc2 = max(0, min(1 - z2, 1)) * CritCap + min(max(0, z2), 1) * (min(CritCap, CritNatMin) + min(CritCap, Max[i])) / 2
-        AvgCalc3 = max(0, min(1 - y, 1)) * DmgCap + min(max(0, y), 1) * (min(DmgCap, Min[i]) + min(DmgCap, CritNatMin)) / 2
+    # If an adrenaline buff due to Meteor Strike, Tsunami or Incendiary Shot is active, calculate extra adrenaline and return immediately
+    if player.CritAdrenalineBuff:
+        player.BasicAdrenalineGain += (pForcedCrit + (1 - pForcedCrit) * pNatCrit) * 10
+        player.CritAdrenalineBuff = False
+        return None
 
-        Avg.append(pForcedCrit * AvgCalc1 + (1 - pForcedCrit) * (
-                    pNatCrit * AvgCalc2 + (1 - pNatCrit) * AvgCalc3))
-        # ------------------------------------------------------------------------------------
+    AvgCalc1 = max(0, min(1 - z1, 1)) * CritCap + min(max(0, z1), 1) * (min(CritCap, CritForcedMin) + min(CritCap, CritForcedMax)) / 2
+    AvgCalc2 = max(0, min(1 - z2, 1)) * CritCap + min(max(0, z2), 1) * (min(CritCap, CritNatMin) + min(CritCap, Max)) / 2
+    AvgCalc3 = max(0, min(1 - y, 1)) * DmgCap + min(max(0, y), 1) * (min(DmgCap, Min) + min(DmgCap, CritNatMin)) / 2
 
-        if logger.DebugMode:
-            logger.write(13, [Object.Name, round(Avg[i], 2), round(pForcedCrit, 4), round(pNatCrit, 4)])
+    Avg = pForcedCrit * AvgCalc1 + (1 - pForcedCrit) * (pNatCrit * AvgCalc2 + (1 - pNatCrit) * AvgCalc3)
+    # ------------------------------------------------------------------------------------
+
+    if logger.DebugMode:
+        logger.write(13, [Object.Name, round(Avg, 2), round(pForcedCrit, 4), round(pNatCrit, 4)])
 
     return Avg
 
@@ -114,8 +102,8 @@ def BleedDamAvgCalc(Object, player, logger):
     :return: Average bleed hits
     """
 
-    Max = Object.DoTMax.copy()
-    Min = Object.DoTMin.copy()
+    Max = Object.DamMax.copy()
+    Min = Object.DamMin.copy()
 
     # If the player has a boost from berserker or w/e, the aura boost is replaced by the ability boost
     if player.Boost:
@@ -145,7 +133,7 @@ def PunctureDamAvgCalc(Object, player, logger):
     """
 
     Avg = []
-    if Object.Puncture and Object.Name == 'Greater Dazing Shot':
+    if Object.Type == 4 and Object.Name == 'Greater Dazing Shot':
         Max = np.array([7 / 15 * 0.072, 5 / 15 * 0.072, 2 / 15 * 0.072, 1 / 15 * 0.072]) * player.BaseBoost * player.BaseDamage
         Min = np.array([7 / 15 * 0.058, 5 / 15 * 0.058, 2 / 15 * 0.058, 1 / 15 * 0.058]) * player.BaseBoost * player.BaseDamage
 
@@ -171,17 +159,18 @@ def SpecialDamAvgCalc(Object, player, logger):
     Max = Object.DamMax.copy()
     Min = Object.DamMin.copy()
 
-    Avg = []
     # If the player has a boost from berserker or w/e, the aura boost is replaced by the ability boost
-    if player.PerkAftershock:
+    if player.PerkAftershock and Object.Name == 'Aftershock':
         Max *= player.Ar * player.BaseDamage
         Min *= player.Ar * player.BaseDamage
+    else:
+        Max *= player.BaseDamage
+        Min *= player.BaseDamage
 
-    for i in range(0, len(Max)):
-        ################## Calculate averages ########################
-        Avg.append((Max[i] + Min[i]) / 2)
+    ################## Calculate averages ########################
+    Avg = (Max + Min) / 2
 
-        if logger.DebugMode:
-            logger.write(54, [Object.Name, Avg[i]])
+    if logger.DebugMode:
+        logger.write(54, [Object.Name, Avg])
 
     return Avg

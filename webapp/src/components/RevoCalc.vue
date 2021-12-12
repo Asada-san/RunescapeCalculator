@@ -3,11 +3,9 @@
     <div class="accordion" role="tablist">
       <b-card no-body class="mb-1" id="card-header" bg-variant="dark" text-variant="white" style="text-align: left;">
         <h2 style="text-align: center; margin-bottom: 15px; margin-top: 15px;">Revolution Bar <span v-html="latestVersion" style="font-size:small;"></span></h2>
-<!--        <p style="text-align: center; margin-left: 15px; margin-right: 15px; color: pink;">If something doesn't work please contact me on Discord:-->
-<!--            <strong style="color: #4CAF50">Micky#5858</strong>, Reddit:-->
-<!--            <a style="color: #4CAF50" href="https://www.reddit.com/user/ftwmickywtf"><strong>u/FTWmickyWTF</strong></a>-->
-<!--            or ingame: <a style="color: #4CAF50" href="https://apps.runescape.com/runemetrics/app/overview/player/asada-san"><strong>Asada-san</strong></a>.-->
-<!--        </p>-->
+        <p style="text-align: center; margin-left: 15px; margin-right: 15px; color: pink;">If something seems broken, do not hesitate to contact me on discord:
+          <a style="color: #4CAF50" href="https://discordapp.com/users/713459040386023579"><strong>Micky#5858</strong></a>.
+        </p>
 
         <b-card no-body class="mb-0" bg-variant="dark" text-variant="white" >
           <b-card-header header-tag="header" class="p-1" role="tab">
@@ -42,7 +40,8 @@
                   Clicking on the result card will allow you to view some more interesting information.<br><br>
 
                   If anything is wrong or if you have any suggestions please let me know by contacting me on either
-                  Discord: <strong style="color: #4CAF50">Micky#5858</strong>, Reddit: <a style="color: #4CAF50" href="https://www.reddit.com/user/ftwmickywtf"><strong>u/FTWmickyWTF</strong></a> or ingame:
+                  Discord: <a style="color: #4CAF50" href="https://discordapp.com/users/713459040386023579"><strong>Micky#5858</strong></a>,
+                  Reddit: <a style="color: #4CAF50" href="https://www.reddit.com/user/ftwmickywtf"><strong>u/FTWmickyWTF</strong></a> or ingame:
                   <a style="color: #4CAF50" href="https://apps.runescape.com/runemetrics/app/overview/player/asada-san"><strong>Asada-san</strong></a>.
                 </p>
               </b-card-text>
@@ -92,6 +91,7 @@
         <b-dropdown-item v-on:click="displayChart(0)" switch v-b-tooltip.hover.right="'Displays the total damage over time'">Total damage</b-dropdown-item>
         <b-dropdown-item v-on:click="displayChart(1)" switch v-b-tooltip.hover.right="'Displays the total damage over time per ability'">Total damage per ability</b-dropdown-item>
         <b-dropdown-item v-on:click="displayChart(2)" switch v-b-tooltip.hover.right="'Displays the total damage per tick over time'">Total damage per tick</b-dropdown-item>
+        <b-dropdown-item v-on:click="displayChart(3)" switch v-b-tooltip.hover.right="'Displays the total damage taken per dummy'">Total damage per dummy</b-dropdown-item>
       </b-dropdown>
     </b-button-group>
 
@@ -555,6 +555,10 @@
             <b-form-select-option v-for="cape in optCape" :key="cape.value" :id="cape.value" :value="cape.value" v-b-tooltip.hover.right :title="cape.title">{{ cape.text }}</b-form-select-option>
           </b-form-select>
 
+          <b-form-select class="mt-1" id="Pocket" v-model="Pocket" size="sm">
+            <b-form-select-option v-for="pocket in optPocket" :key="pocket.value" :id="pocket.value" :value="pocket.value" v-b-tooltip.hover.right :title="pocket.title">{{ pocket.text }}</b-form-select-option>
+          </b-form-select>
+
           <p style="margin-left: 15px; margin-top: 15px; text-align: center; font-weight: bold;">Bash Ability</p>
           <b-form-input size="sm" class="mt-1" id="DefenceLevel" placeholder="Defence Level" type="number" min="0" max="200" v-b-tooltip.hover></b-form-input>
           <b-form-input size="sm" class="mt-1" id="ShieldArmourValue" placeholder="Shield Armour Value" type="number" min="0" max="1000" v-b-tooltip.hover></b-form-input>
@@ -661,6 +665,13 @@
       </div>
     </b-card>
 
+    <b-card hidden @mousedown="startDrag($event, 3)" bg-variant="dark" text-variant="white" class="text-left output-card-chart result">
+      <div class="close-container" v-on:click="displayChart(3)">x</div>
+      <div class="container-100wh">
+        <line-chart :chart-data="dataLineChart3"></line-chart>
+      </div>
+    </b-card>
+
     <b-card hidden id="result-card-extra" header="Result" bg-variant="dark" text-variant="white" class="text-left output-card-extra result">
     </b-card>
 
@@ -721,6 +732,7 @@ export default {
       dataLineChart1: null,
       dataBarChart1: null,
       dataLineChart2: null,
+      dataLineChart3: null,
       fightData: {},
       resultCardBackgroundVariant: 'dark',
       resultCardTextColorVariant: 'white',
@@ -914,6 +926,20 @@ export default {
         { value: 'IgneousKal-Mej', text: 'Igneous Kal-Mej', title: 'Reduces the adrenaline cost of Omnipower to 60% and the ability hits the target four times, each hit dealing 90-180% ability damage' },
         { value: 'IgneousKal-Xil', text: 'Igneous Kal-Xil', title: 'Reduces the adrenaline cost of Deadshot to 60% and causes it to deal 42-210% of initial damage plus 70% ability damage every 1.2 seconds over the next 8.4 seconds' }
       ],
+      Pocket: null,
+      optPocket: [
+        { value: null, text: 'Pocket', disabled: true, selected: true, hidden: true},
+        { value: null, text: 'none'},
+        { value: 'Book of War', text: 'Book of War', title: 'The Strength cape\'s perk causes Dismember\'s damage over time to last an extra 3.6 seconds (an extra 3 hits for a total of 8)' },
+        { value: 'Book of Balance', text: 'Book of Balance', title: 'The Strength cape\'s perk causes Dismember\'s damage over time to last an extra 3.6 seconds (an extra 3 hits for a total of 8)' },
+        { value: 'Book of Law', text: 'Book of Law', title: 'The Strength cape\'s perk causes Dismember\'s damage over time to last an extra 3.6 seconds (an extra 3 hits for a total of 8)' },
+        { value: 'Book of Wisdom', text: 'Book of Wisdom', title: 'The Strength cape\'s perk causes Dismember\'s damage over time to last an extra 3.6 seconds (an extra 3 hits for a total of 8)' },
+        { value: 'Book of Chaos', text: 'Book of Chaos', title: 'The Strength cape\'s perk causes Dismember\'s damage over time to last an extra 3.6 seconds (an extra 3 hits for a total of 8)' },
+        { value: 'Ancient Book', text: 'Ancient Book', title: 'The Strength cape\'s perk causes Dismember\'s damage over time to last an extra 3.6 seconds (an extra 3 hits for a total of 8)' },
+        { value: 'Scripture of Wen', text: 'Scripture of Wen', title: 'The Strength cape\'s perk causes Dismember\'s damage over time to last an extra 3.6 seconds (an extra 3 hits for a total of 8)' },
+        { value: 'Scripture of Jas', text: 'Scripture of Jas', title: 'The Strength cape\'s perk causes Dismember\'s damage over time to last an extra 3.6 seconds (an extra 3 hits for a total of 8)' },
+        { value: 'Scripture of Ful', text: 'Scripture of Ful', title: 'The Strength cape\'s perk causes Dismember\'s damage over time to last an extra 3.6 seconds (an extra 3 hits for a total of 8)' }
+      ],
       afkStatus: { value: 'afkStatus', text: 'Efficient' },
       switchStatus: { value: 'switchStatus', text: 'Switcher' },
       movementStatus: { value: 'movementStatus', text: 'Stationary' },
@@ -941,6 +967,7 @@ export default {
       //   0: Line chart with total damage
       //   1: Line chart with total damage per ability
       //   2: Bar chart with total damage per tick
+      //   3: Line chart with total damage per dummy
 
       let lineChartPointRadius = 3;
 
@@ -958,27 +985,32 @@ export default {
           this.dataBarChart1 = this.initData;
         }
 
+        if (!this.chartElements[3].hidden && [-1, 3].includes(option)) {
+          this.dataLineChart3 = this.initData;
+        }
+
         return;
       }
 
+      let nDataPoints = this.fightData['CycleTime'];
 
-      if ([-1, 0, 1].includes(option)) {
-        let nDataPoints = this.fightData['CycleDamageIncrement'].length;
+      if (nDataPoints > 100) {
+        lineChartPointRadius = 0;
+      }
 
-        if (nDataPoints > 100) {
-          lineChartPointRadius = 0;
-        }
+      if (nDataPoints > 1000) {
+        nDataPoints = 1000;
       }
 
       // Line chart with total damage
       if (!this.chartElements[0].hidden && [-1, 0].includes(option)) {
         this.dataLineChart1 = {
-          labels: Array.from(Array(this.fightData['CycleDamageIncrement'].length).keys()),
+          labels: Array.from(Array(nDataPoints + 1).keys()),
           //labels: Array.from({length: }, (_, i) => i + 1),
           datasets: [
             {
               label: 'Total damage',
-              data: this.fightData['CycleDamageIncrement'],
+              data: this.fightData['CycleDamageIncrement'].slice(0, nDataPoints + 1),
               fill: false,
               borderColor: '#4CAF50',
               backgroundColor: '#4CAF50',
@@ -986,7 +1018,7 @@ export default {
               pointRadius: lineChartPointRadius
             }, {
               label: 'Trendline',
-              data: Array.from({length: this.fightData['CycleDamageIncrement'].length}, (_, i) => i + 1).map(x => x * this.fightData['AADPT']),
+              data: Array.from({length: nDataPoints + 1}, (_, i) => i).map(x => x * this.fightData['AADPT']),
               fill: false,
               borderColor: '#900C3F',
               backgroundColor: '#900C3F',
@@ -1008,7 +1040,7 @@ export default {
         for (const key in this.fightData['AbilityInfoPerTick']) {
           lines.push({
             label: key,
-            data: this.fightData['AbilityInfoPerTick'][key]['damage'],
+            data: this.fightData['AbilityInfoPerTick'][key]['damage'].slice(0, nDataPoints + 1),
             fill: false,
             borderColor: colors[i],
             backgroundColor: colors[i],
@@ -1020,7 +1052,7 @@ export default {
         }
 
         this.dataLineChart2 = {
-          labels: Array.from(Array(this.fightData['AbilityInfoPerTick'][Object.keys(this.fightData['AbilityInfoPerTick'])[0]]['damage'].length).keys()),
+          labels: Array.from(Array(nDataPoints + 1).keys()),
           datasets: lines
         }
       }
@@ -1028,17 +1060,45 @@ export default {
       // Bar chart with total damage per tick
       if (!this.chartElements[2].hidden && [-1, 2].includes(option)) {
         this.dataBarChart1 = {
-          labels: Array.from(Array(this.fightData['CycleDamagePerTick'].length).keys()),
+          labels: Array.from({length: nDataPoints}, (_, i) => i + 1),
+          // labels: Array.from(Array(this.fightData['CycleDamagePerTick'].length).keys()),
           datasets: [
             {
               label: 'Damage',
-              data: this.fightData['CycleDamagePerTick'],
+              data: this.fightData['CycleDamagePerTick'].slice(0, nDataPoints),
               fill: false,
               borderColor: '#4CAF50',
               backgroundColor: '#4CAF50',
               borderWidth: 1
             }
           ]
+        }
+      }
+
+      // Line chart with total damage per dummy
+      if (!this.chartElements[3].hidden && [-1, 3].includes(option)) {
+        let lines = [];
+        let colors = ['#FF9999', '#FFCC99', '#FFFF99', '#CCFF99', '#99FF99', '#99FFCC',
+          '#99FFFF', '#99CCFF', '#9999FF', '#CC99FF', '#FF99FF', '#FF99CC', '#E0E0E0', '#FFFFFF'];
+
+        // Create plot for every ability used in the rotation
+        let length = this.fightData['DamagePerDummy'].length
+        for (let i = 0; i < length; i++) {
+          lines.push({
+            label: 'Dummy ' + (i + 1),
+            data: this.fightData['DamagePerDummy'][i].slice(0, nDataPoints + 1),
+            fill: false,
+            borderColor: colors[i],
+            backgroundColor: colors[i],
+            borderWidth: 1,
+            pointRadius: lineChartPointRadius
+          });
+
+        }
+
+        this.dataLineChart3 = {
+          labels: Array.from(Array(nDataPoints + 1).keys()),
+          datasets: lines
         }
       }
     },
@@ -1302,7 +1362,7 @@ export default {
             let linkStr = `<span style="color: #4CAF50;"><strong>${data['AADPT']} (${data['AADPTPercentage']}%)</strong></span>`;
 
             // CREATE A MESSAGE TO SHOW THE (AA)DPT
-            if (data['CycleRotation'].length !== 0) {
+            if (data['CycleFound']) {
                 message = "The AADPT of the bar above is: " + linkStr;
             } else {
                 message = "The DPT of the bar above is: " + linkStr;
@@ -1457,7 +1517,6 @@ export default {
       if (this.kLog === updateInfo.length) {
         return;
       }
-
       let updateToShow = updateInfo[this.kLog];
 
       let updateDiv = document.createElement("div");

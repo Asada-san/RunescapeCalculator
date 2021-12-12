@@ -24,20 +24,33 @@ export var updateInfo = [{
             'Added the Igneous cape effects of Deadshot, Omnipower and Overpower',
             '(Greater) Chain and (Greater) Ricochet secondary hits are now delayed by 1 tick',
             'Fourth puncture hit is now .1x its previous value',
+            'Puncture damage is now multiple by the puncture stack instead of by 1',
             'Wild magic is now a channeled ability',
-            'Added Magma Tempest --> even though it has varying damage for each hit, it is still seen as a bleed such that it will never crit'
+            'Added Magma Tempest'
+        ]}, {
+        header: 'Perks:',
+        subItems: [
+            'Reworked Aftershock such that the damage is applied when the player has done 50k damage to the dummy (checked on a 10 seconds interval (17 ticks))',
+            'The Aftershock hit is now seen as an ability hit, such that its damage on the dummy can be tracked'
         ]}, {
         header: 'Options:',
         subItems: [
             'Added the 3 Igneous capes (TzKal-Zuk) and moved them under 1 option together with the strength cape as "Cape"',
+            'Added Pocket slot items: 6 (illuminated) god books (Zaros, Bandos, Armadyl, Zamorak, Guthix, Saradomin) and 3 scriptures (Jas, Wen, Ful)',
             'Increased the maximum amount of dummies to 30 (up from 10)'
         ]}, {
         header: 'Calculations:',
         subItems: [
-            'Damaging AoE hits are now instantiated once instead of every time an AoE ability is activated in the rotation',
+            'AoE hits are now instantiated once instead of every time an AoE ability is activated in the rotation improving performance',
             'Greater Chain effect is now applied to the correct targets',
-            'Greater Chain effect is now applied as soon as the next ability after Greater Chain has been fired instead of when the damage actually occures on the target',
-            'Damage done on secondary targets due to the Greater chain effect is now seen as Greater Chain damage instead of whatever the fired ability was'
+            'Greater Chain effect is now applied as soon as the next ability after Greater Chain has been fired instead of when the damage actually occurs on the target',
+            'Damage done on secondary targets due to the Greater chain effect is now seen as Greater Chain damage instead of whatever the fired ability was',
+            'Boosted damage due to abilities or items is now tracked and counts for the boosting ability or item instead of the fired abilities during the boost',
+            'Damage is now tracked per dummy',
+            'Prevented some damage from being counted twice',
+            'Changed the code such that a "verification cycle" is no longer needed which improves the performance',
+            'Added 2 new requirements to the cycle finder algorithm having to do with aftershock and god books, this will most likely result in either significantly larger cycle times or no cycle being found at all in 6000 ticks',
+            'Data is now tracked immediately instead of once a cycle has been found, this makes it so there is always information to show even if no cycle has been found'
         ]}, {
         header: 'Layout:',
         subItems: [
@@ -47,18 +60,23 @@ export var updateInfo = [{
         header: spreadsheet + ':',
         subItems: [
             'Added Magma Tempest values',
-            'Added MaxTargets column indicating the maximum amount of targets damaged by AoE abilities'
+            'Added MaxTargets column indicating the maximum amount of targets damaged by AoE abilities',
+            'Merged the DoTMax en DoTMin columns with the DamMax and DamMin columns respectively',
+            'Added special abilities (god books and aftershock)',
+            'Added an activation chance column used for the god books'
         ]}, {
-        header: 'Charts (Note that these only show information about 1 cycle rotation):',
+        header: 'Charts (Note that these only show information of 1 cycle rotation OR up to the first 1000 ticks):',
         subItems: [
             'Added the option to select charts in a dropdown menu',
             'Added a line chart showing the total damage over time',
             'Added a line chart showing total damage per ability over time',
-            'Added a bar chart showing damage per tick over time'
+            'Added a bar chart showing damage per tick over time',
+            'Added a line chart showing the total damage taken per dummy over time'
         ]}, {
         header: 'Other:',
         subItems: [
-            'Added a download data button on the result card with which a .json file can be downloaded containing data resulting from the simulated fight'
+            'Added a download data button on the result card with which a .json file can be downloaded containing data resulting from the simulated fight',
+            'Revolution bars containing no basic abilities are now detected and will give an error'
         ]}
     ]}, {
     version: 'V2.00.1',

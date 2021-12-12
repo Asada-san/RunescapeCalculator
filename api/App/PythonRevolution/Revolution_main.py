@@ -132,12 +132,15 @@ def fight_dummy(userInput, AbilityBook):
         # Status checks
         bar.TimerCheck(logger)  # CHECK GLOBAL COOLDOWN TIMER
         dummy.TimerCheck(logger)  # CHECK STUN AND BIND STATUS TIMERS
-        player.TimerCheck(logger)  # CHECK PLAYER COOLDOWNS/BUFFS/BOOSTS/CHANNEL TIMERS
+        player.TimerCheck(dummy, logger)  # CHECK PLAYER COOLDOWNS/BUFFS/BOOSTS/CHANNEL TIMERS
         # -----------------------------------------------------
 
         # --------- ATTACKING PHASE ---------------------------
         # Possibly activate an ability and get its hits
         FireAbility = Attack.useAbility(bar, player, dummy, logger, settings)
+
+        if not settings.run:
+            break
 
         # Check for any hits that need to inflict damage in the current tick
         Attack.PHitCheck(bar, dummy, player, logger, settings)
@@ -157,51 +160,49 @@ def fight_dummy(userInput, AbilityBook):
         logger.n += 1
         logger.nCheck += 1
 
-        # If a cycle has been found
-        if logger.CycleFound or all([logger.n == settings.nMax, not settings.FindCycle]):
-            Cycle.CycleRotation(bar, player, dummy, logger, settings)
+        if True:
+            dummy.updateTickInfo()
+            logger.updateTickInfo()
 
         # Print total damage and logger time depending if a cycle has been found or not
-        if not logger.CycleFound:
-            if logger.DebugMode:
-                logger.write(46, [round(dummy.Damage, 3), round(logger.n * .6, 1)])
-        else:
-            logger.CycleLoopTime += 1  # Add tick time
-
-            if logger.DebugMode:
-                logger.write(47, [round(logger.CycleDamage, 3), round(logger.CycleLoopTime * .6, 1)])
+        if logger.DebugMode:
+            logger.write(46, [round(dummy.Damage, 3), logger.n])
         # -----------------------------------------------------
+
+    for name, value in logger.AbilInfo.items():
+        if value['activations'] == 0:
+            logger.Redundant.append(name)
 
     if not logger.CycleFound:  # If no cycle has been found, change some result variables
         logger.CycleTime = logger.n
-        logger.CycleDamage = dummy.Damage
 
         if settings.FindCycle:
-            logger.Rotation.extend([f'<span style="color: {logger.TextColor["cycle"]}">NO CYCLE HAS BEEN FOUND AFTER 6000 TICKS!!! DPT RESULT GIVEN INSTEAD!</span>'])
+            logger.Rotation = [f'<span style="color: {logger.TextColor["cycle"]}">NO CYCLE HAS BEEN FOUND IN 6000 TICKS!!! DPT RESULT GIVEN INSTEAD!</span>']
+        else:
+            logger.Rotation = [f'<span style="color: {logger.TextColor["cycle"]}">N/A</span>']
 
-    if logger.CycleDamage != 0:
-        for entry in logger.AbilInfo:
-            if entry != 'Boosted':
-                logger.AbilInfo[entry]['shared%'] = round(logger.AbilInfo[entry]['damage'] / logger.CycleDamage * 100, 2)
-            else:
-                logger.AbilInfo[entry]['shared%'] = 0
+    for entry in logger.AbilInfo:
+        if dummy.Damage != 0:
+            logger.AbilInfo[entry]['shared%'] = round(logger.AbilInfo[entry]['damage'] / dummy.Damage * 100, 2)
 
     Results = {  # The output of main
-        'AADPTPercentage': round(logger.CycleDamage / logger.CycleTime / player.BaseDamage * 100, 3),
-        'AADPT': round(logger.CycleDamage / logger.CycleTime, 3),
+        'AADPTPercentage': round(dummy.Damage / logger.CycleTime / player.BaseDamage * 100, 3),
+        'AADPT': round(dummy.Damage / logger.CycleTime, 3),
         'BaseDamage': player.BaseDamage,
         'SimulationTime': int(logger.n),
         'CycleTime': round(logger.CycleTime, 1),
         'CycleConvergenceTime': round(logger.CycleConvergenceTime, 1),
-        'CycleDamage': round(logger.CycleDamage, 2),
-        'CycleDamagePerTick': logger.CycleDamagePerTick,
-        'CycleDamageIncrement': logger.CycleDamageIncrement,
+        'CycleDamage': round(dummy.Damage, 2),
+        'CycleDamagePerTick': dummy.DamagePerTick,
+        'CycleDamageIncrement': dummy.DamageIncrement,
+        'CycleFound': logger.CycleFound,
         'CycleRotation': logger.Rotation,
         'CycleRedundant': logger.Redundant,
         'CycleBar': bar.AbilNames,
         'AbilityInfo': logger.AbilInfo,
         'AbilityInfoPerTick': logger.CycleAbilityDamagePerTick,
-        'LoggerText': logger.Text
+        'LoggerText': logger.Text,
+        'DamagePerDummy': dummy.DamagePerDummyIncrement
     }
 
     # cp.disable()
