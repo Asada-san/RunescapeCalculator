@@ -67,7 +67,7 @@ def fight_dummy(userInput, AbilityBook):
         Ring: string                --> 'RoV', 'ChampionsRing', 'ChannelersRing', 'ReaversRing', 'StalkersRing'
         Aura: string                --> 'Berserker', 'Maniacal', 'Reckless', 'Equilibrium'
         Cape: string                --> 'StrengthCape', 'Igneous Kal-Ket', 'Igneous Kal-Mej', 'Igneous Kal-Xil'
-
+        Pocket: string              --> 'Book of War', 'Book of Balance', 'Book of Law', 'Book of Wisdom', 'Book of Chaos', 'Ancient Book', 'Scripture of Wen', 'Scripture of Jas', 'Scripture of Ful'
 
         ARCHAEOLOGY RELICS
 
@@ -80,7 +80,7 @@ def fight_dummy(userInput, AbilityBook):
 
         movementStatus: boolean
         stunbindStatus: boolean
-        nTargets: float             --> 1 <= x <= 10
+        nTargets: float             --> 1 <= x <= 30
 
         PYTHON SCRIPT
 
