@@ -539,13 +539,15 @@
         <div id="PlayerOptions" class="optsect">
           <p style="margin-left: 15px; margin-top: 15px; text-align: center; font-weight: bold;">Equipment</p>
           <b-form-checkbox class="switch mt-1" id="MSoA" v-model="MSoA" switch v-b-tooltip.hover.right="'Melee damage over time abilities (bleeds) have their duration extended by 50%, rounded down to the nearest whole number'">Masterwork Spear of Annihilation</b-form-checkbox>
+          <b-form-checkbox class="switch mt-1" id="DualLeng" v-model="DualLeng" switch v-b-tooltip.hover.right="'Hurricane and Destroy no longer have a shared cooldown'">Arch-Glacor weaponry</b-form-checkbox>
           <b-form-checkbox class="switch mt-1" id="Grimoire" v-model="Grimoire" switch v-b-tooltip.hover.right="'Every non-bleed hit has a 12% chance to be forced to become a critical hit and the player\'s damage cap for critical hits is increased to 15,000, up from 12,000'">Erethdor's Grimoire</b-form-checkbox>
+          <b-form-checkbox class="switch mt-1" id="StrengthCape" v-model="StrengthCape" switch v-b-tooltip.hover.right="'For six seconds after using the Dragon Breath ability, the Combust ability will deal 25% more damage - and deal it instantly'">Strength Cape</b-form-checkbox>
 <!--          <b-form-checkbox class="switch mt-1" id="KerapacWristWraps" v-model="KerapacWristWraps" switch v-b-tooltip.hover.right="'For six seconds after using the Dragon Breath ability, the Combust ability will deal 25% more damage - and deal it instantly'">Kerapac's wrist wraps</b-form-checkbox>-->
+          <b-form-checkbox class="switch mt-1" id="GlovesOfPassage" v-model="GlovesOfPassage" switch v-b-tooltip.hover.right="'A successful hit from Smash or Havoc causes the next attack, inflicted within the next six seconds, to deal 10% additional damage, and the target also takes 20% additional damage from bleeds for ten seconds'">Gloves of Passage</b-form-checkbox>
 
           <b-form-select class="mt-1" id="Ring" v-model="Ring" size="sm">
             <b-form-select-option v-for="ring in optRing" :key="ring.value" :id="ring.value" :value="ring.value" v-b-tooltip.hover.right :title="ring.title">{{ ring.text }}</b-form-select-option>
           </b-form-select>
-
 
           <b-form-select class="mt-1" id="Aura" v-model="Aura" size="sm">
             <b-form-select-option v-for="aura in optAura" :key="aura.value" :id="aura.value" :value="aura.value" v-b-tooltip.hover.right :title="aura.title">{{ aura.text }}</b-form-select-option>
@@ -557,6 +559,10 @@
 
           <b-form-select class="mt-1" id="Pocket" v-model="Pocket" size="sm">
             <b-form-select-option v-for="pocket in optPocket" :key="pocket.value" :id="pocket.value" :value="pocket.value" v-b-tooltip.hover.right :title="pocket.title">{{ pocket.text }}</b-form-select-option>
+          </b-form-select>
+
+          <b-form-select class="mt-1" id="Ammo" v-model="Ammo" size="sm">
+            <b-form-select-option v-for="ammo in optAmmo" :key="ammo.value" :id="ammo.value" :value="ammo.value" v-b-tooltip.hover.right :title="ammo.title">{{ ammo.text }}</b-form-select-option>
           </b-form-select>
 
           <p style="margin-left: 15px; margin-top: 15px; text-align: center; font-weight: bold;">Bash Ability</p>
@@ -896,8 +902,10 @@ export default {
       ],
       StrengthCape: { value: 'StrengthCape', text: 'Strength Cape' },
       MSoA: { value: 'MSoA', text: 'Masterwork Spear of Annihilation' },
+      DualLeng: { value: 'DualLeng', text: 'Arch-Glacor weaponry' },
       Grimoire: { value: 'Grimoire', text: 'Erethdor\'s Grimoire' },
       // KerapacWristWraps: { value: 'KerapacWristWraps', text: 'Kerapac\'s wrist wraps' },
+      GlovesOfPassage: { value: 'GlovesOfPassage', text: 'Gloves of Passage' },
       Ring: null,
       optRing: [
         { value: null, text: 'Ring', disabled: true, selected: true, hidden: true},
@@ -921,24 +929,32 @@ export default {
       optCape: [
         { value: null, text: 'Cape', disabled: true, selected: true, hidden: true},
         { value: null, text: 'none'},
-        { value: 'StrengthCape', text: 'Strength Cape', title: 'The Strength cape\'s perk causes Dismember\'s damage over time to last an extra 3.6 seconds (an extra 3 hits for a total of 8)' },
-        { value: 'IgneousKal-Ket', text: 'Igneous Kal-Ket', title: 'Reduces the adrenaline cost of Overpower to 60% and the ability hits the target twice' },
-        { value: 'IgneousKal-Mej', text: 'Igneous Kal-Mej', title: 'Reduces the adrenaline cost of Omnipower to 60% and the ability hits the target four times, each hit dealing 90-180% ability damage' },
-        { value: 'IgneousKal-Xil', text: 'Igneous Kal-Xil', title: 'Reduces the adrenaline cost of Deadshot to 60% and causes it to deal 42-210% of initial damage plus 70% ability damage every 1.2 seconds over the next 8.4 seconds' }
+        { value: 'IgneousKal-Ket', text: 'Igneous Kal-Ket (melee)', title: 'Reduces the adrenaline cost of Overpower to 60% and the ability hits the target twice' },
+        { value: 'IgneousKal-Mej', text: 'Igneous Kal-Mej (magic)', title: 'Reduces the adrenaline cost of Omnipower to 60% and the ability hits the target four times, each hit dealing 90-180% ability damage' },
+        { value: 'IgneousKal-Xil', text: 'Igneous Kal-Xil (ranged)', title: 'Reduces the adrenaline cost of Deadshot to 60% and causes it to deal 42-210% of initial damage plus 70% ability damage every 1.2 seconds over the next 8.4 seconds' },
+        { value: 'IgneousKal-Zuk', text: 'Igneous Kal-Zuk (all)', title: 'Combines all 3 the effects of the Zuk capes' }
       ],
       Pocket: null,
       optPocket: [
         { value: null, text: 'Pocket', disabled: true, selected: true, hidden: true},
         { value: null, text: 'none'},
-        { value: 'Book of War', text: 'Book of War', title: 'The Strength cape\'s perk causes Dismember\'s damage over time to last an extra 3.6 seconds (an extra 3 hits for a total of 8)' },
-        { value: 'Book of Balance', text: 'Book of Balance', title: 'The Strength cape\'s perk causes Dismember\'s damage over time to last an extra 3.6 seconds (an extra 3 hits for a total of 8)' },
-        { value: 'Book of Law', text: 'Book of Law', title: 'The Strength cape\'s perk causes Dismember\'s damage over time to last an extra 3.6 seconds (an extra 3 hits for a total of 8)' },
-        { value: 'Book of Wisdom', text: 'Book of Wisdom', title: 'The Strength cape\'s perk causes Dismember\'s damage over time to last an extra 3.6 seconds (an extra 3 hits for a total of 8)' },
-        { value: 'Book of Chaos', text: 'Book of Chaos', title: 'The Strength cape\'s perk causes Dismember\'s damage over time to last an extra 3.6 seconds (an extra 3 hits for a total of 8)' },
-        { value: 'Ancient Book', text: 'Ancient Book', title: 'The Strength cape\'s perk causes Dismember\'s damage over time to last an extra 3.6 seconds (an extra 3 hits for a total of 8)' },
-        { value: 'Scripture of Wen', text: 'Scripture of Wen', title: 'The Strength cape\'s perk causes Dismember\'s damage over time to last an extra 3.6 seconds (an extra 3 hits for a total of 8)' },
-        { value: 'Scripture of Jas', text: 'Scripture of Jas', title: 'The Strength cape\'s perk causes Dismember\'s damage over time to last an extra 3.6 seconds (an extra 3 hits for a total of 8)' },
-        { value: 'Scripture of Ful', text: 'Scripture of Ful', title: 'The Strength cape\'s perk causes Dismember\'s damage over time to last an extra 3.6 seconds (an extra 3 hits for a total of 8)' }
+        { value: 'Book of War', text: 'Book of War', title: 'TBD' },
+        { value: 'Book of Balance', text: 'Book of Balance', title: 'TBD' },
+        { value: 'Book of Law', text: 'Book of Law', title: 'TBD' },
+        { value: 'Book of Wisdom', text: 'Book of Wisdom', title: 'TBD' },
+        { value: 'Book of Chaos', text: 'Book of Chaos', title: 'TBD' },
+        { value: 'Ancient Book', text: 'Ancient Book', title: 'TBD' },
+        { value: 'Scripture of Wen', text: 'Scripture of Wen', title: 'TBD' },
+        { value: 'Scripture of Jas', text: 'Scripture of Jas', title: 'TBD' },
+        { value: 'Scripture of Ful', text: 'Scripture of Ful', title: 'TBD' }
+      ],
+      Ammo: null,
+      optAmmo: [
+        { value: null, text: 'Ammo', disabled: true, selected: true, hidden: true},
+        { value: null, text: 'none'},
+        { value: 'Deathspore arrows', text: 'Deathspore arrows', title: 'TBD' }
+        // { value: 'Deathspore arrows', text: 'Deathspore arrows', title: 'TBD' },
+        // { value: 'Deathspore arrows', text: 'Deathspore arrows', title: 'TBD' },
       ],
       afkStatus: { value: 'afkStatus', text: 'Efficient' },
       switchStatus: { value: 'switchStatus', text: 'Switcher' },

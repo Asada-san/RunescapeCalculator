@@ -10,11 +10,12 @@ class Player:
     def __init__(self, userInput):
         self.nStall = 0
         self.Cooldown = []                          # List of abilities which are currently on cooldown
-        self.ChanAbil = False                       # When True, the player used a channeled ability
         self.ChanTime = 0                           # Duration of the channeled ability
-        self.GreaterChain = False                   # True when greater chain has been activated
-        self.GreaterChainDuration = 0               # Time for the greater chain effect to take effect
+        self.GreaterChainTime = 0               # Time for the greater chain effect to take effect
         self.GreaterChainTargets = []               # Target numbers hit by Greater Chain minus main target
+        self.GlovesOfPassageTime = 0
+        self.GlovesOfPassageMax = 17
+        self.GlovesOfPassageBoost = 0
         self.BaseBoost = 1                          # Base damage boost for all abilities
         self.LevelBoost = 0                         # Amount of boosted combat levels
         self.Boost = False                          # True if a damage boosting ability has been used
@@ -22,12 +23,8 @@ class Player:
         self.BoostTime = []                         # Amount of time of damage boost
         self.BoostName = []
         self.Boost1 = False                         # True if the player does more damage on the next ability only
-        self.Boost1X = 1                            # Damage output multiplier for the next ability only
+        self.Boost1X = ['', 0]                      # Name and damage multiplier of the fired ability which has a 1x boost effect
         self.AbilCritBuff = 0                       # Critical hit buff for next ability
-        self.CritStack = 0                          # Critical hit stack used for Fury and (Greater) Concentrated Blast
-        self.ChannelCritStack = 0                   # Critical hit stack used for magic channeling abilities whilst wearing the Channeler's Ring
-        self.GreaterFuryCritCheck = False           # True if Greater Fury was used in an attack cycle
-        self.CritAdrenalineBuff = False             # True if Meteor Strike, Tsunami or Incendiary Shot were used in an attack cycle
         self.CritAdrenalineBuffTime = 0             # Timer for adrenaline buff due to the above ^
         self.BasicAdrenalineGain = 0                # Adrenaline boost for basic abilities due to the above ^
         self.DragonBreathGain = False               # True if Dragon Breath is on the bar and there are more than 2 dummies
@@ -40,7 +37,15 @@ class Player:
 
         # self.KerapacWristWraps = userInput['KerapacWristWraps']     # True if the user selected Kerapac's Wrist Wraps
 
+        self.StrengthCape = userInput['StrengthCape']
+
         self.Cape = userInput['Cape']                   # Cape selected by the user
+
+        self.Ammo = userInput['Ammo']
+
+        self.GlovesOfPassage = userInput['GlovesOfPassage']
+
+        self.DualLeng = userInput['DualLeng']
 
         if self.Cape == 0:
             self.Cape = ''
@@ -56,10 +61,8 @@ class Player:
         self.Aura = userInput['Aura']                   # Aura selected by the user
         self.Pocket = userInput['Pocket']               # Pocket slot item selected by the user
 
-        self.JasBuffMaxDuration = 17                    # Duration of the Jas scripture buff
-        self.JasBuffDam = 0                             # Damage done during the Jas Scripture buff
-        self.JasBuff = False                            # True if the Jas Scripture buff is active
-        self.JasBuffDuration = 0                        # Current duration of Jas Scripture buff
+        self.JasDamage = 0                              # Damage done during the Jas Scripture buff
+        self.JasTime = 0                                # Current duration of Jas Scripture buff
 
         self.CoE = userInput['CoE']                     # True if the user selected the Conservation of Energy Relic
 
@@ -171,39 +174,21 @@ class Player:
         :param logger: The Logger object.
         """
 
-        # For all abilities currently on cooldown
-        for i in range(len(self.Cooldown) - 1, -1, -1):
-            self.Cooldown[i].cdTime -= 1
-
-            if self.Cooldown[i].cdTime == 0:
-                self.Cooldown[i].cdStatus = False
-
-                if logger.DebugMode:
-                    logger.write(22, self.Cooldown[i].Name)
-
-                self.Cooldown.pop(i)  # Delete it from the cooldown list
-
         # If the player has an adrenaline buff going
         if self.CritAdrenalineBuffTime:
             self.CritAdrenalineBuffTime -= 1
 
-            if self.CritAdrenalineBuffTime == 0:
-                self.CritAdrenalineBuff = False
-
+            if not self.CritAdrenalineBuffTime:
                 if logger.DebugMode:
                     logger.write(23)
 
         # If the player used a channeled ability and its still active
-        if self.ChanAbil:
+        if self.ChanTime:
             self.ChanTime -= 1
 
-            if self.ChanTime == 0:
-                self.ChanAbil = False
-
-                if self.GreaterChain:
+            if not self.ChanTime:
+                if self.GreaterChainTime:
                     self.resetGreaterChain()
-
-                self.ChannelCritStack = 0
 
                 if logger.DebugMode:
                     logger.write(24)
@@ -227,29 +212,49 @@ class Player:
                 self.Boost = False
 
         # If the player has a Greater Chain effect going on
-        if self.GreaterChain:
-            self.GreaterChainDuration -= 1
+        if self.GreaterChainTime:
+            self.GreaterChainTime -= 1
 
-            if self.GreaterChainDuration == 0:
+            if not self.GreaterChainTime:
                 self.resetGreaterChain()
 
                 if logger.DebugMode:
                     logger.write(26)
 
         # If the player has a Jas Buff effect going on
-        if self.JasBuff:
-            self.JasBuffDuration -= 1
+        if self.JasTime:
+            self.JasTime -= 1
 
-            if self.JasBuffDuration == 0:
+            if not self.JasTime:
                 JasAbil = deepcopy(self.SpecialAbils['Scripture of Jas'])
 
-                JasAbil.Hits[0].Damage = 0.2 * self.JasBuffDam
+                JasAbil.Hits[0].Damage = 0.2 * self.JasDamage
 
                 dummy.PHits[dummy.nPH: dummy.nPH + JasAbil.nHits] = JasAbil.Hits
                 dummy.nPH += JasAbil.nHits
 
-                self.JasBuff = False
-                self.JasBuffDam = 0
+                self.JasDamage = 0
+
+        # If the player has a Gloves of Passage effect going on
+        if self.GlovesOfPassageTime:
+            self.GlovesOfPassageTime -= 1
+
+            if not self.GlovesOfPassageTime:
+                self.GlovesOfPassageBoost -= .2
+
+                if logger.DebugMode:
+                    logger.write(59)
+
+        # Upgrade special abilities (option check)
+        for name in self.SpecialAbils.keys():
+            special_ability = self.SpecialAbils[name]
+
+            if special_ability.cdTime:
+                special_ability.cdTime -= 1
+
+                if not special_ability.cdTime:
+                    if logger.DebugMode:
+                        logger.write(22, special_ability.Name)
 
         # If the player has a Greater Chain effect going on
         # if self.DragonBreathCombustTime:
@@ -260,9 +265,16 @@ class Player:
         #             logger.write(49)
 
     def resetGreaterChain(self):
-        self.GreaterChainDuration = 0
-        self.GreaterChain = False
+        self.GreaterChainTime = 0
         self.GreaterChainTargets = []
 
     def getBoost(self):
-        return sum(self.BoostX) + 1
+        boost = 1
+
+        for i, name in enumerate(self.BoostName):
+            if name != 'Needle Strike':
+                boost += self.BoostX[i]
+            else:
+                boost *= (self.BoostX[i] + 1)
+
+        return boost

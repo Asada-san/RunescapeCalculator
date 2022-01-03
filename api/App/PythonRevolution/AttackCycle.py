@@ -22,7 +22,7 @@ def useAbility(bar, player, dummy, logger, settings):
     mustStall = player.nStall % 3 != 0
 
     # CHECK IF THE PLAYER IS ALLOWED TO ATTACK
-    if not bar.GCDStatus and not player.ChanAbil:
+    if not bar.GCDStatus and not player.ChanTime:
 
         if not mustStall:
             # Check for available ability
@@ -41,21 +41,17 @@ def useAbility(bar, player, dummy, logger, settings):
 
             FireAbility = bar.Rotation[bar.FireN]
 
-            # Count activations
-            logger.AbilInfo[FireAbility.Name]['activations'] += 1
+            # Add the ability to the Rotation
+            logger.addRotation(FireAbility.Name)
 
             # Tell if Stun/Bind damage is going to be used
             if logger.DebugMode:
-                if not all([FireAbility.StunBindDam, any([dummy.Stun, dummy.Bind])]):
+                if not all([FireAbility.StunBindDam, any([dummy.StunTime, dummy.BindTime])]):
                     logger.write(31, FireAbility.Name)
                 else:
                     logger.write(32, FireAbility.Name)
 
                 logger.write(33, round(bar.Adrenaline, 0))  # Adrenaline status
-
-            # Add to cycle rotation
-            logger.Rotation.append(FireAbility.Name)
-            logger.RotationTick.append(logger.n)
 
             determineHits(FireAbility, player, dummy, logger)
 
@@ -75,7 +71,7 @@ def useAbility(bar, player, dummy, logger, settings):
 
     else:
         if logger.DebugMode:
-            if player.ChanAbil:
+            if player.ChanTime:
                 logger.write(39)
             elif bar.GCDStatus:
                 logger.write(40)
@@ -99,7 +95,7 @@ def determineHits(FA, player, dummy, logger):
         dummy.PHits[dummy.nPH: dummy.nPH + FA.nHits] = PunctureCheck(dummy, player, FA, logger)
 
     elif FA.Standard or FA.Channeled or FA.Bleed:
-        if not all([FA.StunBindDam,  any([dummy.Stun, dummy.Bind])]):
+        if not all([FA.StunBindDam,  any([dummy.StunTime, dummy.BindTime])]):
             dummy.PHits[dummy.nPH: dummy.nPH + FA.nHits] = deepcopy(FA.Hits)
         else:
             dummy.PHits[dummy.nPH: dummy.nPH + FA.nHits] = deepcopy(FA.HitsStunBind)
@@ -111,21 +107,30 @@ def determineHits(FA, player, dummy, logger):
 
     # Set Channeling Time on Player object
     if FA.Channeled:
-        player.ChanAbil = True
-
         if player.Afk:
             player.ChanTime = FA.TrueWaitTime
 
         else:
             player.ChanTime = FA.EfficientWaitTime
 
+    if player.Boost1:
+        player.Boost1 = False
+
+        player.Boost = True
+        player.BoostX.append(player.Boost1X[1])
+        player.BoostTime.append(FA.Hits[0].Time + 2)
+        player.BoostName.append(player.Boost1X[0])
+
+    # Status checks
+    if FA.Name in {'Meteor Strike', 'Tsunami', 'Incendiary Shot'}:
+        player.CritAdrenalineBuffTime = FA.EffectDuration
+
     # Determine hits with Greater Chain effect
     if FA.Name == 'Greater Chain':
-        player.GreaterChain = True
-        player.GreaterChainDuration = 10
+        player.GreaterChainTime = FA.EffectDuration
         player.GreaterChainTargets = FA.GreaterChainTargets
 
-    elif player.GreaterChain:  # Check for Greater Chain effect
+    elif player.GreaterChainTime:  # Check for Greater Chain effect
         if (FA.Standard or FA.Channeled or FA.Bleed) and FA.Name != 'Sunshine':
             NewHits = np.array([])
             nHits = 0
@@ -209,8 +214,7 @@ def PunctureCheck(dummy, player, FA, logger):
         return NewHit
 
     else:  # Else the Greater Dazing Shot ability has been used, change stack value accordingly
-        dummy.PunctureDuration = 15
-        dummy.Puncture = True
+        dummy.PunctureTime = FA.EffectDuration
 
         # Set puncture stack
         if dummy.nPuncture < 10:  # Stacks are capped at 10
@@ -292,90 +296,96 @@ def doDamage(CurrentHits, bar, dummy, player, logger, settings):
 
     # Check if dummy takes a hit
     for PHit in CurrentHits:
-        if player.Ring == 'ChannelersRing' and bar.Style == 'Magic' and player.ChanAbil and PHit.Type == 2 and not PHit.Name == 'Detonate':
-            player.ChannelCritStack += 1
-            player.AbilCritBuff += player.ChannelCritStack * 0.04
-
-        # Determine bleed damage multiplier
-        if PHit.Type == 3 and dummy.Movement and not any([dummy.Stun, dummy.Bind]):
-            PHit.Damage *= PHit.BleedOnMove
+        # Check for Deathspore arrows effect
+        if all([player.Ammo == 'Deathspore arrows', PHit.Style == 'Ranged', PHit.Equipment in {'2h', 'any'}, PHit.Type in {1, 2}]):
+            player.AbilCritBuff += 0.03
 
         # Determine average hit damage
-        if PHit.Type in {1, 2, 5, 6} and any([player.AbilCritBuff > player.InitCritBuff, player.Boost, player.Boost1]):
+        if PHit.Type in {1, 2} and any([player.AbilCritBuff > player.InitCritBuff, player.Boost]):
             PHit.Damage = AVGCalc.StandardChannelDamAvgCalc(PHit, player, logger)
 
-            if any([player.Boost, player.Boost1]):
-                if logger.DebugMode:
-                    logger.write(27, [PHit.Name, player.getBoost() * player.Boost1X])
-
-            # The single hit damage boost works on the first 2 hits on rapid fire fore some reason
-            if any([PHit.Name not in ['Rapid Fire', 'Snap Shot'] and player.Boost1, player.Boost1 and int(PHit.Index) == 1]):
-                player.Boost1 = False
-                player.Boost1X = 1
+            if player.Boost and logger.DebugMode:
+                logger.write(27, [PHit.Name, player.getBoost()])
 
             # Reset Critical Hit Buff
             player.AbilCritBuff = 0
 
-        elif PHit.Type in {3, 4} and player.BaseBoost > 1 and player.Boost:
-            if PHit.Index == 0 and player.Boost1:
-                player.Boost1 = False
-                player.Boost1X = 1
-
+        elif PHit.Type in {3, 4} and any([player.BaseBoost > 1 and player.Boost, player.GlovesOfPassageTime]):
             PHit.Damage = AVGCalc.BleedDamAvgCalc(PHit, player, logger)
+            print(PHit.Damage)
 
-        # Add the damage to the total damage
+        # Determine bleed damage multiplier
+        if PHit.Type == 3 and dummy.Movement and not any([dummy.StunTime, dummy.BindTime]):
+            PHit.Damage *= PHit.BleedOnMove
+
+        # Add the damage to the total damage and damage per dummy
         dummy.Damage += PHit.Damage
         dummy.DamagePerDummy[PHit.Target - 1] += PHit.Damage
 
-        if player.Boost and PHit.Type in {1, 2, 5, 6}:
+        # Count the damage for the correct ability whether there is a boost active or not
+        if player.Boost and PHit.Type in {1, 2}:
             standardDamage = PHit.Damage / player.getBoost()
 
             logger.AbilInfo[PHit.Name]['damage'] += standardDamage
 
             for i, name in enumerate(player.BoostName):
-                logger.AbilInfo[name]['damage'] += standardDamage * player.BoostX[i]
+                if name == 'Needle Strike':
+                    logger.AbilInfo[name]['damage'] += PHit.Damage - (PHit.Damage / (player.BoostX[i] + 1))
+                else:
+                    logger.AbilInfo[name]['damage'] += standardDamage * player.BoostX[i]
         else:
             logger.AbilInfo[PHit.Name]['damage'] += PHit.Damage
 
-        if player.PerkAftershock and PHit.Type not in {4, 10}:
-            player.ArDamage += PHit.Damage
-
+        # Write to the log
         if logger.DebugMode:
             if dummy.nTarget == 1:
                 logger.write(28, [PHit.Name, PHit.Type, round(PHit.Damage, 3)])
             else:
                 logger.write(29, [PHit.Name, PHit.Type, int(PHit.Target), round(PHit.Damage, 3)])
 
-        # Critical hit chance checks
+        # Increase Aftershock damage if using the perk
+        if player.PerkAftershock and PHit.Type not in {4, 10}:
+            player.ArDamage += PHit.Damage
+
+        # Increase the stored damage for the Jas Buff if it is active
+        if player.JasTime:
+            player.JasDamage += PHit.Damage
+
+            if logger.DebugMode:
+                logger.write(57, player.JasDamage)
+
+        # Critical hit check: Channeller's Ring
+        if all([player.Ring == 'ChannelersRing', PHit.Style == 'Magic', player.ChanTime, PHit.Type == 2, PHit.Name != 'Detonate']):
+            player.AbilCritBuff += (PHit.Index + 1) * 0.04
+
+        # Critical hit check: (Greater) Concentrated Blast and Fury
         if PHit.Name in {'Concentrated Blast', 'Greater Concentrated Blast', 'Fury'}:
-            if player.CritStack == 3:  # If the stack reached 3, reset
-                player.CritStack = 0
-            player.CritStack += 1  # Increase stack
-            player.AbilCritBuff += 0.05 * player.CritStack
+            player.AbilCritBuff += (PHit.Index + 1) * 0.05
 
-        elif PHit.Name == 'Greater Fury' or all([player.CritAdrenalineBuffTime > 0, PHit.Type in {1, 2}]):
+        # Critical hit check: Greater Fury, get the AbilCritBuff for the next Hit via the avg damage calculator
+        if PHit.Name == 'Greater Fury':
+            AVGCalc.StandardChannelDamAvgCalc(PHit, player, logger, 'Greater Fury')
 
-            if player.CritAdrenalineBuffTime > 0:
-                player.CritAdrenalineBuff = True  # We need to perform a check
-                AVGCalc.StandardChannelDamAvgCalc(PHit, player, logger)
-                bar.Adrenaline += round(player.BasicAdrenalineGain / 1, 0)
+        # Critical hit check: Increased Adrenaline when under the effect of Tsunami/Meteor Strike/Incendiary Shot
+        if all([player.CritAdrenalineBuffTime, PHit.Type in {1, 2}]):
+
+            AVGCalc.StandardChannelDamAvgCalc(PHit, player, logger, 'Adrenaline Buff')
+            if player.BasicAdrenalineGain > 1:
+                bar.Adrenaline += 1
 
                 if logger.DebugMode:
-                    logger.write(30, [round(player.BasicAdrenalineGain / 1, 0), round(bar.Adrenaline, 0)])
+                    logger.write(30, [bar.Adrenaline])
 
-                player.BasicAdrenalineGain -= round(player.BasicAdrenalineGain / 1, 0)
-
-            if PHit.Name == 'Greater Fury':
-                player.GreaterFuryCritCheck = True  # We need to perform a check
-                AVGCalc.StandardChannelDamAvgCalc(PHit, player, logger)
+                player.BasicAdrenalineGain -= 1
 
         # Append to list of hits that did do damage in the current tick for effect checks
         dummy.DamageNames.append(PHit.Name)
 
-        if PHit.Type in {1, 2, 5, 6} and player.Pocket != 0 and PHit.Target == 1:
+        # Check if it is time to activate a pocket slot item
+        if PHit.Type in {1, 2} and player.Pocket != 0 and PHit.Target == 1:
             pocketAbil = player.SpecialAbils[player.Pocket]
-
-            if not pocketAbil.cdStatus:
+            print(pocketAbil.cdTime)
+            if not pocketAbil.cdTime:
 
                 player.PocketHitCounter += 1
 
@@ -384,15 +394,14 @@ def doDamage(CurrentHits, bar, dummy, player, logger, settings):
                         dummy.PHits[dummy.nPH: dummy.nPH + pocketAbil.nHits] = deepcopy(pocketAbil.Hits)
                         dummy.nPH += pocketAbil.nHits
                     elif pocketAbil.Name == 'Scripture of Jas':
-                        player.JasBuff = True
-                        player.JasBuffDuration = player.JasBuffMaxDuration
+                        player.JasTime = pocketAbil.EffectDuration
 
                         if logger.DebugMode:
                             logger.write(56)
                     elif pocketAbil.Name == 'Scripture of Ful':
                         player.Boost = True
                         player.BoostX.append(pocketAbil.BoostX)
-                        player.BoostTime.append(pocketAbil.BoostTime)
+                        player.BoostTime.append(pocketAbil.EffectDuration)
                         player.BoostName.append(pocketAbil.Name)
 
                         if logger.DebugMode:
@@ -400,19 +409,9 @@ def doDamage(CurrentHits, bar, dummy, player, logger, settings):
 
                     player.PocketHitCounter = 0
 
-                    logger.AbilInfo[pocketAbil.Name]['activations'] += 1
-                    logger.addSpecial(pocketAbil.Name)
-                    logger.RotationTick.append(logger.n)
+                    logger.addRotation(pocketAbil.Name, True)
 
-                    # Put it on cooldown whether it has been activated or not
-                    pocketAbil.cdStatus = True
-                    pocketAbil.cdTime = pocketAbil.cdMax
-                    player.Cooldown.append(pocketAbil)
-
-            elif pocketAbil.Name == 'Scripture of Jas' and player.JasBuff:
-                player.JasBuffDam += PHit.Damage
-
-                if logger.DebugMode:
-                    logger.write(57, player.JasBuffDam)
+                    # Put it on cooldown
+                    pocketAbil.putOnCooldown()
 
     return None

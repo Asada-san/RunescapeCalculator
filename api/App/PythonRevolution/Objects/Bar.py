@@ -46,9 +46,11 @@ class AbilityBar():
             ['Forceful Backhand', 'Stomp', 'Tight Bindings', 'Rout', 'Deep Impact', 'Horror'],
             ['Backhand', 'Kick', 'Binding Shot', 'Demoralise', 'Impact', 'Shock'],
             ['Fragmentation Shot', 'Combust'],
-            ['Metamorphosis', 'Sunshine'],
-            ['Destroy', 'Hurricane']
+            ['Metamorphosis', 'Sunshine']
         ]
+
+        if not userInput['DualLeng']:
+            self.SharedCDs.append(['Destroy', 'Hurricane'])
 
         # Groups of abilities which cannot appear together on the ability bar
         self.Invalid = [
@@ -87,6 +89,16 @@ class AbilityBar():
                 if logger.DebugMode:
                     logger.write(18)
 
+        # For all abilities currently on cooldown
+        for ability in self.Rotation:
+
+            if ability.cdTime:
+                ability.cdTime -= 1
+
+                if not ability.cdTime:
+                    if logger.DebugMode:
+                        logger.write(22, ability.Name)
+
     def FireNextAbility(self, player, logger):
         """
         Checks if an ability is allowed to fire.
@@ -99,42 +111,38 @@ class AbilityBar():
         for i in range(0, self.N):
             Ability = self.Rotation[i]
 
-            if not Ability.cdStatus:
+            if not Ability.cdTime:
+                self.FireStatus = True
+                adrenaline = 0
 
                 if Ability.Type == 'Basic':
+                    adrenaline += self.Basic
                     if Ability.Name == 'Dragon Breath' and player.DragonBreathGain:
-                        self.Adrenaline += self.Basic + 2
-                    else:
-                        self.Adrenaline += self.Basic
-
-                    if self.Adrenaline > self.MaxAdrenaline:
-                        self.Adrenaline = self.MaxAdrenaline
-
-                    self.FireStatus = True
+                        adrenaline += 2
 
                 elif Ability.Type == 'Threshold' and self.Adrenaline >= 50:
-                    self.Adrenaline -= self.Threshold
-                    self.FireStatus = True
+                    adrenaline = -self.Threshold
 
                 elif Ability.Type == 'Ultimate':
                     if self.Adrenaline >= 60 and 'Igneous' in player.Cape and Ability.Name in {'Overpower', 'Deadshot', 'Omnipower'}:
-                        self.Adrenaline -= 60
-                        self.FireStatus = True
+                        adrenaline -= 60
 
                     elif self.Adrenaline >= 100:
                         if player.PerkUltimatums and Ability.Name in {'Overpower', 'Frenzy', 'Unload', 'Omnipower'} and 100 - self.Ultimate < player.Ur * 5:
-                            self.Adrenaline -= 100 - player.Ur * 5
+                            adrenaline -= (100 - player.Ur * 5)
                         else:
-                            self.Adrenaline -= self.Ultimate
-                        self.FireStatus = True
-
-
+                            adrenaline -= self.Ultimate
 
                 else:
                     self.FireStatus = False
 
                 if self.FireStatus:
                     self.FireN = i  # Index of ability is equal to for loop i
+
+                    self.Adrenaline += adrenaline
+
+                    if self.Adrenaline > self.MaxAdrenaline:
+                        self.Adrenaline = self.MaxAdrenaline
 
                     if logger.DebugMode:
                         logger.write(36, self.Rotation[i].Name)
@@ -161,7 +169,6 @@ class AbilityBar():
                         pass
                     elif Ability in self.AbilNames:
                         idx = self.AbilNames.index(Ability)
-                        self.Rotation[idx].cdStatus = True
                         self.Rotation[idx].cdTime = self.Rotation[idx].cdMax
                         player.Cooldown.append(self.Rotation[idx])
 

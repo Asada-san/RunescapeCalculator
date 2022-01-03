@@ -88,15 +88,16 @@ class Logger:
                 break
             else:
                 i += 1
-
+        print(self.Rotation)
         self.Rotation = self.Rotation[i:]
-
+        print(self.Rotation)
         for ability in self.AbilInfo.keys():
             self.CycleAbilityDamagePerTick[ability]['damage'] = self.CycleAbilityDamagePerTick[ability]['damage'][startTime:endTime + 1]
             self.CycleAbilityDamagePerTick[ability]['damage'] = [x - self.CycleAbilityDamagePerTick[ability]['damage'][0] for x in self.CycleAbilityDamagePerTick[ability]['damage']]
             self.CycleAbilityDamagePerTick[ability]['activations'] = self.Rotation.count(ability)
 
             self.AbilInfo[ability]['damage'] = self.CycleAbilityDamagePerTick[ability]['damage'][-1]
+            print(self.Rotation.count(ability), self.Rotation.count('<span style="color: #B65FCF">' + ability + '</span>'))
             self.AbilInfo[ability]['activations'] = max(self.Rotation.count(ability), self.Rotation.count('<span style="color: #B65FCF">' + ability + '</span>'))
 
     def check_stall(self):
@@ -109,10 +110,17 @@ class Logger:
             self.Rotation.extend([f'<span style="color: {self.TextColor["cycle"]}">STALL {self.nStall}x</span>'])
             self.RotationTick.append(self.n)
 
-    def addSpecial(self, name):
-        pre = '<span style="color: #B65FCF">'
-        post = '</span>'
-        self.Rotation.append(pre + name + post)
+    def addRotation(self, name, special=False):
+        self.AbilInfo[name]['activations'] += 1
+
+        if special:
+            name = '<span style="color: #B65FCF">' + name + '</span>'
+            self.RotationTick.append(self.n + 1)
+        else:
+            self.RotationTick.append(self.n)
+
+        self.Rotation.append(name)
+        # self.RotationTick.append(self.n)
 
     def write(self, x, var=None):
 
@@ -223,7 +231,7 @@ class Logger:
             string = f'<li style="color: {self.TextColor["damage"]};">{var[0]} ({self.TypeDict[var[1]]}) damage applied on target #{var[2]}: {var[3]}</li>'
 
         elif x == 30:
-            string = f'<li style="color: {self.TextColor["attack"]};">Adrenaline increased by: {var[0]} to: {var[1]}</li>'
+            string = f'<li style="color: {self.TextColor["attack"]};">Adrenaline increased by 1 to: {var[0]}</li>'
 
         elif x == 31:
             string = f'<li style="color: {self.TextColor["attack"]};">{var} activated (normal)'
@@ -316,6 +324,9 @@ class Logger:
 
         elif x == 58:
             string = f'<li style="color: {self.TextColor["attack"]};">Ful buff activated</li>'
+
+        elif x == 59:
+            string = f'<li style="color: {self.TextColor["normal"]};">Player damage boost due to Gloves of Passage has been reset</li>'
 
         else:
             string = f'NO CORRESPONDING STRING FOUND!'

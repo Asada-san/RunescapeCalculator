@@ -23,7 +23,6 @@ class Ability:
         self.Member = abil_stats[5]                 # True if its a members only ability
 
         self.cdMax = abil_stats[6]                  # Maximum cooldown time of the ability
-        self.cdStatus = False                       # True if the ability is on cooldown
         self.cdTime = 0                             # Current cooldown time of the ability
 
         self.Equipment = abil_stats[7]              # Determines if the weapon required is a 2h, duals or both
@@ -49,46 +48,39 @@ class Ability:
         self.BleedOnMove = abil_stats[20]           # Damage multiplier when target moves after bleed attack
         self.Puncture = abil_stats[21]              # True if the ability has a puncture effect
 
-        # self.DoTMax = np.fromstring(abil_stats[22].strip('[]'), dtype=float, sep='; ')          # Maximum damage of the effect
-        # self.DoTMin = np.fromstring(abil_stats[23].strip('[]'), dtype=float, sep='; ')          # Minimum damage of the effect
-        # self.DoTHits = []                           # Array containing DoT effect hits
-
         self.StunBindDam = abil_stats[22]           # True if the ability does extra damage when the dummy is stunned/bound
         self.StunBindDamMax = np.fromstring(abil_stats[23].strip('[]'), dtype=float, sep='; ')  # Maximum damage of the effect
         self.StunBindDamMin = np.fromstring(abil_stats[24].strip('[]'), dtype=float, sep='; ')  # Maximum damage of the effect
         self.HitsStunBind = []                      # Array containing stun&bind hits
 
-        self.Stun = abil_stats[25]                  # True if the ability has a stun effect
-        self.StunDur = abil_stats[26]               # Duration of the stun
+        self.StunDuration = abil_stats[25]          # Duration of a possible Stun effect
+        self.BindDuration = abil_stats[26]          # Duration of a possible Bind effect
 
-        self.Bind = abil_stats[27]                  # True if the ability has a bind effect
-        self.BindDur = abil_stats[28]               # Duration of the bind
-
-        self.SideTarget = abil_stats[29]            # True if the ability does different damage to side targets
-        self.SideTargetMax = np.fromstring(abil_stats[30].strip('[]'), dtype=float, sep='; ')   # Maximum damage of the effect
-        self.SideTargetMin = np.fromstring(abil_stats[31].strip('[]'), dtype=float, sep='; ')   # Maximum damage of the effect
+        self.SideTarget = abil_stats[27]            # True if the ability does different damage to side targets
+        self.SideTargetMax = np.fromstring(abil_stats[28].strip('[]'), dtype=float, sep='; ')   # Maximum damage of the effect
+        self.SideTargetMin = np.fromstring(abil_stats[29].strip('[]'), dtype=float, sep='; ')   # Maximum damage of the effect
         self.HitsSideTarget = []                    # Array containing side target hits
 
-        self.Boost1 = abil_stats[32]                # True if the ability has a single ability boosting effect
-        self.Boost1X = abil_stats[33]               # Boost multiplier
-        self.Boost = abil_stats[34]                 # True if the ability has a ability boosting effect
-        self.BoostTime = abil_stats[35]             # Boost duration
-        self.BoostX = abil_stats[36]                # Boost multiplier
-        self.Special = abil_stats[37]               # True if the ability is a special cunt
+        self.Boost1 = abil_stats[30]                # True if the ability has a single ability boosting effect
+        self.Boost = abil_stats[31]                 # True if the ability has a ability boosting effect
+        self.BoostX = abil_stats[32]                # Boost multiplier
 
-        self.AoE = abil_stats[38]                   # True if the ability does AoE damage
-        self.MaxTargets = abil_stats[39]            # Maximum amount of targets damaged by AoE abilities
+        self.EffectDuration = abil_stats[33]        # Duration of the effect of the ability
 
-        self.ActivationChance = abil_stats[40]      # Chance of an ability activating
+        self.AoE = abil_stats[34]                   # True if the ability does AoE damage
+        self.MaxTargets = abil_stats[35]            # Maximum amount of targets damaged by AoE abilities
 
-        if 0 < self.ActivationChance < 1:
-            self.HitsToActivate = int(math.ceil(math.log(0.5)/math.log(1-self.ActivationChance)))
+        if 0 < abil_stats[36] < 1:                  # Hits needed for activation
+            self.HitsToActivate = int(math.ceil(math.log(0.5)/math.log(1 - abil_stats[36])))
         else:
             self.HitsToActivate = 1
 
         self.Hits = []                              # Array containing all hits which will be applied to the dummy
         self.nHits = 0                              # Total amount of hits of the ability including multi targets
         self.GreaterChainTargets = []               # Dummy targets affected by the Greater Chain effect
+
+    def putOnCooldown(self):
+        self.cdTime = self.cdMax
 
     def AbilityUpgrades(self, player, logger):
         """
@@ -120,14 +112,14 @@ class Ability:
         # Stun ability changes due to perks
         if player.PerkFlanking:
             if self.Name in {'Backhand', 'Impact', 'Binding Shot'}:
-                self.Stun = False  # Abilities above loose their stun effect
+                self.StunDuration = 0  # Abilities above loose their stun effect
 
                 for i in range(0, self.nS):  # Increase min by 8% per rank, max by 40% per rank
                     self.DamMax[i] += 0.4 * player.Fr
                     self.DamMin[i] += 0.08 * player.Fr
 
             if self.Name in {'Forceful Backhand', 'Deep Impact', 'Tight Bindings'}:
-                self.Stun = False  # Abilities above lose their stun effect
+                self.StunDuration = 0  # Abilities above lose their stun effect
 
                 for i in range(0, self.nS):  # Increase min by 6% per rank, max by 30% per rank
                     self.DamMax[i] += 0.3 * player.Fr
@@ -147,7 +139,7 @@ class Ability:
 
             self.DamMax += 0.2 * player.Lr / self.nD  # Increase max hit by 0.2 for every rank
 
-        if player.Cape == 'StrengthCape' and self.Name == 'Dismember':
+        if player.StrengthCape and self.Name == 'Dismember':
             nExtend += 3  # Add 3 hits to the Dismember ability
 
             self.DamMax = np.append(self.DamMax, self.DamMax[-4: -1])
@@ -156,7 +148,7 @@ class Ability:
             if logger.DebugMode:
                 logger.write(14, self.Name)
 
-        if player.Cape == 'IgneousKal-Ket' and self.Name == 'Overpower':
+        if player.Cape in {'IgneousKal-Ket', 'IgneousKal-Zuk'} and self.Name == 'Overpower':
             self.DamMax = np.append(self.DamMax, self.DamMax)
             self.DamMin = np.append(self.DamMin, self.DamMin)
             self.Timings = np.append(self.Timings, self.Timings)
@@ -166,7 +158,7 @@ class Ability:
             if logger.DebugMode:
                 logger.write(51, self.Name)
 
-        if player.Cape == 'IgneousKal-Xil' and self.Name == 'Deadshot':
+        if player.Cape in {'IgneousKal-Xil', 'IgneousKal-Zuk'} and self.Name == 'Deadshot':
             self.DamMax[0] = 2.1
             self.DamMin[0] = 0.42
 
@@ -178,7 +170,7 @@ class Ability:
             if logger.DebugMode:
                 logger.write(52, self.Name)
 
-        if player.Cape == 'IgneousKal-Mej' and self.Name == 'Omnipower':
+        if player.Cape in {'IgneousKal-Mej', 'IgneousKal-Zuk'} and self.Name == 'Omnipower':
             self.DamMax = np.full(4, 1.8)
             self.DamMin = np.full(4, 0.9)
 
@@ -213,8 +205,15 @@ class Ability:
 
         if player.PerkPlantedFeet and self.Name in {'Sunshine', 'Death\'s Swiftness'}:
             self.Bleed = False
-            self.BoostTime = 63
+            self.EffectDuration = 63
             return
+
+        if player.GlovesOfPassage and self.Name in {'Smash', 'Havoc'}:
+            self.Boost1 = True
+            self.BoostX = .1
+
+        if player.DualLeng and self.Name == 'Hurricane':
+            self.Equipment = 'any'
 
         # Creating Hit objects which will be attached to the ability
         if self.nS > 0:
@@ -258,7 +257,6 @@ class Ability:
                 copyHit = deepcopy(hit)
                 copyHit.DamMin = self.StunBindDamMin[i]
                 copyHit.DamMax = self.StunBindDamMax[i]
-                copyHit.Type = 5
                 copyHit.Damage = AVGCalc.StandardChannelDamAvgCalc(copyHit, player, logger)
 
                 self.HitsStunBind.append(copyHit)
@@ -268,7 +266,6 @@ class Ability:
                 copyHit = deepcopy(hit)
                 copyHit.DamMin = self.SideTargetMin[i]
                 copyHit.DamMax = self.SideTargetMax[i]
-                copyHit.Type = 6
                 copyHit.Damage = AVGCalc.StandardChannelDamAvgCalc(copyHit, player, logger)
 
                 self.HitsSideTarget.append(copyHit)
@@ -291,7 +288,6 @@ class Ability:
 
         if self.Name in {'Quake', 'Greater Flurry'}:  # DamMax = 0.94, DamMin = 0.2, DamAvg = 0.57 for ALL! targets
             for i in range(0, nDT - 1):
-                print(self.HitsSideTarget)
                 self.Hits = np.append(self.Hits, deepcopy(self.HitsSideTarget))
 
                 for j in range(0, self.nT):
@@ -378,6 +374,7 @@ class Ability:
             self.Target = 1                                         # Target on which each hit should be applied, initialised as #1
             self.Index = HitIndex                                   # Index of the hit
             self.Name = Abil.Name                                   # Name of the ability causing the hit
-
+            self.Style = Abil.Style                                 # Combat style of the ability
+            self.Equipment = Abil.Equipment                         # Equipment from which the damage is originating
 
 

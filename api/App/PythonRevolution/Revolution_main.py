@@ -64,6 +64,7 @@ def fight_dummy(userInput, AbilityBook):
 
         MSoA: boolean               --> Masterwork Spear of Annihilation
         Grimoire: boolean
+        StrengthCape: boolean
         Ring: string                --> 'RoV', 'ChampionsRing', 'ChannelersRing', 'ReaversRing', 'StalkersRing'
         Aura: string                --> 'Berserker', 'Maniacal', 'Reckless', 'Equilibrium'
         Cape: string                --> 'StrengthCape', 'Igneous Kal-Ket', 'Igneous Kal-Mej', 'Igneous Kal-Xil'

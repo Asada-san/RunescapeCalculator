@@ -21,17 +21,13 @@ class Dummy:
         self.DamagePerDummy = [0] * self.nTarget                                # Contains the total damage done to a dummy per dummy
         self.DamagePerDummyIncrement = [[0] for _ in range(0, self.nTarget)]    # List of lists containing the total damage done to a dummy per dummy per tick
 
-        self.Stun = False               # When True, the dummy is in a stunned state
         self.StunTime = 0               # Time before a stun wears of
-        self.Bind = False               # When True, the dummy is in a bind state
         self.BindTime = 0               # Time before a bind wears of
         self.DamageNames = []           # List of abilities which caused damage to the dummy in the current tick
         self.PHits = [0] * 50           # List of Pending Hits
         self.nPH = 0                    # Amount of Pending Hits
-        self.Puncture = False           # True if a Puncture effect has been applied on the dummy
         self.nPuncture = 0              # Amount of puncture stacks on dummy
-        self.PunctureDuration = 0       # Duration of the Puncture effect before the stack is reset
-        self.LastStack = 0              # Stack number when the Salt the Wound ability has been used
+        self.PunctureTime = 0           # Duration of the Puncture effect before the stack is reset
 
         self.Movement = not userInput['movementStatus']       # True if the dummy can move
         self.StunBindImmune = userInput['stunbindStatus']     # True if the dummy is Stun and Bind immune
@@ -43,29 +39,24 @@ class Dummy:
         :param logger: the Logger object.
         """
 
-        if self.Stun:
+        if self.StunTime:
             self.StunTime -= 1
 
-            if self.StunTime == 0:
-                self.Stun = False
-
+            if not self.StunTime:
                 if logger.DebugMode:
                     logger.write(19)
 
-        if self.Bind:
+        if self.BindTime:
             self.BindTime -= 1
 
-            if self.BindTime == 0:
-                self.Bind = False
-
+            if not self.BindTime:
                 if logger.DebugMode:
                     logger.write(20)
 
-        if self.Puncture:
-            self.PunctureDuration -= 1
+        if self.PunctureTime:
+            self.PunctureTime -= 1
 
-            if self.PunctureDuration == 0:
-                self.Puncture = False
+            if not self.PunctureTime:
                 self.nPuncture = 0
 
                 if logger.DebugMode:

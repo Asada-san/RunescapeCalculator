@@ -1,7 +1,7 @@
 import numpy as np
+import math
 
-
-def StandardChannelDamAvgCalc(Object, player, logger):
+def StandardChannelDamAvgCalc(Object, player, logger, check=None):
     """
     Calculates the average hit of a standard/channeled effect of an ability.
 
@@ -49,11 +49,11 @@ def StandardChannelDamAvgCalc(Object, player, logger):
 
     # If the player has a boost from Berserk or w/e, the aura boost is replaced by the ability boost
     if player.Boost:  # If the player has a damage boost
-        Max *= player.getBoost() * player.Boost1X
-        Min *= player.getBoost() * player.Boost1X
+        Max *= player.getBoost()
+        Min *= player.getBoost()
     else:
-        Max *= player.BaseBoost * player.Boost1X
-        Min *= player.BaseBoost * player.Boost1X
+        Max *= player.BaseBoost
+        Min *= player.BaseBoost
 
     CritNatMin = max(Min + (1 - pNatCrit) * (Max - Min), Min)
 
@@ -68,15 +68,15 @@ def StandardChannelDamAvgCalc(Object, player, logger):
     pForcedCrit = min(player.ForcedCritBuff + player.AbilCritBuff + player.InitCritBuff, 1)
 
     # If the ability Greater Fury was used, calculate new CritBuff and return immediately
-    if player.GreaterFuryCritCheck:
+    if check == 'Greater Fury':
+        # (Chance of Forced crit + Chance of Natural Crit) * 1 + (Chance of no Forced crit + Chance of no Natural crit) * 0.1
         player.AbilCritBuff += (pForcedCrit + (1 - pForcedCrit) * pNatCrit) + (1 - pForcedCrit) * (1 - pNatCrit) * 0.1
-        player.GreaterFuryCritCheck = False
         return None
 
     # If an adrenaline buff due to Meteor Strike, Tsunami or Incendiary Shot is active, calculate extra adrenaline and return immediately
-    if player.CritAdrenalineBuff:
-        player.BasicAdrenalineGain += (pForcedCrit + (1 - pForcedCrit) * pNatCrit) * 10
-        player.CritAdrenalineBuff = False
+    elif check == 'Adrenaline Buff':
+        # (Chance of Forced crit + Chance of Natural Crit) * 2
+        player.BasicAdrenalineGain += (pForcedCrit + (1 - pForcedCrit) * pNatCrit) * 2
         return None
 
     AvgCalc1 = max(0, min(1 - z1, 1)) * CritCap + min(max(0, z1), 1) * (min(CritCap, CritForcedMin) + min(CritCap, CritForcedMax)) / 2
@@ -102,8 +102,8 @@ def BleedDamAvgCalc(Object, player, logger):
     :return: Average bleed hits
     """
 
-    Max = Object.DamMax.copy()
-    Min = Object.DamMin.copy()
+    Max = Object.DamMax.copy() + player.GlovesOfPassageBoost
+    Min = Object.DamMin.copy() + player.GlovesOfPassageBoost
 
     # If the player has a boost from berserker or w/e, the aura boost is replaced by the ability boost
     if player.Boost:

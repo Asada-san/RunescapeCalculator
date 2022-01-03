@@ -15,6 +15,45 @@ let spreadsheet = '<a href="https://github.com/Asada-san/RunescapeCalculator/blo
     // ]}
 
 export var updateInfo = [{
+    version: 'V2.02.0',
+    date: '3-1-2021',
+    items: [{
+        header: 'New additions:',
+        subItems: [
+            'Added Gloves of Passage effect',
+            'Added effect of dual wielding Arch-Glacor weaponry',
+            'Added Deathspore arrows effect (crit chance increase only)'
+        ]}, {
+        header: 'Bug fixes:',
+        subItems: [
+            'Scripture of Wen minimum damage reduced to 252% instead of 420%',
+            'Bleeds now do more damage when under a damage boosting effect',
+            'Damage caused by the Needle Strike effect now counts as Needle Strike damage',
+            'Scripture of Jas effect now stores bleed/puncture damage',
+            'Greater Concentrated Blast nu longer stuns and binds the dummy for 1 tick',
+            'Effects of Tsunami, Meteor Strike and Incendiary Shot are now applied as soon as the ability is used',
+            'Adrenaline gain due to the effect of Tsunami, Meteor Strike and Incendiary Shot has been reduced'
+        ]}, {
+        header: spreadsheet + ':',
+        subItems: [
+            'Renamed StunTime and BindTime columns to StunDuration and BindDuration respectively',
+            'Renamed the BoostTime column to EffectDuration and added the Jas, Greater Dazing Shot, Greater Chain, Tsunami, Incendiary Shot and Meteor Strike effect durations to it',
+            'Removed the Boost1X column and moved its values to the BoostX column',
+            'Deleted the Stun and Bind boolean columns because they were unnecessary',
+            'Deleted the "special" column since it was not being used'
+        ]}, {
+        header: 'Options:',
+        subItems: [
+            'Brought Strength Cape out of the cape options since it can be used with other capes if you put it on the dino stand',
+            'Added the styles to the Igneous capes for clarity and also included the Igneous Kal-Zuk cape'
+        ]}, {
+        header: 'Internal improvements:',
+        subItems: [
+            'The effect of Needle Strike (1.07x boost for 2 ticks) is now activated as soon as the next ability in the rotation hits the target',
+            'Improved code readability by removing some unnecessary attributes of certain objects',
+            'Channeller\'s ring crit buff is now applied after the channelled ability hits the dummy'
+        ]}
+    ]}, {
     version: 'V2.01.0',
     date: '12-12-2021',
     items: [{

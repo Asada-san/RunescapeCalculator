@@ -80,7 +80,6 @@ def AbilityBar_verifier(userInput, AbilityBook, bar, dummy, player, logger):
 
     # Create a list of ability names which are on the bar and their required weapon types and styles
     bar.AbilNames = [ability.Name for ability in bar.Rotation]
-    bar.AbilEquipment = [ability.Equipment for ability in bar.Rotation]
     bar.AbilStyles = [ability.Style for ability in bar.Rotation]
 
     # Sets the amount of abilities on the ability bar
@@ -113,42 +112,6 @@ def AbilityBar_verifier(userInput, AbilityBook, bar, dummy, player, logger):
 
                 return error, error_mes, warning
 
-    # Check ability compatibility according to equipment
-    if not player.Switcher and all(equipment in bar.AbilEquipment for equipment in ['2h', 'dual', 'shield']):
-        error = True
-        error_mes = f'The ability bar consists of 2h, dual and shield abilities'
-
-        return error, error_mes, warning
-
-    elif not player.Switcher and all(equipment in bar.AbilEquipment for equipment in ['2h', 'dual']):
-        error = True
-        error_mes = f'The ability bar consists of 2h and dual abilities'
-
-        return error, error_mes, warning
-
-    elif not player.Switcher and all(equipment in bar.AbilEquipment for equipment in ['2h', 'shield']):
-        error = True
-        error_mes = f'The ability bar consists of 2h and shield abilities'
-
-        return error, error_mes, warning
-
-    elif not player.Switcher and all(equipment in bar.AbilEquipment for equipment in ['shield', 'dual']):
-        error = True
-        error_mes = f'The ability bar consists of shield and dual abilities'
-
-        return error, error_mes, warning
-
-    elif sum(equipment in bar.AbilEquipment for equipment in ['2h', 'dual', 'shield']) > 1:
-        weapon = 'multiple weapons, covered in sweat'
-    elif '2h' in bar.AbilEquipment:
-        weapon = 'a 2h weapon'
-    elif 'dual' in bar.AbilEquipment:
-        weapon = 'dual weapons'
-    elif 'shield' in bar.AbilEquipment:
-        weapon = 'a shield'
-    else:
-        weapon = 'anything'
-
     # Check ability compatibility according to cb style
     if all(styles in ['Constitution', 'Defence', 'ANY'] for styles in bar.AbilStyles):
         bar.Style = 'Typeless'
@@ -163,13 +126,6 @@ def AbilityBar_verifier(userInput, AbilityBook, bar, dummy, player, logger):
         error_mes = f'The ability bar consists of abilities of varying combat styles<br>\n'
 
         return error, error_mes, warning
-
-    if player.Ring == 'StalkersRing' and bar.Style in {'Ranged', 'Typeless'} and \
-            weapon in {'a 2h weapon', 'anything', 'shield'} and not player.Switcher:
-        player.InitCritBuff = 0.03
-
-    if logger.DebugMode:
-        logger.write(11, [bar.Style, weapon])
 
     # Set various player values depending on bar style
     if bar.Style == 'Melee':
@@ -230,6 +186,51 @@ def AbilityBar_verifier(userInput, AbilityBook, bar, dummy, player, logger):
         if any([ability.Name == 'Greater Ricochet', all([dummy.nTarget > 1 and ability.AoE])]):
             ability.AoECheck(dummy, player)
 
+    bar.AbilEquipment = [ability.Equipment for ability in bar.Rotation]
+
+    # Check ability compatibility according to equipment
+    if not player.Switcher and all(equipment in bar.AbilEquipment for equipment in ['2h', 'dual', 'shield']):
+        error = True
+        error_mes = f'The ability bar consists of 2h, dual and shield abilities'
+
+        return error, error_mes, warning
+
+    elif not player.Switcher and all(equipment in bar.AbilEquipment for equipment in ['2h', 'dual']):
+        error = True
+        error_mes = f'The ability bar consists of 2h and dual abilities'
+
+        return error, error_mes, warning
+
+    elif not player.Switcher and all(equipment in bar.AbilEquipment for equipment in ['2h', 'shield']):
+        error = True
+        error_mes = f'The ability bar consists of 2h and shield abilities'
+
+        return error, error_mes, warning
+
+    elif not player.Switcher and all(equipment in bar.AbilEquipment for equipment in ['shield', 'dual']):
+        error = True
+        error_mes = f'The ability bar consists of shield and dual abilities'
+
+        return error, error_mes, warning
+
+    elif sum(equipment in bar.AbilEquipment for equipment in ['2h', 'dual', 'shield']) > 1:
+        weapon = 'multiple weapons, covered in sweat'
+    elif '2h' in bar.AbilEquipment:
+        weapon = 'a 2h weapon'
+    elif 'dual' in bar.AbilEquipment:
+        weapon = 'dual weapons'
+    elif 'shield' in bar.AbilEquipment:
+        weapon = 'a shield'
+    else:
+        weapon = 'anything'
+
+    if player.Ring == 'StalkersRing' and bar.Style in {'Ranged', 'Typeless'} and \
+            weapon in {'a 2h weapon', 'anything', 'shield'} and not player.Switcher:
+        player.InitCritBuff = 0.03
+
+    if logger.DebugMode:
+        logger.write(11, [bar.Style, weapon])
+
     return error, error_mes, warning
 
 
@@ -245,41 +246,42 @@ def PostAttackStatuses(bar, player, dummy, FireAbility, logger):
     """
 
     # (Global) Cooldown shenanigans
-    FireAbility.cdStatus = True
-    FireAbility.cdTime = FireAbility.cdMax
+    FireAbility.putOnCooldown()
     bar.GCDStatus = True
     bar.GCDTime = bar.GCDMax
     bar.FireStatus = False
-    player.Cooldown.append(FireAbility)
     bar.SharedCooldowns(FireAbility, player, logger)
 
     if logger.DebugMode:
         logger.write(41, FireAbility.Name)
 
-    # Status checks
-    if FireAbility.Name in {'Meteor Strike', 'Tsunami', 'Incendiary Shot'}:
-        player.CritAdrenalineBuffTime = 50
-    # elif player.KerapacWristWraps and FireAbility.Name == 'Dragon Breath':
+    # if player.KerapacWristWraps and FireAbility.Name == 'Dragon Breath':
     #     player.DragonBreathCombustTime = 10
 
     if FireAbility.Boost:
         player.Boost = True
         player.BoostX.append(FireAbility.BoostX)
-        player.BoostTime.append(FireAbility.BoostTime)
+        player.BoostTime.append(FireAbility.EffectDuration)
         player.BoostName.append(FireAbility.Name)
+
+    if FireAbility.Boost1:
+        player.Boost1 = True
+        player.Boost1X = [FireAbility.Name, FireAbility.BoostX]
+
+    if player.GlovesOfPassage and FireAbility.Name in {'Smash', 'Havoc'}:
+        player.GlovesOfPassageTime = player.GlovesOfPassageMax
+        player.GlovesOfPassageBoost += .2
 
     if not dummy.StunBindImmune:
 
-        if FireAbility.Stun:
-            dummy.Stun = True
-            dummy.StunTime = FireAbility.StunDur
+        if FireAbility.StunDuration:
+            dummy.StunTime = FireAbility.StunDuration
 
             if logger.DebugMode:
                 logger.write(43, dummy.StunTime)
 
-        if FireAbility.Bind:
-            dummy.Bind = True
-            dummy.BindTime = FireAbility.BindDur
+        if FireAbility.BindDuration:
+            dummy.BindTime = FireAbility.BindDuration
 
             if logger.DebugMode:
                 logger.write(44, dummy.BindTime)
@@ -301,17 +303,9 @@ def PostAttackCleanUp(bar, player, dummy, logger):
     if 'Greater Flurry' in dummy.DamageNames and 'Berserk' in bar.AbilNames:
         IDX = bar.AbilNames.index('Berserk')
 
-        if bar.Rotation[IDX].cdStatus:
+        if bar.Rotation[IDX].cdTime:
             bar.Rotation[IDX].cdTime -= 2
-
-    # Special effect of Needle Strike: 1.07x if next abil is standard or channeled hit
-    if 'Needle Strike' in dummy.DamageNames:
-        IDX = bar.AbilNames.index('Needle Strike')
-        player.Boost1 = True
-        player.Boost1X = bar.Rotation[IDX].Boost1X
-
-        if logger.DebugMode:
-            logger.write(45)
+            bar.Rotation[IDX].cdTime = max(0, bar.Rotation[IDX].cdTime)
 
     # Clear the list of abilities which have inflicted damage on the dummy in the current tick
     dummy.DamageNames.clear()
@@ -320,7 +314,7 @@ def PostAttackCleanUp(bar, player, dummy, logger):
     if player.PerkAftershock:
         Aftershock = player.SpecialAbils['Aftershock']
 
-        if not Aftershock.cdStatus:
+        if not Aftershock.cdTime:
 
             if player.ArDamage > 50000:
                 dummy.PHits[dummy.nPH: dummy.nPH + Aftershock.nHits] = deepcopy(Aftershock.Hits)
@@ -329,12 +323,7 @@ def PostAttackCleanUp(bar, player, dummy, logger):
                 # Reset Aftershock damage
                 player.ArDamage = 0
 
-                logger.AbilInfo[Aftershock.Name]['activations'] += 1
-
-                logger.addSpecial(Aftershock.Name)
-                logger.RotationTick.append(logger.n)
+                logger.addRotation(Aftershock.Name, True)
 
             # Put it on cooldown whether it has been activated or not
-            Aftershock.cdStatus = True
-            Aftershock.cdTime = Aftershock.cdMax
-            player.Cooldown.append(Aftershock)
+            Aftershock.putOnCooldown()

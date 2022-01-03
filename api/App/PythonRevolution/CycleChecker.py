@@ -23,7 +23,9 @@ def CycleCheck(bar, player, dummy, logger, settings):
                  dummy.nPuncture,
                  player.AbilCritBuff,
                  player.ArDamage,
-                 player.PocketHitCounter)
+                 player.PocketHitCounter,
+                 player.Boost,
+                 player.Boost1)
 
     logger.Counter.append(logger.n)
 
