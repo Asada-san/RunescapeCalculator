@@ -201,7 +201,7 @@ def PunctureCheck(dummy, player, FA, logger):
         NewHit[0].DamMax += .18 * dummy.nPuncture  # PunctureStack
         NewHit[0].DamMin += .036 * dummy.nPuncture  # PunctureStack
 
-        NewHit[0].Damage = AVGCalc.StandardChannelDamAvgCalc(NewHit[0], player, logger)[0]
+        NewHit[0].Damage = AVGCalc.StandardChannelDamAvgCalc(NewHit[0], player, logger)
 
         # dummy.PHits[dummy.nPH] = Hit  # Put the hit with the new average in the pending hits
         dummy.nPuncture = 0  # Reset stack

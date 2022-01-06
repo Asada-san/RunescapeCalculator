@@ -1,6 +1,7 @@
 import numpy as np
 import math
 
+
 def StandardChannelDamAvgCalc(Object, player, logger, check=None):
     """
     Calculates the average hit of a standard/channeled effect of an ability.

@@ -1526,6 +1526,8 @@ export default {
         if (this.changelogOpen) {
           document.getElementById('changelog-card').innerHTML = '';
           this.kLog = 0;
+        } else {
+          return;
         }
       }
 

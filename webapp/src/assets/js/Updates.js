@@ -14,11 +14,17 @@ let spreadsheet = '<a href="https://github.com/Asada-san/RunescapeCalculator/blo
     //     ]}
     // ]}
 
-// Micky fix bug als je op changelog klikt om af te sluiten dan wordt er alsnog een nieuwe versie geladen
-
-// Strength cape tooltip shows correct info again
-
 export var updateInfo = [{
+    version: 'V2.02.1',
+    date: '6-1-2022',
+    items: [{
+        header: 'Bug fixes:',
+        subItems: [
+            'Salt the Wound works properly again',
+            'Strength cape tooltip now shows correct information',
+            'Changelog button issue has been resolved'
+        ]}
+    ]}, {
     version: 'V2.02.0',
     date: '3-1-2022',
     items: [{
