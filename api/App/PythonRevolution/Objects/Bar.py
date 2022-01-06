@@ -116,7 +116,7 @@ class AbilityBar():
                 adrenaline = 0
 
                 if Ability.Type == 'Basic':
-                    adrenaline += self.Basic
+                    adrenaline = self.Basic
                     if Ability.Name == 'Dragon Breath' and player.DragonBreathGain:
                         adrenaline += 2
 
@@ -125,13 +125,16 @@ class AbilityBar():
 
                 elif Ability.Type == 'Ultimate':
                     if self.Adrenaline >= 60 and 'Igneous' in player.Cape and Ability.Name in {'Overpower', 'Deadshot', 'Omnipower'}:
-                        adrenaline -= 60
+                        adrenaline = -60
 
                     elif self.Adrenaline >= 100:
                         if player.PerkUltimatums and Ability.Name in {'Overpower', 'Frenzy', 'Unload', 'Omnipower'} and 100 - self.Ultimate < player.Ur * 5:
-                            adrenaline -= (100 - player.Ur * 5)
+                            adrenaline = -(100 - player.Ur * 5)
                         else:
-                            adrenaline -= self.Ultimate
+                            adrenaline = -self.Ultimate
+
+                    else:
+                        self.FireStatus = False
 
                 else:
                     self.FireStatus = False
@@ -140,7 +143,6 @@ class AbilityBar():
                     self.FireN = i  # Index of ability is equal to for loop i
 
                     self.Adrenaline += adrenaline
-
                     if self.Adrenaline > self.MaxAdrenaline:
                         self.Adrenaline = self.MaxAdrenaline
 

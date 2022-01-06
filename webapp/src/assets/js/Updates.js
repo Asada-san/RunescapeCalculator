@@ -21,6 +21,7 @@ export var updateInfo = [{
         header: 'Bug fixes:',
         subItems: [
             'Salt the Wound works properly again',
+            'Ultimate are now only fired with sufficient adrenaline',
             'Strength cape tooltip now shows correct information',
             'Changelog button issue has been resolved'
         ]}
