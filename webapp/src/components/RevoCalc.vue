@@ -709,25 +709,28 @@ export default {
   },
   created: async function(){
     await fetch(`${origin}/api/return_counter`, {
-        method: "GET",
-        // credentials: "include",
-        cache: "no-cache",
-        headers: new Headers({
-            "content-type": "application/json"
-        })
-      }) // after receiving the response do:
-      .then(function (response) {
-
-        // if something went wrong, print error
-        if (response.status !== 200) {
-            console.log(`Response status was not 200: ${response.status}`);
-            return;
-        }
-
-        response.json().then(function (data) {
-          document.getElementById("counter").innerHTML = `Simulated fights: ${data['counter']}`;
-        })
+      method: "GET",
+      // credentials: "include",
+      cache: "no-cache",
+      headers: new Headers({
+          "content-type": "application/json"
       })
+    }) // after receiving the response do:
+    .then(function (response) {
+      // if something went wrong, print error
+      if (response.status !== 200) {
+        console.log(`Response status was not 200: ${response.status}`);
+        return;
+      }
+
+      response.json().then(function (data) {
+        document.getElementById("counter").innerHTML = `Simulated fights: ${data['counter']}`;
+      })
+    })
+    .catch((error) => {
+      console.log(error);
+      document.getElementById("counter").innerHTML = `Simulated fights: Unknown`;
+    });
   },
   data: function() {
     return {
@@ -1502,6 +1505,19 @@ export default {
             // }
           })
       })
+      .catch((error) => {
+        console.log(error);
+        resultCard.hidden = false;
+
+        // if an error occured during calculating the DPT, print error
+        downloadButton.hidden = true;
+
+        vm.resultCardBackgroundVariant = 'danger';
+        vm.resultCardTextColorVariant = 'white';
+        vm.resultCardHeader = 'ERROR';
+
+        document.getElementById('result-text').innerHTML = 'Communication with server failed';
+      });
       //       // if its the second time the user clicked on the calc button (or more) , do nothing
       //       if (AlreadyRan) {
       //           return;

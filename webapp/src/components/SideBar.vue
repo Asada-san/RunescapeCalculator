@@ -8,6 +8,7 @@
           <h4 id="sidebar-no-header-title">Page selection</h4>
           <b-nav-item link-classes="text-light" @click="changeComponent('RevoCalc')">Revolution</b-nav-item>
           <b-nav-item link-classes="text-light" @click="changeComponent('ItemIDs')">Item IDs</b-nav-item>
+          <b-nav-item link-classes="text-light" @click="changeComponent('LinkList')">Links</b-nav-item>
           <b-nav-form style="margin-top:50px;">
             <b-form-input id="search-input" size="sm" class="mr-sm-2" placeholder="Search"></b-form-input>
             <b-button id="search-button" size="sm" class="my-2 my-sm-0" @click="searchDDG">Search</b-button>
@@ -30,6 +31,7 @@
 <script>
 import RevoCalc from './RevoCalc.vue'
 import ItemIDs from './itemids.vue'
+import LinkList from './LinkList.vue'
 
 let lastComponent;
 
@@ -60,8 +62,9 @@ export default {
     }
   },
   components: {
-      ItemIDs,
-      RevoCalc
+    ItemIDs,
+    RevoCalc,
+    LinkList
   }
 }
 </script>
