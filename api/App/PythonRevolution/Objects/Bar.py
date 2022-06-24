@@ -74,7 +74,6 @@ class Bar:
         for ability in self.Abilities:
             self.AbilNames.append(ability.Name)
             self.AbilStyles.append(ability.Style)
-            self.AbilEquipment.append(ability.Equipment)
             self.AbilTypes.append(ability.Type)
 
         # Check ability compatibility according to cb style
@@ -140,6 +139,9 @@ class Bar:
                 # If ability j also in disallowed group with idx DisallowedIDX, return error
                 if InvalidIDX is not None and name2 in self.Invalid[InvalidIDX]:
                     raise Exception(f'{name1} and {name2} cannot appear together')
+
+        for ability in self.Abilities:
+            self.AbilEquipment.append(ability.Equipment)
 
         # Check ability compatibility according to equipment
         if not self.Parent.Switcher:
