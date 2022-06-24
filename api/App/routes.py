@@ -175,7 +175,10 @@ def calc():
 
     start_loop = time.time()
 
-    CalcResults = RevoMain.fight_dummy(user_input, Objects)
+    try:
+        CalcResults = RevoMain.fight_dummy(user_input, Objects)
+    except Exception as e:
+        error_message = 'Error: ' + str(e)
 
     end_loop = time.time()
 
