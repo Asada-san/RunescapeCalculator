@@ -1,4 +1,6 @@
-import numpy as np
+from api.App.PythonRevolution.Objects.Bar import Bar
+from api.App.PythonRevolution.Objects.Ability import Ability
+import math
 from copy import deepcopy
 
 
@@ -7,165 +9,303 @@ class Player:
     The Player class. A player attacks the dummy.
     """
 
-    def __init__(self, userInput):
-        self.nStall = 0
-        self.Cooldown = []                          # List of abilities which are currently on cooldown
-        self.ChanTime = 0                           # Duration of the channeled ability
-        self.GreaterChainTime = 0               # Time for the greater chain effect to take effect
-        self.GreaterChainTargets = []               # Target numbers hit by Greater Chain minus main target
-        self.GlovesOfPassageTime = 0
-        self.GlovesOfPassageMax = 17
-        self.GlovesOfPassageBoost = 0
-        self.BaseBoost = 1                          # Base damage boost for all abilities
-        self.LevelBoost = 0                         # Amount of boosted combat levels
-        self.Boost = False                          # True if a damage boosting ability has been used
-        self.BoostX = []                            # Damage output multiplier
-        self.BoostTime = []                         # Amount of time of damage boost
-        self.BoostName = []
-        self.Boost1 = False                         # True if the player does more damage on the next ability only
-        self.Boost1X = ['', 0]                      # Name and damage multiplier of the fired ability which has a 1x boost effect
-        self.AbilCritBuff = 0                       # Critical hit buff for next ability
-        self.CritAdrenalineBuffTime = 0             # Timer for adrenaline buff due to the above ^
-        self.BasicAdrenalineGain = 0                # Adrenaline boost for basic abilities due to the above ^
-        self.DragonBreathGain = False               # True if Dragon Breath is on the bar and there are more than 2 dummies
-        self.SpecialAbils = {}                      # List containing special "abilities" originating from equipment and such
-        self.PocketHitCounter = 0                   # Used to keep track of hits before activation of the pocket item (god books)
-        # self.DragonBreathCombustTime = 0            # Timer for Combust boost due to the Dragon Breath ability
+    def __init__(self, data, gear, logger):
+        # self.AbilityBook = {}
+        self.Logger = logger
 
-        self.Switcher = userInput['switchStatus']                   # True if the user want to use both 2h and dual weapons
-        self.Afk = not userInput['afkStatus']                       # True if the player intends to afk
-
-        # self.KerapacWristWraps = userInput['KerapacWristWraps']     # True if the user selected Kerapac's Wrist Wraps
-
-        self.StrengthCape = userInput['StrengthCape']
-
-        self.Cape = userInput['Cape']                   # Cape selected by the user
-
-        self.Ammo = userInput['Ammo']
-
-        self.GlovesOfPassage = userInput['GlovesOfPassage']
-
-        self.DualLeng = userInput['DualLeng']
-
-        if self.Cape == 0:
-            self.Cape = ''
-
-        self.MSoA = userInput['MSoA']                   # True if the user selected the Masterwork Spear of Annihilation
-        self.Ring = userInput['Ring']                   # Ring selected by the user
-
-        if self.Ring == 'ReaversRing':
-            self.InitCritBuff = 0.05
+        # Main-hand
+        if data['MainHand'] in gear['Main-hand'].keys():
+            self.MainHand = gear['Main-hand'][data['MainHand']]
         else:
-            self.InitCritBuff = 0
+            # self.MainHand = gear['Main-hand']['Main-hand']
+            self.MainHand = gear['Main-hand']['Dark shard of Leng']
 
-        self.Aura = userInput['Aura']                   # Aura selected by the user
-        self.Pocket = userInput['Pocket']               # Pocket slot item selected by the user
+        # Off-hand
+        if data['OffHand'] in gear['Off-hand'].keys():
+            self.OffHand = gear['Off-hand'][data['OffHand']]
+        else:
+            self.OffHand = gear['Off-hand']['Off-hand']
 
+        self.Helm = None
+        self.Chest = None
+        self.Legs = None
+        self.Boots = None
+        self.Amulet = None
+
+        self.Ring = None
+        self.Cape = None
+        self.Aura = None
+        self.Gloves = None
+        self.Pocket = None
+        self.Ammo = None
+        ToEquip = ['Gloves', 'Aura', 'Ring', 'Pocket', 'Ammo', 'Cape']
+
+        for slot in ToEquip:
+            if data[slot] in gear[slot].keys():
+                setattr(self, slot, gear[slot][data[slot]])
+            else:
+                setattr(self, slot, gear[slot][slot])
+
+        self.Special = {}
+        self.PocketHitCounter = 0
+
+        self.Precise = data['Precise']
+        self.Equilibrium = data['Equilibrium']
+        self.Biting = data['Biting']
+        self.Flanking = data['Flanking']
+        self.Lunging = data['Lunging']
+        self.Caroming = data['Caroming']
+        self.Ruthless = data['Ruthless']
+        self.Aftershock = data['Aftershock']
+        self.ShieldBashing = data['ShieldBashing']
+        self.Ultimatums = data['Ultimatums']
+        self.Impatient = data['Impatient']
+        self.PlantedFeet = data['PlantedFeet']
+        self.Reflexes = data['Reflexes']
+
+        self.AsDamage = 0
         self.JasDamage = 0                              # Damage done during the Jas Scripture buff
         self.JasTime = 0                                # Current duration of Jas Scripture buff
 
-        self.CoE = userInput['CoE']                     # True if the user selected the Conservation of Energy Relic
+        self.Level20Gear = 1.1 if data['Level20Gear'] else 1  # Biting perk crit buff increased 1.1x
 
-        if 0.1 <= userInput['BerserkersFury'] <= 5.5:
-            self.BerserkersFury = 1 + userInput['BerserkersFury'] / 100
+        if self.Pocket.Name == 'Erethdor\'s Grimoire':  # True if the user selected the Grimoire
+            self.CritCap = 15000  # Critical hit damage cap increased to 15k
         else:
-            self.BerserkersFury = 1                     # Damage multiplier due to the Berserkers Fury relic
+            self.CritCap = 12000  # Normal critical hit damage cap
 
-        self.Pr = userInput['Precise']                  # Precise rank
-        self.PerkPrecise = self.Pr > 0                  # True if user selected the Precise perk
+        self.AnachroniaCapeStand = data['AnachroniaCapeStand']
+        self.ChanTime = 0
+        self.GreaterChainTime = 0  # Time for the greater chain effect to take effect
+        self.GreaterChainTargets = []  # Target numbers hit by Greater Chain minus main target
+        self.Bar = Bar(self)
+        self.BoostX = []
+        self.BoostTime = []  # Amount of time of damage boost
+        self.BoostName = []
+        self.Boost = False
+        self.Boost1 = False
+        self.Boost1XAbility = None
+        self.BasicAdrenalineGain = 0
 
-        self.Er = userInput['Equilibrium']              # Equilibrium rank
-        self.PerkEquilibrium = self.Er > 0              # True if the user selected the Equilibrium perk
+        self.Afk = not data['afkStatus']
+        self.Switcher = data['switchStatus']
+        self.RingOfVigourPassive = data['ringOfVigourPassive']
 
-        self.Br = userInput['Biting']                   # Biting rank
-        self.PerkBiting = self.Br > 0                   # True if the user selected the Biting perk
-        self.ForcedCritBuff = self.Br * 0.02            # Increase Forced Critical Hit buff by .02 per Biting rank
-
-        if userInput['Level20Gear']:                    # True if the user selected level 20 gear
-            self.ForcedCritBuff *= 1.1                  # Biting perk crit buff increased 1.1x
-
-        if userInput['Grimoire']:                       # True if the user selected the Grimoire
-            self.ForcedCritBuff += 0.12                 # ADDITIVE: Add .12 to Forced Critical Hit buff
-            self.CritCap = 15000                        # Critical hit damage cap increased to 15k
+        if 0.1 <= data['BerserkersFury'] <= 5.5:
+            self.BerserkersFury = 1 + data['BerserkersFury'] / 100
         else:
-            self.CritCap = 12000                        # Normal critical hit damage cap
+            self.BerserkersFury = 1
 
-        self.Fr = userInput['Flanking']                 # Flanking rank
-        self.PerkFlanking = self.Fr > 0                 # True if the user selected the Flanking perk
+        self.FuryOfTheSmall = data['FotS']
+        self.ConservationOfEnergy = data['CoE']
+        self.MaxAdrenaline = 110 if data['HeightenedSenses'] else 100  # Maximum amount of adrenaline
 
-        self.Lr = userInput['Lunging']                  # Lunging rank
-        self.PerkLunging = self.Lr > 0                  # True if the user selected the Lunging perk
-
-        self.Cr = userInput['Caroming']                 # Caroming rank
-        self.PerkCaroming = self.Cr > 0                 # True if the user selected the Caroming perk
-
-        self.Rr = userInput['Ruthless']                 # Ruthless rank
-        self.PerkRuthless = self.Rr > 0                 # True if the user selected the Ruthless perk
-
-        self.Ar = userInput['Aftershock']               # Aftershock rank
-        self.PerkAftershock = self.Ar > 0               # True if the user selected the Aftershock perk
-        self.ArDamage = 0                               # Damage counting for the Aftershock perk activation
-
-        self.SBr = userInput['ShieldBashing']           # Shield Bashing rank
-        self.PerkShieldBashing = self.SBr > 0           # True if the user selected the Shield Bashing perk
-
-        self.Ur = userInput['Ultimatums']               # Ultimatums rank
-        self.PerkUltimatums = self.Ur > 0               # True if the user selected the Ultimatums perk
-
-        self.Ir = userInput['Impatient']                # Ultimatums rank
-        self.PerkImpatient = self.Ir > 0                # True if the user selected the Ultimatums perk
-
-        self.PerkPlantedFeet = userInput['PlantedFeet']  # True if the user selected the Planted Feet perk
-        self.PerkReflexes = userInput['Reflexes']       # True if the user selected the Reflexes Feet perk
-
-        if 1 <= userInput['baseDamage'] <= 10000:
-            self.BaseDamage = userInput['baseDamage']
+        # Check user input for a possible value for simulation time and starting adrenaline
+        if data['Adrenaline'] != '' and 0 <= data['Adrenaline'] <= self.MaxAdrenaline:
+            self.Adrenaline = round(data['Adrenaline'], 0)
         else:
-            self.BaseDamage = 1000                      # Base weapon damage
+            self.Adrenaline = self.MaxAdrenaline  # Set starting adrenaline
 
-        self.BaseDamageEffective = self.BaseDamage
+        self.CritAdrenalineBuffTime = 0
+        self.GlovesOfPassageMax = 10
+        self.GlovesOfPassageBoost = 1
+        self.GlovesOfPassageTime = 0
 
-        if 1 <= userInput['ShieldArmourValue'] <= 1000:
-            self.ShieldArmourValue = userInput['ShieldArmourValue']
+        if 1 <= data['StrengthLevel'] <= 99:
+            self.StrengthLevel = data['StrengthLevel']
+        else:
+            self.StrengthLevel = 99
+        if 1 <= data['RangedLevel'] <= 99:
+            self.RangedLevel = data['RangedLevel']
+        else:
+            self.StrengthLevel = 99
+        if 1 <= data['MagicLevel'] <= 99:
+            self.MagicLevel = data['MagicLevel']
+        else:
+            self.StrengthLevel = 99
+
+        if 0 <= data['StrengthBoost'] <= 60:
+            self.StrengthLevelBoost = data['StrengthBoost']
+        else:
+            self.StrengthLevelBoost = 0
+        if 0 <= data['RangedBoost'] <= 60:
+            self.RangedLevelBoost = data['RangedBoost']
+        else:
+            self.RangedLevelBoost = 0
+        if 0 <= data['MagicBoost'] <= 60:
+            self.MagicLevelBoost = data['MagicBoost']
+        else:
+            self.MagicLevelBoost = 0
+
+        self.StrengthPrayerBoost = data['StrengthPrayer']
+        self.RangedPrayerBoost = data['RangedPrayer']
+        self.MagicPrayerBoost = data['MagicPrayer']
+
+        if 1 <= data['ShieldArmourValue'] <= 1000:
+            self.ShieldArmourValue = data['ShieldArmourValue']
         else:
             self.ShieldArmourValue = 491                # Shield Armour Value
 
-        if 1 <= userInput['DefenceLevel'] <= 200:
-            self.DefenceLevel = userInput['DefenceLevel']
+        if 1 <= data['DefenceLevel'] <= 160:
+            self.DefenceLevel = data['DefenceLevel']
         else:
             self.DefenceLevel = 99                      # Defence Level
 
-        self.BashBaseDamage = self.BaseDamageEffective + self.DefenceLevel + self.ShieldArmourValue  # Base Damage for the Bash ability
+        self._BaseDamage = None
+        self._BaseDamageEffective = None
+        self._BashBaseDamage = None
 
-        if 1 <= userInput['StrengthBoost'] <= 60:
-            self.StrengthLevelBoost = userInput['StrengthBoost']
+        if 1 <= data['baseDamage'] <= 10000:
+            self.userBaseDamage = data['baseDamage']
         else:
-            self.StrengthLevelBoost = 0                 # Strength Boost of the player in levels
+            # Change this into None if the Ability Damage from equipment needs to be calculated
+            self.userBaseDamage = 1000  # Base weapon damage
 
-        if 1 <= userInput['RangedBoost'] <= 60:
-            self.RangedLevelBoost = userInput['RangedBoost']
-        else:
-            self.RangedLevelBoost = 0                   # Ranged Boost of the player in levels
+    @property
+    def BaseDamage(self):
+        if self._BaseDamage is None:
+            if self.userBaseDamage is None:
+                damage_bonus_class = self.MainHand.Class + 'DamageBonus'
+                b = 0  # Sum of all strength bonuses from armour and jewellery
 
-        if 1 <= userInput['MagicBoost'] <= 60:
-            self.MagicLevelBoost = userInput['MagicBoost']
-        else:
-            self.MagicLevelBoost = 0                    # Magic Boost of the player in levels
+                # Ring
+                b += getattr(self.Ring, damage_bonus_class)
 
-        if userInput['StrengthPrayer'] < 1:
-            self.StrengthPrayerBoost = 1
-        else:
-            self.StrengthPrayerBoost = userInput['StrengthPrayer']    # Boost due to melee prayers
+                if self.MainHand.Class == 'Melee':
+                    S = self.StrengthLevel + self.StrengthLevelBoost  # Strength level
 
-        if userInput['RangedPrayer'] < 1:
-            self.RangedPrayerBoost = 1
-        else:
-            self.RangedPrayerBoost = userInput['RangedPrayer']        # Boost due to ranged prayers
+                    ab = self.Aura.Multiplier if self.Aura.Name == 'Berserker aura' and 'Berserk' not in self.BoostName else 1  # Berserker aura boost
 
-        if userInput['MagicPrayer'] < 1:
-            self.MagicPrayerBoost = 1
-        else:
-            self.MagicPrayerBoost = userInput['MagicPrayer']          # Boost due to magic prayers
+                    dm = self.MainHand.Damage  # Main-hand damage
+
+                    # Multiplier for main-hand
+                    if self.MainHand.Speed == 'Average':
+                        sm = 96 / 149
+                    elif self.MainHand.Speed == 'Fast':
+                        sm = 192 / 245
+                    elif self.MainHand.Speed == 'Fastest':
+                        sm = 1
+                    else:
+                        sm = 0
+
+                    if self.MainHand.Slot != '2h':
+                        do = self.OffHand.Damage
+
+                        # Multiplier for off-hand
+                        if self.OffHand.Speed == 'Average':
+                            so = 96 / 149
+                        elif self.OffHand.Speed == 'Fast':
+                            so = 192 / 245
+                        elif self.OffHand.Speed == 'Fastest':
+                            so = 1
+                        else:
+                            so = 0
+                    else:
+                        do = 0
+                        so = 0
+
+                    self._BaseDamage = math.floor((3.75*S + (dm + do)*(sm + so) + 1.5*b) * ab)
+
+                elif self.MainHand.Class == 'Range':
+                    R = self.RangedLevel + self.RangedLevelBoost  # Range level
+
+                    ab = self.Aura.Multiplier if self.Aura.Name == 'Reckless aura' and 'Death\'s Swiftness' not in self.BoostName else 1  # Reckless aura boost
+
+                    tm = self.MainHand.Tier  # Main-hand tier
+
+                    if self.MainHand.Slot != '2h':
+                        to = self.OffHand.Tier  # Off-hand tier
+                    else:
+                        to = tm
+
+                    da = 1500  # Damage of ammo
+
+                    self._BaseDamage = math.floor((3.75*R + min(9.6*tm + 4.8*to, 1.5*da) + 1.5*b) * ab)
+
+                elif self.MainHand.Class == 'Range':
+                    M = self.MagicLevel + self.MagicLevelBoost  # Range level
+
+                    ab = self.Aura.Multiplier if self.Aura.Name == 'Maniacal aura' and 'Sunshine' not in self.BoostName else 1  # Maniacal aura boost
+
+                    tm = self.MainHand.Tier  # Main-hand tier
+                    sm = 1500  # Damage off main-hand spell
+
+                    if self.MainHand.Slot != '2h':
+                        to = self.OffHand.Tier  # Off-hand tier
+                        so = 750  # Damage off off-hand spell
+                    else:
+                        to = tm
+                        so = sm
+
+                    self._BaseDamage = math.floor((3.75*M + min(9.6*tm + 4.8*to, sm + 0.5*so) + 1.5*b) * ab)
+
+                else:
+                    self._BaseDamage = 13
+            else:
+                if self.Bar.Style == 'Melee':
+                    ab = self.Aura.Multiplier if self.Aura.Name == 'Berserker aura' and 'Berserk' not in self.BoostName else 1  # Berserker aura boost
+                elif self.Bar.Style == 'Ranged':
+                    ab = self.Aura.Multiplier if self.Aura.Name == 'Reckless aura' and 'Death\'s Swiftness' not in self.BoostName else 1  # Reckless aura boost
+                elif self.Bar.Style == 'Magic':
+                    ab = self.Aura.Multiplier if self.Aura.Name == 'Maniacal aura' and 'Sunshine' not in self.BoostName else 1  # Maniacal aura boost
+                elif self.Bar.Style == 'All' and self.Aura.Name in {'Berserker aura', 'Reckless aura', 'Maniacal aura'}:
+                    ab = self.Aura.Multiplier
+                else:
+                    ab = 1
+
+                self._BaseDamage = self.userBaseDamage * ab
+
+        return self._BaseDamage
+
+    @property
+    def BaseDamageEffective(self):
+        if self._BaseDamageEffective is None:
+            if self.MainHand.Class == 'Melee':
+                damage = self.BaseDamage * self.StrengthPrayerBoost
+                damage += self.StrengthLevelBoost * 6
+                damage *= self.getBoost()
+            elif self.MainHand.Class == 'Range':
+                damage = self.BaseDamage * self.RangedPrayerBoost
+                damage += self.RangedLevelBoost * 6
+                damage *= self.getBoost()
+            elif self.MainHand.Class == 'Magic':
+                damage = self.BaseDamage * self.MagicPrayerBoost
+                damage += self.MagicLevelBoost * 6
+                damage *= self.getBoost()
+            else:
+                damage = self.BaseDamage * max(self.StrengthPrayerBoost, self.RangedPrayerBoost, self.MagicPrayerBoost)
+                damage += max(self.StrengthLevelBoost, self.RangedLevelBoost, self.MagicLevelBoost) * 6
+
+            self._BaseDamageEffective = damage * self.BerserkersFury * (1 + self.Ruthless * 0.025)
+
+        return self._BaseDamageEffective
+
+    @property
+    def BashBaseDamage(self):
+        if self._BashBaseDamage is None:
+            self._BashBaseDamage = self.BaseDamageEffective + self.DefenceLevel + self.ShieldArmourValue  # Base Damage for the Bash ability
+
+        return self._BashBaseDamage
+
+    def addSpecial(self, SpecialBook):
+
+        specialNames = []
+
+        # Aftershock
+        if self.Aftershock:
+            specialNames.append('Aftershock')
+
+        # Pocket item
+        if self.Pocket.Name != 'Pocket':
+            specialNames.append(self.Pocket.Name)
+
+        for name in specialNames:
+            special = deepcopy(SpecialBook[name])
+            special.Parent = self
+
+            self.Logger.initAbility(special.Name)
+
+            self.Special.update({special.Name: special})
 
     def TimerCheck(self, dummy, logger):
         """
@@ -174,13 +314,15 @@ class Player:
         :param logger: The Logger object.
         """
 
+        self.Bar.TimerCheck(logger)  # Ability cooldowns and Global Cooldown
+
         # If the player has an adrenaline buff going
         if self.CritAdrenalineBuffTime:
             self.CritAdrenalineBuffTime -= 1
 
             if not self.CritAdrenalineBuffTime:
                 if logger.DebugMode:
-                    logger.write(23)
+                    logger.Text += f'<li style="color: {logger.TextColor["normal"]};">Player adrenaline gain buff has worn out</li>'
 
         # If the player used a channeled ability and its still active
         if self.ChanTime:
@@ -191,7 +333,7 @@ class Player:
                     self.resetGreaterChain()
 
                 if logger.DebugMode:
-                    logger.write(24)
+                    logger.Text += f'<li style="color: {logger.TextColor["normal"]};">Player is no longer performing a channeled ability</li>'
 
         # If the player has a boost going on
         if self.Boost:
@@ -200,11 +342,15 @@ class Player:
                     self.BoostTime[i] -= 1
 
                     if self.BoostTime[i] == 0:
+                        self._BaseDamage = None
+                        self._BaseDamageEffective = None
+                        # self._BashBaseDamage = None
+
                         self.BoostTime.pop(i)
                         self.BoostX.pop(i)
 
                         if logger.DebugMode:
-                            logger.write(25, self.BoostName[i])
+                            logger.Text += f'<li style="color: {logger.TextColor["normal"]};">Player damage boost due to {self.BoostName[i]} has been reset</li>'
 
                         self.BoostName.pop(i)
 
@@ -219,16 +365,16 @@ class Player:
                 self.resetGreaterChain()
 
                 if logger.DebugMode:
-                    logger.write(26)
+                    logger.Text += f'<li style="color: {logger.TextColor["normal"]};">Player Greater Chain effect has worn off</li>'
 
         # If the player has a Jas Buff effect going on
         if self.JasTime:
             self.JasTime -= 1
 
             if not self.JasTime:
-                JasAbil = deepcopy(self.SpecialAbils['Scripture of Jas'])
+                JasAbil = deepcopy(self.Special['Scripture of Jas'])
 
-                JasAbil.Hits[0].Damage = 0.2 * self.JasDamage
+                JasAbil.Hits[0].setDamage(0.2 * self.JasDamage)
 
                 dummy.PHits[dummy.nPH: dummy.nPH + JasAbil.nHits] = JasAbil.Hits
                 dummy.nPH += JasAbil.nHits
@@ -243,38 +389,106 @@ class Player:
                 self.GlovesOfPassageBoost -= .2
 
                 if logger.DebugMode:
-                    logger.write(59)
+                    logger.Text += f'<li style="color: {logger.TextColor["normal"]};">Player damage boost due to Gloves of Passage has been reset</li>'
 
         # Upgrade special abilities (option check)
-        for name in self.SpecialAbils.keys():
-            special_ability = self.SpecialAbils[name]
+        for name in self.Special.keys():
+            special = self.Special[name]
 
-            if special_ability.cdTime:
-                special_ability.cdTime -= 1
+            if special.cdTime:
+                special.cdTime -= 1
 
-                if not special_ability.cdTime:
+                if not special.cdTime:
                     if logger.DebugMode:
-                        logger.write(22, special_ability.Name)
+                        logger.Text += f'<li style="color: {logger.TextColor["normal"]};">{special.Name} no longer on cd</li>'
 
-        # If the player has a Greater Chain effect going on
+        # # If the player has a Dragon Breath effect going on
         # if self.DragonBreathCombustTime:
         #     self.DragonBreathCombustTime -= 1
         #
         #     if self.DragonBreathCombustTime == 0:
         #         if logger.DebugMode:
-        #             logger.write(49)
+        #             logger.Text += f'<li style="color: {logger.TextColor["normal"]};">Player Dragon Breath (Kerapac\'s Wrist Wraps) effect has worn off</li>'
 
-    def resetGreaterChain(self):
-        self.GreaterChainTime = 0
-        self.GreaterChainTargets = []
+    def FireNextAbility(self, logger):
+        """
+        Checks if an ability is allowed to fire.
+
+        :param player: The Player object
+        :param logger: The Logger object
+        """
+
+        # Check for available ability
+        for i, Ability in enumerate(self.Bar.Abilities):
+            if not Ability.cdTime:
+
+                AdrenalineCostReduction = 0
+
+                if Ability.Type == 'Ultimate':
+                    if self.ConservationOfEnergy:
+                        AdrenalineCostReduction += 10
+
+                    if self.Ring.Name == 'Ring of vigour' or self.RingOfVigourPassive:
+                        AdrenalineCostReduction += 10
+
+                    if self.Aura.Name in {'Invigorate aura',
+                                          'Greater invigorate aura',
+                                          'Master invigorate aura',
+                                          'Supreme invigorate aura'}:
+                        AdrenalineCostReduction += Ability.Parent.Aura.Multiplier * 100
+
+                if self.Ultimatums and \
+                        Ability.Name in {'Overpower', 'Frenzy', 'Unload', 'Omnipower'} and \
+                        self.Cape.Name not in {'Igneous Kal-Ket', 'Igneous Kal-Xil', 'Igneous Kal-Mej', 'Igneous Kal-Zuk'} and \
+                        self.Ultimatums * 5 > AdrenalineCostReduction:
+                    AdrenalineCostReduction = self.Ultimatums * 5
+
+                if Ability.Type == 'Basic' or Ability.Type == 'Threshold' and self.Adrenaline >= 50 or Ability.Type == 'Ultimate' and self.Adrenaline >= -1 * Ability.AdrenalineGain:
+                    self.Adrenaline += Ability.AdrenalineGain + AdrenalineCostReduction
+
+                    if self.Adrenaline > self.MaxAdrenaline:
+                        self.Adrenaline = self.MaxAdrenaline
+
+                    if logger.DebugMode:
+                        logger.Text += f'<li style="color: {logger.TextColor["normal"]};">Attack status: {Ability.Name} ready</li>'
+
+                    return Ability  # Return because firing more than 1 ability wouldn't make sense
+
+                else:
+                    if logger.DebugMode:
+                        logger.Text += f'<li style="color: {logger.TextColor["initialisation"]};">Not enough Adrenaline for {Ability.Name}</li>'
+
+        return None
+
+    def addBoost(self, ability):
+        self._BaseDamage = None
+        self._BaseDamageEffective = None
+        self._BashBaseDamage = None
+
+        self.Boost = True
+        self.BoostX.append(ability.BoostX)
+        self.BoostTime.append(ability.EffectDuration)
+        self.BoostName.append(ability)
+
+    def addBoost1(self, ability):
+        self.Boost1 = True
+        self.Boost1XAbility = ability
+
+    def resetBoost1(self):
+        self.Boost1 = False
+        self.addBoost(self.Boost1XAbility)
 
     def getBoost(self):
         boost = 1
 
-        for i, name in enumerate(self.BoostName):
-            if name != 'Needle Strike':
+        for i, ability in enumerate(self.BoostName):
+            if ability.Boost1:
                 boost += self.BoostX[i]
             else:
                 boost *= (self.BoostX[i] + 1)
 
         return boost
+
+    def resetGreaterChain(self):
+        self.GreaterChainTime = 0
+        self.GreaterChainTargets = []

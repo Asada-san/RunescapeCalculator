@@ -1,4 +1,4 @@
-from App.PythonRevolution import AverageDamageCalculator as AVGCalc, AttackCycle as Attack
+from App.PythonRevolution import AttackCycle as Attack
 from copy import deepcopy
 
 
@@ -45,13 +45,14 @@ def AbilityBar_verifier(userInput, AbilityBook, bar, dummy, player, logger):
                 warning.append(f'{ability.Name} should not be used with revolution')
 
                 if logger.DebugMode:
-                    logger.write(9, [ability.Name])
+                    logger.Text += f'<br>\n<li style="color: {logger.TextColor["damage"]};">WARNING: {ability.Name} should not be used with revolution</li>\n'
+
         else:
             warning.append(f'{ability.Name} is not activated by revolution \n')
             logger.Redundant.extend([ability.Name])
 
             if logger.DebugMode:
-                logger.write(10, [ability.Name])
+                logger.Text += f'<br>\n<li style="color: {logger.TextColor["damage"]};">WARNING: {ability.Name} is not activated by revolution</li>\n'
 
     # Check ability compatibility according to equipment
     if noBasics:
@@ -229,12 +230,12 @@ def AbilityBar_verifier(userInput, AbilityBook, bar, dummy, player, logger):
         player.InitCritBuff = 0.03
 
     if logger.DebugMode:
-        logger.write(11, [bar.Style, weapon])
+        logger.Text += f'<li style="color: {logger.TextColor["initialisation"]};">Ability bar consists of {bar.Style} abilities and can be used with {weapon}</li>'
 
     return error, error_mes, warning
 
 
-def PostAttackStatuses(bar, player, dummy, FireAbility, logger):
+def PostAttackStatuses(player, dummy, FireAbility, logger):
     """
     Checks and sets various statuses.
 
@@ -246,31 +247,27 @@ def PostAttackStatuses(bar, player, dummy, FireAbility, logger):
     """
 
     # (Global) Cooldown shenanigans
-    FireAbility.putOnCooldown()
-    bar.GCDStatus = True
-    bar.GCDTime = bar.GCDMax
-    bar.FireStatus = False
-    bar.SharedCooldowns(FireAbility, player, logger)
+    player.Bar.putOnGlobalCooldown()
 
     if logger.DebugMode:
-        logger.write(41, FireAbility.Name)
+        logger.Text += f'<li style="color: {logger.TextColor["normal"]};">{FireAbility.Name} went on cooldown</li>' \
+                f'<li style="color: {logger.TextColor["normal"]};">GCD activated</li>'
 
     # if player.KerapacWristWraps and FireAbility.Name == 'Dragon Breath':
     #     player.DragonBreathCombustTime = 10
 
     if FireAbility.Boost:
-        player.Boost = True
-        player.BoostX.append(FireAbility.BoostX)
-        player.BoostTime.append(FireAbility.EffectDuration)
-        player.BoostName.append(FireAbility.Name)
+        player.addBoost(FireAbility)
 
     if FireAbility.Boost1:
-        player.Boost1 = True
-        player.Boost1X = [FireAbility.Name, FireAbility.BoostX]
+        player.addBoost1(FireAbility)
 
-    if player.GlovesOfPassage and FireAbility.Name in {'Smash', 'Havoc'}:
+    if player.Gloves.Name in {'Gloves of Passage', 'Enhanced gloves of Passage'} and FireAbility.Name in {'Smash', 'Havoc'}:
         player.GlovesOfPassageTime = player.GlovesOfPassageMax
         player.GlovesOfPassageBoost += .2
+
+    if FireAbility.Bleed:
+        dummy.isBleeding = True
 
     if not dummy.StunBindImmune:
 
@@ -278,18 +275,18 @@ def PostAttackStatuses(bar, player, dummy, FireAbility, logger):
             dummy.StunTime = FireAbility.StunDuration
 
             if logger.DebugMode:
-                logger.write(43, dummy.StunTime)
+                logger.Text += f'<li style="color: {logger.TextColor["status"]};">Dummy is Stunned for {dummy.StunTime}s</li>'
 
         if FireAbility.BindDuration:
             dummy.BindTime = FireAbility.BindDuration
 
             if logger.DebugMode:
-                logger.write(44, dummy.BindTime)
+                logger.Text += f'<li style="color: {logger.TextColor["status"]};">Dummy is Bound for {dummy.BindTime}s</li>'
 
     return None
 
 
-def PostAttackCleanUp(bar, player, dummy, logger):
+def PostAttackCleanUp(player, dummy, logger):
     """
     Check for special effects of abilities and clears the current attack cycle list.
 
@@ -300,28 +297,28 @@ def PostAttackCleanUp(bar, player, dummy, logger):
     """
 
     # Special effect of Greater Flurry
-    if 'Greater Flurry' in dummy.DamageNames and 'Berserk' in bar.AbilNames:
-        IDX = bar.AbilNames.index('Berserk')
+    if 'Greater Flurry' in dummy.DamageNames and 'Berserk' in player.Bar.AbilNames:
+        IDX = player.Bar.AbilNames.index('Berserk')
 
-        if bar.Rotation[IDX].cdTime:
-            bar.Rotation[IDX].cdTime -= 2
-            bar.Rotation[IDX].cdTime = max(0, bar.Rotation[IDX].cdTime)
+        if player.Bar.Rotation[IDX].cdTime:
+            player.Bar.Rotation[IDX].cdTime -= 2
+            player.Bar.Rotation[IDX].cdTime = max(0,  player.Bar.Abilities[IDX].cdTime)
 
     # Clear the list of abilities which have inflicted damage on the dummy in the current tick
     dummy.DamageNames.clear()
 
     # Check for Aftershock perk activation
-    if player.PerkAftershock:
-        Aftershock = player.SpecialAbils['Aftershock']
+    if player.Aftershock:
+        Aftershock = player.Special['Aftershock']
 
         if not Aftershock.cdTime:
 
-            if player.ArDamage > 50000:
+            if player.AsDamage > 50000:
                 dummy.PHits[dummy.nPH: dummy.nPH + Aftershock.nHits] = deepcopy(Aftershock.Hits)
                 dummy.nPH += Aftershock.nHits
 
                 # Reset Aftershock damage
-                player.ArDamage = 0
+                player.AsDamage = 0
 
                 logger.addRotation(Aftershock.Name, True)
 

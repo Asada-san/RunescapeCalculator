@@ -2,7 +2,7 @@ let spreadsheet = '<a href="https://github.com/Asada-san/RunescapeCalculator/blo
 
     // {
     // version: '',
-    // data: '',
+    // date: '',
     // items: [{
     //     header: '',
     //     subItems: [
@@ -15,6 +15,36 @@ let spreadsheet = '<a href="https://github.com/Asada-san/RunescapeCalculator/blo
     // ]}
 
 export var updateInfo = [{
+    version: 'V2.03.0',
+    date: '24-6-2022',
+    items: [{
+        header: 'Additions',
+        subItems: [
+            'Ring of Vigour passive from the Extinction quest',
+            'A separate Strenght Cape option for the Anachronia cape stand',
+            '(Greater/Master/Supreme) Invogorate Aura',
+            'Inspiration Aura'
+        ]}, {
+        header: 'Internal changes',
+        subItems: [
+            'Base damage calculation is now possible resulting in a different way of selecting equipment in the options, however, the internal base damage calculation is currently disabled',
+            'Copying actions are now more efficient',
+            'Recalculations have been reduced when a boost is active',
+            'The ' + spreadsheet + ' now also contains equipment information used for the base damage calculation',
+            'Magma Tempest is now seen as a regular ability which cannot crit'
+        ]}, {
+        header: 'Charts',
+        subItems: [
+            'All charts now have a thin border',
+            'Close button is now thicker and highlighted on mouse hover',
+            'Dummies which have not been damaged are excluded from the chart',
+            'Amount of legend colors has been extended to 30 for the "Total damage per dummy" chart'
+        ]}, {
+        header: 'Changelog',
+        subItems: [
+            'The changelog is now a modal'
+        ]}
+    ]}, {
     version: 'V2.02.1',
     date: '6-1-2022',
     items: [{

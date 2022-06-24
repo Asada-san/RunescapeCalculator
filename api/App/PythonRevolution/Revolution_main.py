@@ -3,11 +3,11 @@ from App.PythonRevolution import CombatChecks, CycleChecker as Cycle, \
 from App.PythonRevolution.Objects.Logger import Logger
 from App.PythonRevolution.Objects.Dummy import Dummy
 from App.PythonRevolution.Objects.Player import Player
-from App.PythonRevolution.Objects.Bar import AbilityBar
 from App.PythonRevolution.Objects.Settings import Settings
+import time
 
 
-def fight_dummy(userInput, AbilityBook):
+def fight_dummy(userInput, Objects):
     """
     Initialises and simulates the player vs dummy fight.
 
@@ -96,6 +96,10 @@ def fight_dummy(userInput, AbilityBook):
     # cp = cProfile.Profile()
     # cp.enable()
 
+    AbilityBook = Objects['Abilities']
+    SpecialBook = Objects['Special']
+    Gear = Objects['Gear']
+
     logger = Logger()
     
     settings = Settings(userInput)
@@ -104,56 +108,81 @@ def fight_dummy(userInput, AbilityBook):
         logger.DebugMode = True
 
     if logger.DebugMode:
-        logger.write(0)
-        logger.write(2, userInput)
+        logger.Text += '----------------------------------------------------------------------------' \
+                '----------------------------------------------------------------------------' \
+                '----------------------------------------------------------------------------' \
+                '----------------------------------------------------------------------------' \
+                '--------------------------------------------------------<br><br>' \
+                '<ul>'
+
+        for key in userInput:
+            logger.Text += f'<li style="color: {logger.TextColor["initialisation"]};">User select: {key} --- {userInput[key]}</li>'
 
     # Initialise Combat Objects
     dummy = Dummy(userInput)
-    player = Player(userInput)
-    bar = AbilityBar(userInput)
 
-    # Check for correct abilities and initialise the ability bar
-    error, error_mes, warning = CombatChecks.AbilityBar_verifier(userInput, AbilityBook, bar, dummy, player, logger)
+    player = Player(userInput, Gear, logger)
 
-    # If an error occurred in the Ability Bar verifier, return that error
-    if error:
-        return {}, warning, error_mes
+    player.Bar.addAbilities(userInput['Abilities'], AbilityBook)
+    player.addSpecial(SpecialBook)
+
+    for ability in player.Bar.Abilities:
+        ability.AbilityUpgrades()
+
+        # Get AoE hits
+        if any([ability.Name == 'Greater Ricochet', all([dummy.nTarget > 1 and ability.AoE])]):
+            ability.AoECheck(dummy)
+
+    for name in player.Special.keys():
+        player.Special[name].AbilityUpgrades()
+
+        # Get AoE hits
+        if all([dummy.nTarget > 1 and player.Special[name].AoE]):
+            player.Special[name].AoECheck(dummy)
+
+    player.Bar.validate()
 
     # Print start of revolution logger
     if logger.DebugMode:
-        logger.write(12)
+        logger.Text += f'<br><li style="color: {logger.TextColor["start"]}"> INITIALISATION COMPLETE: starting loop<br><br>' \
+                f'<li style="color: {logger.TextColor["loop"]}; white-space: pre-wrap;">' \
+                f'Total damage: 0' \
+                f'<span style="float: right;">Time: 0</span></li><br>'
+
+    Results = {
+        'BaseDamage': player.BaseDamage,
+    }
 
     # The revolution loop
-    while settings.run and logger.n < settings.nMax + logger.CycleTime:
+    while settings.run and logger.n < settings.nMax:
 
         if logger.n > 300:
             logger.DebugMode = False
 
         # --------- PRE ATTACKING PHASE -----------------------
         # Status checks
-        bar.TimerCheck(logger)  # CHECK GLOBAL COOLDOWN TIMER
         dummy.TimerCheck(logger)  # CHECK STUN AND BIND STATUS TIMERS
-        player.TimerCheck(dummy, logger)  # CHECK PLAYER COOLDOWNS/BUFFS/BOOSTS/CHANNEL TIMERS
+        player.TimerCheck(dummy, logger)  # CHECK PLAYER GLOBAL+ABILITY COOLDOWNS/BUFFS/BOOSTS/CHANNEL TIMERS
         # -----------------------------------------------------
 
         # --------- ATTACKING PHASE ---------------------------
         # Possibly activate an ability and get its hits
-        FireAbility = Attack.useAbility(bar, player, dummy, logger, settings)
+        FireAbility = Attack.useAbility(player, dummy, logger, settings)
 
         if not settings.run:
             break
 
         # Check for any hits that need to inflict damage in the current tick
-        Attack.PHitCheck(bar, dummy, player, logger, settings)
+        Attack.PHitCheck(player, dummy, logger, settings)
         # -----------------------------------------------------
 
         # --------- POST ATTACKING PHASE ----------------------
         # Check special cooldown shenanigans involving FireAbility
-        if bar.FireStatus:
-            CombatChecks.PostAttackStatuses(bar, player, dummy, FireAbility, logger)
+        if FireAbility is not None:
+            CombatChecks.PostAttackStatuses(player, dummy, FireAbility, logger)
 
         # Check for other ability shenanigans
-        CombatChecks.PostAttackCleanUp(bar, player, dummy, logger)
+        CombatChecks.PostAttackCleanUp(player, dummy, logger)
         # -----------------------------------------------------
 
         # ---------- logger SHENANIGANS -------------------------
@@ -167,7 +196,9 @@ def fight_dummy(userInput, AbilityBook):
 
         # Print total damage and logger time depending if a cycle has been found or not
         if logger.DebugMode:
-            logger.write(46, [round(dummy.Damage, 3), logger.n])
+            logger.Text += f'<br>\n<li style="color: {logger.TextColor["loop"]}; white-space: pre-wrap;">' \
+                f'Total damage: {round(dummy.Damage, 3)}' \
+                f'<span style="float: right;">Tick: {logger.n}</span></li><br>'
         # -----------------------------------------------------
 
     for name, value in logger.AbilInfo.items():
@@ -186,10 +217,9 @@ def fight_dummy(userInput, AbilityBook):
         if dummy.Damage != 0:
             logger.AbilInfo[entry]['shared%'] = round(logger.AbilInfo[entry]['damage'] / dummy.Damage * 100, 2)
 
-    Results = {  # The output of main
-        'AADPTPercentage': round(dummy.Damage / logger.CycleTime / player.BaseDamage * 100, 3),
+    Results.update({  # The output of main
+        'AADPTPercentage': round(dummy.Damage / logger.CycleTime / Results['BaseDamage'] * 100, 3),
         'AADPT': round(dummy.Damage / logger.CycleTime, 3),
-        'BaseDamage': player.BaseDamage,
         'SimulationTime': int(logger.n),
         'CycleTime': round(logger.CycleTime, 1),
         'CycleConvergenceTime': round(logger.CycleConvergenceTime, 1),
@@ -199,14 +229,14 @@ def fight_dummy(userInput, AbilityBook):
         'CycleFound': logger.CycleFound,
         'CycleRotation': logger.Rotation,
         'CycleRedundant': logger.Redundant,
-        'CycleBar': bar.AbilNames,
+        'CycleBar': player.Bar.AbilNames,
         'AbilityInfo': logger.AbilInfo,
         'AbilityInfoPerTick': logger.CycleAbilityDamagePerTick,
         'LoggerText': logger.Text,
         'DamagePerDummy': dummy.DamagePerDummyIncrement
-    }
+    })
 
     # cp.disable()
     # cp.print_stats(sort='time')
 
-    return Results, warning, error_mes
+    return Results

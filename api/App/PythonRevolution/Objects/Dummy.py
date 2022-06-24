@@ -29,6 +29,8 @@ class Dummy:
         self.nPuncture = 0              # Amount of puncture stacks on dummy
         self.PunctureTime = 0           # Duration of the Puncture effect before the stack is reset
 
+        self.isBleeding = False
+
         self.Movement = not userInput['movementStatus']       # True if the dummy can move
         self.StunBindImmune = userInput['stunbindStatus']     # True if the dummy is Stun and Bind immune
 
@@ -44,14 +46,14 @@ class Dummy:
 
             if not self.StunTime:
                 if logger.DebugMode:
-                    logger.write(19)
+                    logger.Text += f'<li style="color: {logger.TextColor["status"]};">Dummy no longer stunned</li>'
 
         if self.BindTime:
             self.BindTime -= 1
 
             if not self.BindTime:
                 if logger.DebugMode:
-                    logger.write(20)
+                    logger.Text += f'<li style="color: {logger.TextColor["status"]};">Dummy no longer bound</li>'
 
         if self.PunctureTime:
             self.PunctureTime -= 1
@@ -60,7 +62,16 @@ class Dummy:
                 self.nPuncture = 0
 
                 if logger.DebugMode:
-                    logger.write(21)
+                    logger.Text += f'<li style="color: {logger.TextColor["status"]};">Dummy puncture stack reset to 0</li>'
+
+        if self.isBleeding:
+            bleedAbil = False
+            for i in range(self.nPH - 1, -1, -1):
+                if self.PHits[i].Type == 3:
+                    bleedAbil = True
+                    break
+
+            self.isBleeding = bleedAbil
 
     def updateTickInfo(self):
         # Get damage done in current tick
