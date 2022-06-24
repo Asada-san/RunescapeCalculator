@@ -10,7 +10,7 @@ class Settings:
         # self.Debug = True
 
         # Check user input for a possible value for simulation time and starting adrenaline
-        if 1 <= userInput['simulationTime'] <= 3600 and 0 <= userInput['Adrenaline'] <= 100:
+        if 1 <= userInput['simulationTime'] <= 3600:
             self.FindCycle = False
             self.nMax = round(userInput['simulationTime'] / .6, 0)
         else:

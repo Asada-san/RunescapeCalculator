@@ -3,7 +3,10 @@
     <b-card no-body class="mb-1" id="card-header" bg-variant="dark" text-variant="white" style="text-align: left;">
       <h2 style="text-align: center; margin-bottom: 15px; margin-top: 15px;">Item IDs (tradeable)</h2>
       <p style="text-align: center;">
-          Last updated: 12-12-2021
+          Last updated: 7-5-2022
+      </p>
+      <p style="text-align: center; margin-left: 15px; margin-right: 15px; color: pink;">If this list needs an update, contact me on discord:
+        <a style="color: #4CAF50" href="https://discordapp.com/users/713459040386023579"><strong>Micky#5858</strong></a>.
       </p>
     </b-card>
 

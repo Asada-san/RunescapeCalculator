@@ -3,8 +3,9 @@
     <div class="accordion" role="tablist">
       <b-card no-body class="mb-1" id="card-header" bg-variant="dark" text-variant="white" style="text-align: left;">
         <h2 style="text-align: center; margin-bottom: 15px; margin-top: 15px;">Revolution Bar <span v-html="latestVersion" style="font-size:small;"></span></h2>
-        <p style="text-align: center; margin-left: 15px; margin-right: 15px; color: pink;">If something seems broken, do not hesitate to contact me on discord:
-          <a style="color: #4CAF50" href="https://discordapp.com/users/713459040386023579"><strong>Micky#5858</strong></a>.
+        <p style="text-align: center; margin-left: 15px; margin-right: 15px; color: pink;">Stuff may be broken, working on it.
+<!--          If something seems broken, do not hesitate to contact me on discord:-->
+<!--          <a style="color: #4CAF50" href="https://discordapp.com/users/713459040386023579"><strong>Micky#5858</strong></a>.-->
         </p>
 
         <b-card no-body class="mb-0" bg-variant="dark" text-variant="white" >
@@ -12,8 +13,9 @@
             <b-button-group class="accordion-button-group">
               <b-button v-b-toggle.accordion-1 class="accordion-button" variant="secondary">General Info</b-button>
               <b-button v-b-toggle.accordion-2 class="accordion-button" variant="secondary">Important Notes</b-button>
-              <b-button v-b-toggle.accordion-3 class="accordion-button" variant="secondary" @click="changelogVisibility(false)">Changelog</b-button>
+              <b-button class="accordion-button" variant="secondary" @click="changelogVisibility(false)">Changelog</b-button>
             </b-button-group>
+
           </b-card-header>
           <b-collapse id="accordion-1" accordion="my-accordion" role="tabpanel">
             <b-card-body>
@@ -67,14 +69,14 @@
             </b-card-body>
           </b-collapse>
 
-          <b-collapse id="accordion-3" accordion="my-accordion" role="tabpanel">
-            <b-card-body>
-              <b-card-text id="changelog-card"></b-card-text>
-              <div style="text-align: center;">
-                <b-button @click="changelogVisibility(true)" variant="secondary">Show more</b-button>
-              </div>
-            </b-card-body>
-          </b-collapse>
+<!--          <b-collapse id="accordion-3" accordion="my-accordion" role="tabpanel">-->
+<!--            <b-card-body>-->
+<!--              <b-card-text id="changelog-card"></b-card-text>-->
+<!--              <div style="text-align: center;">-->
+<!--                <b-button @click="changelogVisibility(true)" variant="secondary">Show more</b-button>-->
+<!--              </div>-->
+<!--            </b-card-body>-->
+<!--          </b-collapse>-->
         </b-card>
       </b-card>
     </div>
@@ -500,15 +502,18 @@
 
         <div id="AbilityOptions1" class="optsect">
           <p style="margin-left: 15px; margin-top: 15px; text-align: center; font-weight: bold;">Strength Boost</p>
-          <b-form-input size="sm" class="mt-1" id="StrengthBoost" placeholder="Level Boost" type="number" min="0" max="60" v-b-tooltip.hover.right="'The amount of boosted levels (above your base level) due to potions and/or aura\'s (min:0, max:60)'"></b-form-input>
+          <b-form-input size="sm" class="mt-1" id="StrengthLevel" v-model="StrengthLevel" placeholder="Strength Level" type="number" min="1" max="99" v-b-tooltip.hover.right="'Base Strength level (min:1, max:99)'"></b-form-input>
+          <b-form-input size="sm" class="mt-1" id="StrengthBoost" placeholder="Strength Level Boost" type="number" min="0" max="60" v-b-tooltip.hover.right="'Boosted Strength levels due to potions and/or aura\'s (min:0, max:60)'"></b-form-input>
           <b-form-select class="mt-1" id="StrengthPrayer" v-model="StrengthPrayer" :options="optStrengthPrayer" size="sm"></b-form-select>
 
           <p style="margin-left: 15px; margin-top: 15px; text-align: center; font-weight: bold;">Magic Boost</p>
-          <b-form-input size="sm" class="mt-1" id="MagicBoost" placeholder="Level Boost" type="number" min="0" max="60" v-b-tooltip.hover.right="'The amount of boosted levels (above your base level) due to potions and/or aura\'s (min:0, max:60)'"></b-form-input>
+          <b-form-input size="sm" class="mt-1" id="MagicLevel" v-model="MagicLevel" placeholder="Magic Level" type="number" min="1" max="99" v-b-tooltip.hover.right="'Base Magic level due to potions and/or aura\'s (min:1, max:99)'"></b-form-input>
+          <b-form-input size="sm" class="mt-1" id="MagicBoost" placeholder="Magic Level Boost" type="number" min="0" max="60" v-b-tooltip.hover.right="'Boosted Magic levels due to potions and/or aura\'s (min:0, max:60)'"></b-form-input>
           <b-form-select class="mt-1" id="MagicPrayer" v-model="MagicPrayer" :options="optMagicPrayer" size="sm"></b-form-select>
 
           <p style="margin-left: 15px; margin-top: 15px; text-align: center; font-weight: bold;">Ranged Boost</p>
-          <b-form-input size="sm" class="mt-1" id="RangedBoost" placeholder="Level Boost" type="number" min="0" max="60" v-b-tooltip.hover.right="'The amount of boosted levels (above your base level) due to potions and/or aura\'s (min:0, max:60)'"></b-form-input>
+          <b-form-input size="sm" class="mt-1" id="RangedLevel" v-model="RangedLevel" placeholder="Ranged Level" type="number" min="1" max="99" v-b-tooltip.hover.right="'Base Ranged level due to potions and/or aura\'s (min:1, max:99)'"></b-form-input>
+          <b-form-input size="sm" class="mt-1" id="RangedBoost" placeholder="Ranged Level Boost" type="number" min="0" max="60" v-b-tooltip.hover.right="'Boosted Ranged levels due to potions and/or aura\'s (min:0, max:60)'"></b-form-input>
           <b-form-select class="mt-1" id="RangedPrayer" v-model="RangedPrayer" :options="optRangedPrayer" size="sm"></b-form-select>
         </div>
 
@@ -538,32 +543,46 @@
 
         <div id="PlayerOptions" class="optsect">
           <p style="margin-left: 15px; margin-top: 15px; text-align: center; font-weight: bold;">Equipment</p>
-          <b-form-checkbox class="switch mt-1" id="MSoA" v-model="MSoA" switch v-b-tooltip.hover.right="'Melee damage over time abilities (bleeds) have their duration extended by 50%, rounded down to the nearest whole number'">Masterwork Spear of Annihilation</b-form-checkbox>
-          <b-form-checkbox class="switch mt-1" id="DualLeng" v-model="DualLeng" switch v-b-tooltip.hover.right="'Hurricane can be used with dual wielding weapons and no longer shares its cooldown with Destroy'">Arch-Glacor weaponry</b-form-checkbox>
-          <b-form-checkbox class="switch mt-1" id="Grimoire" v-model="Grimoire" switch v-b-tooltip.hover.right="'Every non-bleed hit has a 12% chance to be forced to become a critical hit and the player\'s damage cap for critical hits is increased to 15,000, up from 12,000'">Erethdor's Grimoire</b-form-checkbox>
-          <b-form-checkbox class="switch mt-1" id="StrengthCape" v-model="StrengthCape" switch v-b-tooltip.hover.right="'Dismember\'s damage over time lasts an extra 3.6 seconds (an extra 3 hits for a total of 8)'">Strength Cape</b-form-checkbox>
-<!--          <b-form-checkbox class="switch mt-1" id="KerapacWristWraps" v-model="KerapacWristWraps" switch v-b-tooltip.hover.right="'For six seconds after using the Dragon Breath ability, the Combust ability will deal 25% more damage - and deal it instantly'">Kerapac's wrist wraps</b-form-checkbox>-->
-          <b-form-checkbox class="switch mt-1" id="GlovesOfPassage" v-model="GlovesOfPassage" switch v-b-tooltip.hover.right="'A successful hit from Smash or Havoc causes the next attack, inflicted within the next six seconds, to deal 10% additional damage, and the target also takes 20% additional damage from bleeds for ten seconds'">Gloves of Passage</b-form-checkbox>
 
-          <b-form-select class="mt-1" id="Ring" v-model="Ring" size="sm">
-            <b-form-select-option v-for="ring in optRing" :key="ring.value" :id="ring.value" :value="ring.value" v-b-tooltip.hover.right :title="ring.title">{{ ring.text }}</b-form-select-option>
-          </b-form-select>
+          <b-form-input class="mt-1" size="sm" id="MainHand" type="text" v-model="MainHand" list="mainHands" placeholder="Main-hand"></b-form-input>
+          <datalist id="mainHands">
+            <option v-for="mainHand in mainHandList" :key="mainHand.value">{{mainHand}}</option>
+          </datalist>
 
-          <b-form-select class="mt-1" id="Aura" v-model="Aura" size="sm">
-            <b-form-select-option v-for="aura in optAura" :key="aura.value" :id="aura.value" :value="aura.value" v-b-tooltip.hover.right :title="aura.title">{{ aura.text }}</b-form-select-option>
-          </b-form-select>
+          <b-form-input class="mt-1" size="sm" id="OffHand" type="text" v-model="OffHand" list="offHands" placeholder="Off-hand"></b-form-input>
+          <datalist id="offHands">
+            <option v-for="offHand in offHandList" :key="offHand.value">{{offHand}}</option>
+          </datalist>
 
-          <b-form-select class="mt-1" id="Cape" v-model="Cape" size="sm">
-            <b-form-select-option v-for="cape in optCape" :key="cape.value" :id="cape.value" :value="cape.value" v-b-tooltip.hover.right :title="cape.title">{{ cape.text }}</b-form-select-option>
-          </b-form-select>
+          <b-form-input class="mt-1" size="sm" id="Ring" type="text" v-model="Ring" list="rings" placeholder="Ring"></b-form-input>
+          <datalist id="rings">
+            <option v-for="ring in ringList" :key="ring.value">{{ring}}</option>
+          </datalist>
 
-          <b-form-select class="mt-1" id="Pocket" v-model="Pocket" size="sm">
-            <b-form-select-option v-for="pocket in optPocket" :key="pocket.value" :id="pocket.value" :value="pocket.value" v-b-tooltip.hover.right :title="pocket.title">{{ pocket.text }}</b-form-select-option>
-          </b-form-select>
+          <b-form-input class="mt-1" size="sm" id="Aura" type="text" v-model="Aura" list="auras" placeholder="Aura"></b-form-input>
+          <datalist id="auras">
+            <option v-for="aura in auraList" :key="aura.value">{{aura}}</option>
+          </datalist>
 
-          <b-form-select class="mt-1" id="Ammo" v-model="Ammo" size="sm">
-            <b-form-select-option v-for="ammo in optAmmo" :key="ammo.value" :id="ammo.value" :value="ammo.value" v-b-tooltip.hover.right :title="ammo.title">{{ ammo.text }}</b-form-select-option>
-          </b-form-select>
+          <b-form-input class="mt-1" size="sm" id="Cape" type="text" v-model="Cape" list="capes" placeholder="Cape"></b-form-input>
+          <datalist id="capes">
+            <option v-for="cape in capeList" :key="cape.value">{{cape}}</option>
+          </datalist>
+
+          <b-form-input class="mt-1" size="sm" id="Pocket" type="text" v-model="Pocket" list="pockets" placeholder="Pocket"></b-form-input>
+          <datalist id="pockets">
+            <option v-for="pocket in pocketList" :key="pocket.value">{{pocket}}</option>
+          </datalist>
+
+          <b-form-input class="mt-1" size="sm" id="Ammo" type="text" v-model="Ammo" list="ammos" placeholder="Ammo"></b-form-input>
+          <datalist id="ammos">
+            <option v-for="ammo in ammoList" :key="ammo.value">{{ammo}}</option>
+          </datalist>
+
+          <b-form-input class="mt-1" size="sm" id="Gloves" type="text" v-model="Gloves" list="Glovess" placeholder="Gloves"></b-form-input>
+          <datalist id="Glovess">
+            <option v-for="gloves in glovesList" :key="gloves.value">{{gloves}}</option>
+          </datalist>
 
           <p style="margin-left: 15px; margin-top: 15px; text-align: center; font-weight: bold;">Bash Ability</p>
           <b-form-input size="sm" class="mt-1" id="DefenceLevel" placeholder="Defence Level" type="number" min="0" max="200" v-b-tooltip.hover></b-form-input>
@@ -573,9 +592,13 @@
         <div class="optsect" style="width: 10px;"></div>
 
         <div id="DummyOptions" class="optsect">
+          <p style="margin-left: 15px; margin-top: 15px; text-align: center; font-weight: bold;">Anachronia cape stand</p>
+          <b-form-checkbox class="switch mt-1" id="AnachroniaCapeStand" v-model="AnachroniaCapeStand" switch v-b-tooltip.hover.right="'Dismember\'s damage over time lasts an extra 3.6 seconds (an extra 3 hits for a total of 8)'">Strength Cape</b-form-checkbox>
+
           <p style="margin-left: 15px; margin-top: 15px; text-align: center; font-weight: bold;">Player</p>
           <b-form-checkbox class="switch mt-1" id="afkStatus" v-model="afkStatus" switch v-b-tooltip.hover.right="'Assumes the player breaks channeling abilities such that they still do all their damage (except for Concentrated Blast which cuts off after 2 hits) but the next ability is activated earlier'">Efficient</b-form-checkbox>
           <b-form-checkbox class="switch mt-1" id="switchStatus" v-model="switchStatus" switch v-b-tooltip.hover.right="'Assumes the player switches between 2h/dual/shield whenever required for the next available ability'">Switcher</b-form-checkbox>
+          <b-form-checkbox class="switch mt-1" id="ringOfVigourPassive" v-model="ringOfVigourPassive" switch v-b-tooltip.hover.right="'TBD'">RoV passive</b-form-checkbox>
 
           <b-form-input size="sm" class="mt-1" id="baseDamage" placeholder="Ability Damage" type="number" min="1" max="10000" v-b-tooltip.hover.right="'The ability damage as calculated in the \'Calculating ability damage\' section on the RS3 wiki (Min:1, Max:10000)'"></b-form-input>
 
@@ -651,28 +674,28 @@
     </div>
 
     <b-card hidden @mousedown="startDrag($event, 0)" bg-variant="dark" text-variant="white" class="text-left output-card-chart result">
-      <div class="close-container" v-on:click="displayChart(0)">x</div>
+      <span class="close" v-on:click="displayChart(0)">&times;</span>
       <div class="container-100wh">
         <line-chart :chart-data="dataLineChart1"></line-chart>
       </div>
     </b-card>
 
     <b-card hidden @mousedown="startDrag($event, 1)" bg-variant="dark" text-variant="white" class="text-left output-card-chart result">
-      <div class="close-container" v-on:click="displayChart(1)">x</div>
+      <span class="close" v-on:click="displayChart(1)">&times;</span>
       <div class="container-100wh">
         <line-chart :chart-data="dataLineChart2"></line-chart>
       </div>
     </b-card>
 
     <b-card hidden @mousedown="startDrag($event, 2)" bg-variant="dark" text-variant="white" class="text-left output-card-chart result">
-      <div class="close-container" v-on:click="displayChart(2)">x</div>
+      <span class="close" v-on:click="displayChart(2)">&times;</span>
       <div class="container-100wh">
         <bar-chart :chart-data="dataBarChart1"></bar-chart>
       </div>
     </b-card>
 
     <b-card hidden @mousedown="startDrag($event, 3)" bg-variant="dark" text-variant="white" class="text-left output-card-chart result">
-      <div class="close-container" v-on:click="displayChart(3)">x</div>
+      <span class="close" v-on:click="displayChart(3)">&times;</span>
       <div class="container-100wh">
         <line-chart :chart-data="dataLineChart3"></line-chart>
       </div>
@@ -682,6 +705,19 @@
     </b-card>
 
     <p id="counter"></p>
+
+    <div id="changelogModal" class="OptionBlock" v-on:click="closeModalOutside($event)">
+
+      <div class="modal-content">
+
+
+        <span class="close" v-on:click="closeModal()">&times;</span>
+<!--        <div class="optsect" style="width: 20px;"></div>-->
+        <div id="changelogItem" style="margin-bottom: 20px"></div>
+<!--        <b-button v-if="setAllButton" id="optSubmitAll" @click="setOptions(true)" variant="secondary">Set All</b-button>-->
+        <b-button @click="changelogVisibility(true)" variant="secondary" style="position: absolute; width: 200px; right: 10px; bottom: 10px;">Show older</b-button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -707,33 +743,24 @@ export default {
     LineChart,
     BarChart
   },
-  created: async function(){
-    await fetch(`${origin}/api/return_counter`, {
-      method: "GET",
-      // credentials: "include",
-      cache: "no-cache",
-      headers: new Headers({
-          "content-type": "application/json"
-      })
-    }) // after receiving the response do:
-    .then(function (response) {
-      // if something went wrong, print error
-      if (response.status !== 200) {
-        console.log(`Response status was not 200: ${response.status}`);
-        return;
-      }
-
-      response.json().then(function (data) {
-        document.getElementById("counter").innerHTML = `Simulated fights: ${data['counter']}`;
-      })
-    })
-    .catch((error) => {
-      console.log(error);
-      document.getElementById("counter").innerHTML = `Simulated fights: Unknown`;
-    });
-  },
   data: function() {
     return {
+      ringList: [],
+      Ring: '',
+      mainHandList: [],
+      MainHand: '',
+      offHandList: [],
+      OffHand: '',
+      capeList: [],
+      Cape: '',
+      glovesList: [],
+      Gloves: '',
+      auraList: [],
+      Aura: '',
+      pocketList: [],
+      Pocket: '',
+      ammoList: [],
+      Ammo: '',
       latestVersion: updateInfo[0]['version'],
       changelogOpen: false,
       kLog: 0,
@@ -767,10 +794,11 @@ export default {
         alignItems: 'center',
         textAlign: 'center'
       },
-      StrengthPrayer: null,
+      StrengthLevel: 99,
+      StrengthPrayer: 1,
       optStrengthPrayer: [
-        { value: null, text: 'Strength Prayer', disabled: true, selected: true, hidden: true},
-        { value: null, text: 'none'},
+        { value: 1, text: 'Strength Prayer', disabled: true, selected: true, hidden: true},
+        { value: 1, text: 'none'},
         { value: 1.02, text: 'Burst of Strength'},
         { value: 1.04, text: 'Superhuman Strength'},
         { value: 1.06, text: 'Ultimate Strength'},
@@ -778,10 +806,11 @@ export default {
         { value: 1.10, text: 'Turmoil'},
         { value: 1.12, text: 'Malevolence'}
       ],
-      MagicPrayer: null,
+      MagicLevel: 99,
+      MagicPrayer: 1,
       optMagicPrayer: [
-        { value: null, text: 'Magic Prayer', disabled: true, selected: true, hidden: true},
-        { value: null, text: 'none'},
+        { value: 1, text: 'Magic Prayer', disabled: true, selected: true, hidden: true},
+        { value: 1, text: 'none'},
         { value: 1.02, text: 'Charge'},
         { value: 1.04, text: 'Super Charge'},
         { value: 1.06, text: 'Overcharge'},
@@ -789,10 +818,11 @@ export default {
         { value: 1.10, text: 'Torment'},
         { value: 1.12, text: 'Affliction'}
       ],
-      RangedPrayer: null,
+      RangedLevel: 99,
+      RangedPrayer: 1,
       optRangedPrayer: [
-        { value: null, text: 'Ranged Prayer', disabled: true, selected: true, hidden: true},
-        { value: null, text: 'none'},
+        { value: 1, text: 'Ranged Prayer', disabled: true, selected: true, hidden: true},
+        { value: 1, text: 'none'},
         { value: 1.02, text: 'Unstoppable Force'},
         { value: 1.04, text: 'Unrelenting Force'},
         { value: 1.06, text: 'Overpowering Force'},
@@ -903,65 +933,11 @@ export default {
         { value: 3, text: 'Impatient 3'},
         { value: 4, text: 'Impatient 4'}
       ],
-      StrengthCape: { value: 'StrengthCape', text: 'Strength Cape' },
-      MSoA: { value: 'MSoA', text: 'Masterwork Spear of Annihilation' },
-      DualLeng: { value: 'DualLeng', text: 'Arch-Glacor weaponry' },
-      Grimoire: { value: 'Grimoire', text: 'Erethdor\'s Grimoire' },
-      // KerapacWristWraps: { value: 'KerapacWristWraps', text: 'Kerapac\'s wrist wraps' },
-      GlovesOfPassage: { value: 'GlovesOfPassage', text: 'Gloves of Passage' },
-      Ring: null,
-      optRing: [
-        { value: null, text: 'Ring', disabled: true, selected: true, hidden: true},
-        { value: null, text: 'none'},
-        { value: 'RoV', text: 'Ring of Vigour', title: 'When an ultimate ability is used, adrenaline will be reduced by 90% instead of 100%' },
-        { value: 'ReaversRing', text: 'Reaver\'s Ring', title: 'Increases critical strike chance by 5%' },
-        { value: 'ChampionsRing', text: 'Champion\'s Ring', title: 'Increases critical strike chance against bleeding targets by 3%' },
-        { value: 'ChannelersRing', text: 'Channeler\'s Ring', title: 'Increases critical strike chance while using channelled abilities by 4% per hit of the channelled ability' },
-        { value: 'StalkersRing', text: 'Stalker\'s Ring', title: 'Increases critical strike chance when using a bow by 3% (cannot be used in conjunction with the Switcher option)' }
-      ],
-      Aura: null,
-      optAura: [
-        { value: null, text: 'Aura', disabled: true, selected: true, hidden: true},
-        { value: null, text: 'none'},
-        { value: 'Equilibrium', text: 'Equilibrium', title: 'Decreases maximum hit by 25%, but increases minimum hit by the same amount' },
-        { value: 'Berserker', text: 'Berserker', title: 'Boosts Attack and Strength by 10%' },
-        { value: 'Maniacal', text: 'Maniacal', title: 'Boosts Magic by 10%' },
-        { value: 'Reckless', text: 'Reckless', title: 'Boosts Range by 10%' }
-      ],
-      Cape: null,
-      optCape: [
-        { value: null, text: 'Cape', disabled: true, selected: true, hidden: true},
-        { value: null, text: 'none'},
-        { value: 'IgneousKal-Ket', text: 'Igneous Kal-Ket (melee)', title: 'Reduces the adrenaline cost of Overpower to 60% and the ability hits the target twice' },
-        { value: 'IgneousKal-Mej', text: 'Igneous Kal-Mej (magic)', title: 'Reduces the adrenaline cost of Omnipower to 60% and the ability hits the target four times, each hit dealing 90-180% ability damage' },
-        { value: 'IgneousKal-Xil', text: 'Igneous Kal-Xil (ranged)', title: 'Reduces the adrenaline cost of Deadshot to 60% and causes it to deal 42-210% of initial damage plus 70% ability damage every 1.2 seconds over the next 8.4 seconds' },
-        { value: 'IgneousKal-Zuk', text: 'Igneous Kal-Zuk (all)', title: 'Combines all 3 the effects of the Zuk capes' }
-      ],
-      Pocket: null,
-      optPocket: [
-        { value: null, text: 'Pocket', disabled: true, selected: true, hidden: true},
-        { value: null, text: 'none'},
-        { value: 'Book of War', text: 'Book of War', title: 'TBD' },
-        { value: 'Book of Balance', text: 'Book of Balance', title: 'TBD' },
-        { value: 'Book of Law', text: 'Book of Law', title: 'TBD' },
-        { value: 'Book of Wisdom', text: 'Book of Wisdom', title: 'TBD' },
-        { value: 'Book of Chaos', text: 'Book of Chaos', title: 'TBD' },
-        { value: 'Ancient Book', text: 'Ancient Book', title: 'TBD' },
-        { value: 'Scripture of Wen', text: 'Scripture of Wen', title: 'TBD' },
-        { value: 'Scripture of Jas', text: 'Scripture of Jas', title: 'TBD' },
-        { value: 'Scripture of Ful', text: 'Scripture of Ful', title: 'TBD' }
-      ],
-      Ammo: null,
-      optAmmo: [
-        { value: null, text: 'Ammo', disabled: true, selected: true, hidden: true},
-        { value: null, text: 'none'},
-        { value: 'Deathspore arrows', text: 'Deathspore arrows', title: 'TBD' }
-        // { value: 'Deathspore arrows', text: 'Deathspore arrows', title: 'TBD' },
-        // { value: 'Deathspore arrows', text: 'Deathspore arrows', title: 'TBD' },
-      ],
+      AnachroniaCapeStand: { value: 'Strength Cape', text: 'Anachronia Strength Cape' },
       afkStatus: { value: 'afkStatus', text: 'Efficient' },
       switchStatus: { value: 'switchStatus', text: 'Switcher' },
       movementStatus: { value: 'movementStatus', text: 'Stationary' },
+      ringOfVigourPassive: { value: 'ringOfVigourPassive', text: 'RoV Passive' },
       stunbindStatus: { value: 'stunbindStatus', text: 'Stun&Bind Immune' },
       HeightenedSenses: { value: 'HeightenedSenses', text: 'Heightened Senses' },
       FotS: { value: 'FotS', text: 'Fury of the Small' },
@@ -976,10 +952,58 @@ export default {
       ]
     }
   },
+  created: async function(){
+    let vm = this; // Necessary so that "this" can still be used after server request
+
+    await fetch(`${origin}/api/return_counter`, {
+      method: "GET",
+      // credentials: "include",
+      cache: "no-cache",
+      headers: new Headers({
+          "content-type": "application/json"
+      })
+    }) // after receiving the response do:
+    .then(function (response) {
+      // if something went wrong, print error
+      if (response.status !== 200) {
+        console.log(`Response status was not 200: ${response.status}`);
+        return;
+      }
+
+      response.json().then(function (data) {
+        document.getElementById("counter").innerHTML = `Simulated fights: ${data['counter']}`;
+
+        vm.ringList = data['nameList']['Ring'];
+        vm.mainHandList = data['nameList']['Main-hand'];
+        vm.offHandList = data['nameList']['Off-hand'];
+        vm.pocketList = data['nameList']['Pocket'];
+        vm.glovesList = data['nameList']['Gloves'];
+        vm.auraList = data['nameList']['Aura'];
+        vm.capeList = data['nameList']['Cape'];
+        vm.ammoList = data['nameList']['Ammo'];
+      })
+    })
+    .catch((error) => {
+      console.log(error);
+      document.getElementById("counter").innerHTML = `Simulated fights: Unknown`;
+    });
+  },
   mounted () {
     // this.fillData()
   },
   methods: {
+    closeModalOutside: function (event) {
+      let modal = document.getElementById("changelogModal");
+
+      if (event.target === modal) {
+        this.closeModal();
+      }
+    },
+    closeModal: function () {
+      document.getElementById("changelogModal").style.display = "none";
+      document.getElementById("changelogItem").innerHTML = '';
+      this.kLog = 0;
+    },
     fillData: function (option) {
       // option: Number of chart(s) that needs updating
       //  -1: All charts
@@ -1098,21 +1122,25 @@ export default {
       if (!this.chartElements[3].hidden && [-1, 3].includes(option)) {
         let lines = [];
         let colors = ['#FF9999', '#FFCC99', '#FFFF99', '#CCFF99', '#99FF99', '#99FFCC',
-          '#99FFFF', '#99CCFF', '#9999FF', '#CC99FF', '#FF99FF', '#FF99CC', '#E0E0E0', '#FFFFFF'];
+                      '#99FFFF', '#99CCFF', '#9999FF', '#CC99FF', '#FF99FF', '#FF99CC',
+                      '#E0E0E0', '#FFFFFF', '#FF9999', '#FFCC99', '#FFFF99', '#CCFF99',
+                      '#99FF99', '#99FFCC', '#99FFFF', '#99CCFF', '#9999FF', '#CC99FF',
+                      '#FF99FF', '#FF99CC', '#E0E0E0', '#FFFFFF', '#FF9999', '#FFCC99'];
 
         // Create plot for every ability used in the rotation
         let length = this.fightData['DamagePerDummy'].length
         for (let i = 0; i < length; i++) {
-          lines.push({
-            label: 'Dummy ' + (i + 1),
-            data: this.fightData['DamagePerDummy'][i].slice(0, nDataPoints + 1),
-            fill: false,
-            borderColor: colors[i],
-            backgroundColor: colors[i],
-            borderWidth: 1,
-            pointRadius: lineChartPointRadius
-          });
-
+          if (this.fightData['DamagePerDummy'][i][this.fightData['DamagePerDummy'][i].length - 1] !== 0) {
+            lines.push({
+              label: 'Dummy ' + (i + 1),
+              data: this.fightData['DamagePerDummy'][i].slice(0, nDataPoints + 1),
+              fill: false,
+              borderColor: colors[i],
+              backgroundColor: colors[i],
+              borderWidth: 1,
+              pointRadius: lineChartPointRadius
+            });
+          }
         }
 
         this.dataLineChart3 = {
@@ -1357,7 +1385,6 @@ export default {
 
             // Unhide result card
             resultCard.hidden = false;
-
             // if an error occured during calculating the DPT, print error
             if (data['error']) {
               downloadButton.hidden = true;
@@ -1535,16 +1562,10 @@ export default {
     changelogVisibility: function (showMore) {
       // showMore = true --> clicked on "show more" button within changelog card
       // showMore = false --> clicked on "Changelog"
-      if (!showMore) {
-        this.changelogOpen = !this.changelogOpen;
 
-        // Reset log items
-        if (this.changelogOpen) {
-          document.getElementById('changelog-card').innerHTML = '';
-          this.kLog = 0;
-        } else {
-          return;
-        }
+
+      if (!showMore) {
+        document.getElementById("changelogModal").style.display = "block";
       }
 
       // If everything is showing, return
@@ -1588,7 +1609,7 @@ export default {
         updateDiv.appendChild(ul);
       }
 
-      document.getElementById('changelog-card').appendChild(updateDiv);
+      document.getElementById("changelogItem").appendChild(updateDiv);
 
       this.kLog++;
     },
@@ -1930,19 +1951,56 @@ export default {
     padding: 0;
     text-align: left;
     margin: auto;
+    border: 1px solid #888;
     /*resize: both;*/
     /*overflow: auto;*/
   }
-  .close-container {
-    position: absolute;
-    width: 20px;
-    height: 15px;
-    cursor: pointer;
-    background-color: inherit;
-    color: #B0B0B0;
+
+  #changelogModal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
     top: 0;
-    right: 0;
-    text-align: center;
-    font-weight: 18;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    background-color: #343A40; /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  }
+
+
+  /* Modal Content */
+  .modal-content {
+    background-color: #343A40;
+    margin: auto;
+    padding: 50px 20px;
+    border: 1px solid #888;
+    width: 900px;
+  }
+
+  #changelogItem {
+    color: #fff;
+    text-align: left;
+    overflow: auto; /* Enable scroll if needed */
+    max-height: 800px;
+  }
+
+  /* The Close Button */
+  .close {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+
+  .close:hover,
+  .close:focus {
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
   }
 </style>

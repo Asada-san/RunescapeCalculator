@@ -4,7 +4,7 @@ import numpy as np
 import time
 
 
-def CycleCheck(bar, player, dummy, logger, settings):
+def CycleCheck(player, dummy, logger, settings):
     """
     Checks for repeating cycles.
 
@@ -14,15 +14,15 @@ def CycleCheck(bar, player, dummy, logger, settings):
     :param logger: The Logger object.
     """
 
-    cdTimes = [ability.cdTime for ability in bar.Rotation]
-    cdTimes.extend([player.SpecialAbils[ability_name].cdTime for ability_name in player.SpecialAbils])
+    cdTimes = [ability.cdTime for ability in player.Bar.Abilities]
+    cdTimes.extend([player.Special[special].cdTime for special in player.Special])
 
     # Tuple consisting of list of cd times, loop time, adrenaline and puncture stack
     condition = (cdTimes,
-                 bar.Adrenaline,
+                 player.Adrenaline,
                  dummy.nPuncture,
-                 player.AbilCritBuff,
-                 player.ArDamage,
+                 player.Bar.CritIncreaseNextAbility,
+                 player.AsDamage,
                  player.PocketHitCounter,
                  player.Boost,
                  player.Boost1)
@@ -49,7 +49,7 @@ def CycleCheck(bar, player, dummy, logger, settings):
             logger.getResults(logger.CycleConvergenceTime, logger.CycleTime)
 
         if logger.DebugMode:
-            logger.write(35, round(logger.CycleTime * .6, 1))
+            logger.Text += f'<li style="color: {logger.TextColor["cycle"]};">CYCLE FOUND!!! Terminating intense fight with dummy.</li>'
 
 
 # def CycleRotation(bar, player, dummy, logger, settings):
@@ -87,7 +87,7 @@ def CycleCheck(bar, player, dummy, logger, settings):
 #         settings.run = False
 #
 #         if logger.DebugMode:
-#             logger.write(48)
+#             logger.Text += f'<li style="color: {logger.TextColor["cycle"]};">VERIFICATION LOOP COMPLETED: RETURN RESULTS</li>'
 #
 #     elif logger.n == settings.nMax:  # If the max runtime has been reached
 #         for attr, value in logger.AbilInfo.items():
