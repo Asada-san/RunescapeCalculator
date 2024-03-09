@@ -234,8 +234,8 @@ class Ability():
                 self.Parent.Logger.Text += f'<li style="color: {self.Parent.Logger.TextColor["initialisation"]};">Ability upgrade {self.Name} (Zuk Cape): Increased hits to {self.nT} and AdrenalineGain to {self.AdrenalineGain}</li>'
 
         if self.Parent.Cape.Name in {'Igneous Kal-Xil', 'Igneous Kal-Zuk'} and self.Name == 'Deadshot':
-            self.DamMax[0] = 2.1
-            self.DamMin[0] = 0.42
+            self.DamMax[0] = 1.45
+            self.DamMin[0] = 1.25
 
             self.DamMax = np.append(self.DamMax, np.full(7, 0.7))
             self.DamMin = np.append(self.DamMin, np.full(7, 0.7))
@@ -250,8 +250,8 @@ class Ability():
                 self.Parent.Logger.Text += f'<li style="color: {self.Parent.Logger.TextColor["initialisation"]};">Ability upgrade {self.Name} (Zuk Cape): Increased Max and Min to {self.DamMax} and {self.DamMin} respectively and AdrenalineGain to {self.AdrenalineGain}</li>'
 
         if self.Parent.Cape.Name in {'Igneous Kal-Mej', 'Igneous Kal-Zuk'} and self.Name == 'Omnipower':
-            self.DamMax = np.full(4, 1.8)
-            self.DamMin = np.full(4, 0.9)
+            self.DamMax = np.full(4, 1.5)
+            self.DamMin = np.full(4, 1.2)
 
             self.Timings = np.append(self.Timings, [self.Timings + 1] * 3)
 
