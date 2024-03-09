@@ -315,12 +315,6 @@ class Ability():
             if self.Parent.Logger.DebugMode:
                 self.Parent.Logger.Text += f'<li style="color: {self.Parent.Logger.TextColor["initialisation"]};">Ability upgrade {self.Name} (Gloves of Passage): Next ability will do 10% extra damage</li>'
 
-        if self.Name == 'Hurricane' and self.Parent.MainHand.Name == 'Dark shard of Leng' and self.Parent.OffHand.Name == 'Dark sliver of Leng':
-            self.Equipment = 'any'
-
-            if self.Parent.Logger.DebugMode:
-                self.Parent.Logger.Text += f'<li style="color: {self.Parent.Logger.TextColor["initialisation"]};">Ability upgrade {self.Name} (Hurricane): Changed Hurricane equipment requirement to any</li>'
-
         if self.Name == 'Aftershock' and self.Parent.Aftershock > 1:
             self.DamMax[0] *= self.Parent.Aftershock
             self.DamMin[0] *= self.Parent.Aftershock
