@@ -149,11 +149,6 @@ class Ability():
             if self.Parent.Logger.DebugMode:
                 self.Parent.Logger.Text += f'<li style="color: {self.Parent.Logger.TextColor["initialisation"]};">Ability upgrade {self.Name} (Fury of the Small): Increased basic adrenaline gain to {self.AdrenalineGain}</li>'
 
-        # Manually calculate the Max and Min of Shadow Tendrils
-        if self.Name in {'Shadow Tendrils'}:
-            self.DamMax[0] = 0.1 * self.DamMax[0] * 2 + .18 * self.DamMax[0] * 3 + .216 * self.DamMax[0] * 4 + .504 * self.DamMax[0] * 5
-            self.DamMin[0] = 0.1 * self.DamMin[0] * 2 + .18 * self.DamMin[0] * 3 + .216 * self.DamMin[0] * 4 + .504 * self.DamMin[0] * 5
-
         # Remove last hit from concentrated blast if the user is not afk
         if not self.Parent.Afk and self.Name in {'Lesser Concentrated Blast', 'Concentrated Blast'}:
             self.nT = 2
