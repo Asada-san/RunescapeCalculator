@@ -336,8 +336,7 @@ def doDamage(CurrentHits, player, dummy, logger, settings):
         #
         # Total increase - forced crit OR NOT forced crit AND natural crit * 0.1 OR NOT forced crit AND NOT natural crit * 1
         if PHit.Parent.Name == 'Greater Fury':
-            player.Bar.CritIncreaseNextAbility = (PHit.pForcedCrit + (1 - PHit.pForcedCrit) * PHit.pNatCrit) + \
-                                                 (1 - PHit.pForcedCrit) * (1 - PHit.pNatCrit) * 0.1
+            player.Bar.CritIncreaseNextAbility = 1
 
         if PHit.Parent.Name in {'Fury', 'Concentrated Blast', 'Greater Concentrated Blast'}:
             player.Bar.CritIncreaseNextAbility += (PHit.Index + 1) * 0.05
