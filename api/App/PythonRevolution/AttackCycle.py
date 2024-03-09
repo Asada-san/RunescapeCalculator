@@ -117,6 +117,9 @@ def determineHits(FA, player, dummy, logger):
     if FA.Name in {'Meteor Strike', 'Tsunami', 'Incendiary Shot'}:
         player.CritAdrenalineBuffTime = FA.EffectDuration
 
+    if FA.Name in {'Natural Instinct'}:
+        player.NaturalInstinctTime = FA.EffectDuration
+
     # Determine hits with Greater Chain effect
     if FA.Name == 'Greater Chain':
         player.GreaterChainTime = FA.EffectDuration
