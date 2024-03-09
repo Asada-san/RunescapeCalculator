@@ -298,6 +298,14 @@ class Ability():
                 self.Parent.Logger.Text += f'<li style="color: {self.Parent.Logger.TextColor["initialisation"]};">Ability upgrade {self.Name} (Planted Feet): Removed bleed effect and changed effect duration to {self.EffectDuration} ticks</li>'
 
             return
+        
+        if self.Parent.PlantedFeet and self.Name in {'Greater Sunshine', 'Greater Death\'s Swiftness'}:
+            self.Bleed = False
+
+            if self.Parent.Logger.DebugMode:
+                self.Parent.Logger.Text += f'<li style="color: {self.Parent.Logger.TextColor["initialisation"]};">Ability upgrade {self.Name} (Planted Feet): Removed bleed effect</li>'
+
+            return
 
         if self.Parent.Gloves.Name in {'Gloves of Passage', 'Enhanced gloves of Passage'} and self.Name in {'Smash', 'Havoc'}:
             self.Boost1 = True
