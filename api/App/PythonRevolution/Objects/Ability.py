@@ -441,7 +441,6 @@ class Ability():
             self.pForcedCritExtra = 0  # Champions ring
 
             self.pForcedCrit = self.Parent.pForcedCrit[self.Index]
-            self.pNatCrit = None
 
             self.DamMaxBonus = 0
             self.DamMinBonus = 0
@@ -465,47 +464,35 @@ class Ability():
                         Max = self.Parent.DamMax[self.Index] * self.Parent.Parent.BashBaseDamage
                         Min = self.Parent.DamMin[self.Index] * self.Parent.Parent.BashBaseDamage
 
-                    CritCap = self.Parent.Parent.CritCap  # Critical hit damage cap
-                    DmgCap = 10000  # Normal hit damage cap
+                    HitCap = 30000  # Damage cap
+                    CritChance = min(self.pForcedCrit, 1)
 
-                    if self.Parent.Parent.Precise:  # Increase min by 1.5% per rank
+                    if self.Parent.Parent.Precise:  # Increase min by 1.5% of max per rank
                         Min += self.Parent.Parent.Precise * 0.015 * Max
 
-                    # ---------- Formula used to calculate averages, yoinked from the rs wiki ------------
                     if self.Parent.Parent.Aura == 'Equilibrium':  # If the equilibrium aura is active
-                        self.pNatCrit = min(Max / (40 * (Max - Min)) + 0.0125, 1)
-                    elif self.Parent.Parent.Equilibrium:  # Increase min by 3% per rank and decrease max by 1% per rank
-                        self.pNatCrit = min(((25 - self.Parent.Parent.Equilibrium) * Max) / (500 * (Max - Min)) + self.Parent.Parent.Equilibrium / 2000, 1)
+                        CritChance = 0
+                        Min *= 1.12
+                        Max *= 1.12
+                    elif self.Parent.Parent.Equilibrium:  # Increase damage by 0.5% per rank
+                        EqIncrease = 1 + self.Parent.Parent.Equilibrium * 0.005
+                        Max *= EqIncrease
+                        Min *= EqIncrease
 
-                        EqMinIncrease = self.Parent.Parent.Equilibrium * 0.03 * (Max - Min)
-                        EqMaxDecrease = self.Parent.Parent.Equilibrium * 0.01 * (Max - Min)
-                        Max = Max - EqMaxDecrease
-                        Min = Min + EqMinIncrease
-                    else:
-                        self.pNatCrit = min((0.05 * Max) / (Max - Min), 1)
+                    MinCrit = Min * 1.5
+                    MaxCrit = Max * 1.5
 
-                    CritNatMin = max(Min + (1 - self.pNatCrit) * (Max - Min), Min)
+                    ChanceToHitCapNonCrit = 0 if Max == Min else 1 - (min(HitCap, Max) - min(HitCap, Min)) / (Max - Min)
+                    ChanceToHitCapCrit = 0 if MaxCrit == MinCrit else 1 - (min(HitCap, MaxCrit) - min(HitCap, MinCrit)) / (MaxCrit - MinCrit)
 
-                    CritForcedMin = (Min + 0.95 * (Max - Min))
-                    # CritForcedMax = (Min + (0.95 * (Max - Min)) / 0.95)
-                    CritForcedMax = Max
+                    AverageNonCrit = ChanceToHitCapNonCrit * HitCap + (1 - ChanceToHitCapNonCrit) * ((min(HitCap, Max))+(min(HitCap, Min))) / 2
+                    AverageCrit = ChanceToHitCapCrit * HitCap + (1 - ChanceToHitCapCrit) * ((min(HitCap, MaxCrit))+(min(HitCap, MinCrit))) / 2
 
-                    z1 = (CritCap - CritForcedMin) / (CritForcedMax - CritForcedMin)
-                    z2 = (CritCap - CritNatMin) / (Max - CritNatMin)
-
-                    y = (DmgCap - Min) / (CritNatMin - Min)
-
-                    pForcedCrit = min(self.pForcedCrit, 1)
-
-                    AvgCalc1 = max(0, min(1 - z1, 1)) * CritCap + min(max(0, z1), 1) * (min(CritCap, CritForcedMin) + min(CritCap, CritForcedMax)) / 2
-                    AvgCalc2 = max(0, min(1 - z2, 1)) * CritCap + min(max(0, z2), 1) * (min(CritCap, CritNatMin) + min(CritCap, Max)) / 2
-                    AvgCalc3 = max(0, min(1 - y, 1)) * DmgCap + min(max(0, y), 1) * (min(DmgCap, Min) + min(DmgCap, CritNatMin)) / 2
-
-                    Avg = pForcedCrit * AvgCalc1 + (1 - pForcedCrit) * (self.pNatCrit * AvgCalc2 + (1 - self.pNatCrit) * AvgCalc3)
+                    Avg = CritChance * AverageCrit + (1 - CritChance) * AverageNonCrit
                     # ------------------------------------------------------------------------------------
 
                     if self.Parent.Parent.Logger.DebugMode:
-                        self.Parent.Parent.Logger.Text += f'<li style="color: {self.Parent.Parent.Logger.TextColor["initialisation"]};">Ability Calculation: Avg hit of {self.Parent.Name} to {round(Avg, 2)}, pForced: {round(pForcedCrit, 4)}, pNat: {round(self.pNatCrit, 4)}</li>'
+                        self.Parent.Parent.Logger.Text += f'<li style="color: {self.Parent.Parent.Logger.TextColor["initialisation"]};">Ability Calculation: Avg hit of {self.Parent.Name} to {round(Avg, 2)}, CritChance: {round(CritChance, 4)}</li>'
 
                     self._Damage = Avg
 
