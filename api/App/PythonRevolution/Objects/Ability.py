@@ -350,14 +350,7 @@ class Ability():
         else:
             nDT = dummy.nTarget
 
-        if self.Name in {'Quake', 'Greater Flurry'}:  # DamMax = 0.94, DamMin = 0.2, DamAvg = 0.57 for ALL! targets
-            for i in range(0, nDT - 1):
-                self.Hits = np.append(self.Hits, deepcopy(self.HitsSideTarget))
-
-                for j in range(0, self.nT):
-                    self.Hits[self.nT*(i + 1) + j].Target = i + 2
-
-        elif self.Name == 'Hurricane':  # First hit on main target equals the hit for all other targets
+        if self.Name == 'Hurricane':  # First hit on main target equals the hit for all other targets
             for i in range(0, nDT - 1):
                 self.Hits = np.append(self.Hits, deepcopy(self.Hits[0]))
                 self.Hits[-1].Target = i + 2
