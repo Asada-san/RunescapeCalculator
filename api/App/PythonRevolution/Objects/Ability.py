@@ -203,7 +203,9 @@ class Ability():
             if self.Name != 'Dismember':
                 self.BleedOnMove = 1.5
 
-            self.DamMax += 0.2 * self.Parent.Lunging / self.nD  # Increase max hit by 0.2 for every rank
+            # Increase damage by 6% for every rank
+            self.DamMax *= 1 + 0.06 * self.Parent.Lunging  
+            self.DamMin *= 1 + 0.06 * self.Parent.Lunging
 
             if self.Parent.Logger.DebugMode:
                 self.Parent.Logger.Text += f'<li style="color: {self.Parent.Logger.TextColor["initialisation"]};">Ability upgrade {self.Name} (Lunging): Set BleedOnMove to {self.BleedOnMove} and increased Max to {self.DamMax}</li>'
