@@ -262,19 +262,15 @@ class Player:
         if self._BaseDamageEffective is None:
             if self.MainHand.Class == 'Melee':
                 damage = self.BaseDamage * self.StrengthPrayerBoost
-                damage += self.StrengthLevelBoost * 6
                 damage *= self.getBoost()
             elif self.MainHand.Class == 'Range':
                 damage = self.BaseDamage * self.RangedPrayerBoost
-                damage += self.RangedLevelBoost * 6
                 damage *= self.getBoost()
             elif self.MainHand.Class == 'Magic':
                 damage = self.BaseDamage * self.MagicPrayerBoost
-                damage += self.MagicLevelBoost * 6
                 damage *= self.getBoost()
             else:
                 damage = self.BaseDamage * max(self.StrengthPrayerBoost, self.RangedPrayerBoost, self.MagicPrayerBoost)
-                damage += max(self.StrengthLevelBoost, self.RangedLevelBoost, self.MagicLevelBoost) * 6
 
             self._BaseDamageEffective = damage * self.BerserkersFury * (1 + self.Ruthless * 0.025)
 
