@@ -61,7 +61,7 @@
                   don't let revolution activate this ability, but instead activate it manually once every
                   2 minutes.</li>
                   <li>As the resulting A ... Ability ... DPT suggests, auto attacks are not taken into account.</li>
-                  <li>All ability information used to determine the AADPT is summarized on a <a href="https://github.com/Asada-san/RunescapeCalculator/blob/master/api/AbilityInfo.xlsx" target="_blank" style="color: #4CAF50"><strong>spreadsheet</strong></a>.</li>
+                  <li>All ability information used to determine the AADPT is summarized on a <a href="https://github.com/Asada-san/RunescapeCalculator/blob/master/api/ItemInfo.xlsx" target="_blank" style="color: #4CAF50"><strong>spreadsheet</strong></a>.</li>
                   <li>The code (including html, js, css and python files) have been uploaded to <a href="https://github.com/Asada-san/RunescapeCalculator" target="_blank" style="color: #4CAF50"><strong>Github</strong></a>. You're free to use it however you want.</li>
                   <li>All ability images were yoinked from the RS3 wiki.</li>
                 </ul>
