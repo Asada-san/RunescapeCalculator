@@ -390,7 +390,7 @@ class Ability():
                     if i + 1 + dummy.nTarget <= 3:
                         self.Hits[-1].DamageMultiplier *= 0.5
                     else:
-                        self.Hits[-1].DamageMultiplier /= 6
+                        self.Hits[-1].DamageMultiplier /= 5.6
 
         elif self.Name == 'Book of Balance':  # Last hit of Book of Balance is AoE
             for i in range(0, nDT - 1):
