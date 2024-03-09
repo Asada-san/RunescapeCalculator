@@ -22,9 +22,11 @@ def itemIDs():
 
 @api.route('/return_counter', methods=['GET'])
 def return_counter():
-    N = Counter.query.filter_by(name="RevolutionCounter").first()
+    # N = Counter.query.filter_by(name="RevolutionCounter").first()
+    N = 0
     result = {
-        'counter': N.count,
+        # 'counter': N.count,
+        'counter': N,
         'nameList': NameList
     }
     res = make_response(jsonify(result), 200)
@@ -182,21 +184,23 @@ def calc():
 
     end_loop = time.time()
 
-    N = Counter.query.filter_by(name="RevolutionCounter").first()
+    # N = Counter.query.filter_by(name="RevolutionCounter").first()
+    N = 0
 
     if error_message is not None:
         error = True
     else:
         error = False
 
-        N.count = N.count + 1
-        db.session.commit()
+        # N.count = N.count + 1
+        # db.session.commit()
 
     CalcResults.update({'ExecutionTime': round(end_loop - start_loop, 5),
                         'warning': warning,
                         'error': error,
                         'error_message': error_message,
-                        'counter': N.count})
+                        # 'counter': N.count})
+                        'counter': N})
 
     res = make_response(jsonify(CalcResults), 200)
 
