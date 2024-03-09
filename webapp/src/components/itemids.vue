@@ -33,6 +33,7 @@ if (window.origin === 'http://localhost:8080') {
 }
 
 export default {
+  name: "ItemIds",
   data: function () {
     return {
       centerStyle: {
@@ -70,8 +71,7 @@ export default {
         })
       }
     }
-  },
-  name: "itemids"
+  }
 }
 </script>
 

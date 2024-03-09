@@ -117,6 +117,9 @@ def determineHits(FA, player, dummy, logger):
     if FA.Name in {'Meteor Strike', 'Tsunami', 'Incendiary Shot'}:
         player.CritAdrenalineBuffTime = FA.EffectDuration
 
+    if FA.Name in {'Natural Instinct'}:
+        player.NaturalInstinctTime = FA.EffectDuration
+
     # Determine hits with Greater Chain effect
     if FA.Name == 'Greater Chain':
         player.GreaterChainTime = FA.EffectDuration
@@ -185,8 +188,8 @@ def PunctureCheck(dummy, player, FA, logger):
 
         # Calculate its new average
         if dummy.nPuncture > 0:
-            NewHit[0].DamMaxBonus = .18 * dummy.nPuncture  # PunctureStack
-            NewHit[0].DamMinBonus = .036 * dummy.nPuncture  # PunctureStack
+            NewHit[0].DamMaxBonus = .15 * dummy.nPuncture  # PunctureStack
+            NewHit[0].DamMinBonus = .10 * dummy.nPuncture  # PunctureStack
             NewHit[0]._Damage = None
 
             # dummy.PHits[dummy.nPH] = Hit  # Put the hit with the new average in the pending hits
@@ -333,8 +336,7 @@ def doDamage(CurrentHits, player, dummy, logger, settings):
         #
         # Total increase - forced crit OR NOT forced crit AND natural crit * 0.1 OR NOT forced crit AND NOT natural crit * 1
         if PHit.Parent.Name == 'Greater Fury':
-            player.Bar.CritIncreaseNextAbility = (PHit.pForcedCrit + (1 - PHit.pForcedCrit) * PHit.pNatCrit) + \
-                                                 (1 - PHit.pForcedCrit) * (1 - PHit.pNatCrit) * 0.1
+            player.Bar.CritIncreaseNextAbility = 1
 
         if PHit.Parent.Name in {'Fury', 'Concentrated Blast', 'Greater Concentrated Blast'}:
             player.Bar.CritIncreaseNextAbility += (PHit.Index + 1) * 0.05
@@ -353,7 +355,7 @@ def doDamage(CurrentHits, player, dummy, logger, settings):
         # Critical hit check: Increased Adrenaline when under the effect of Tsunami/Meteor Strike/Incendiary Shot
         if all([player.CritAdrenalineBuffTime, PHit.Type in {1, 2}]):
 
-            player.BasicAdrenalineGain += (PHit.pForcedCrit + (1 - PHit.pForcedCrit) * PHit.pNatCrit) * 2
+            player.BasicAdrenalineGain += PHit.pForcedCrit * 2
 
             if player.BasicAdrenalineGain > 1 and player.Adrenaline < player.MaxAdrenaline:
                 player.Adrenaline += 1

@@ -10,6 +10,6 @@ beautifulsoup4==4.9.3
 SQLAlchemy==1.4.22
 Flask-SQLAlchemy==2.5.1
 Flask-Cors==3.0.10
-psycopg2==2.9.1
+psycopg2-binary==2.9.1
 click==8.0.1
 openpyxl==3.0.7

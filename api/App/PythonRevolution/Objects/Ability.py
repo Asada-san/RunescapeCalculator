@@ -149,11 +149,6 @@ class Ability():
             if self.Parent.Logger.DebugMode:
                 self.Parent.Logger.Text += f'<li style="color: {self.Parent.Logger.TextColor["initialisation"]};">Ability upgrade {self.Name} (Fury of the Small): Increased basic adrenaline gain to {self.AdrenalineGain}</li>'
 
-        # Manually calculate the Max and Min of Shadow Tendrils
-        if self.Name in {'Shadow Tendrils'}:
-            self.DamMax[0] = 0.1 * self.DamMax[0] * 2 + .18 * self.DamMax[0] * 3 + .216 * self.DamMax[0] * 4 + .504 * self.DamMax[0] * 5
-            self.DamMin[0] = 0.1 * self.DamMin[0] * 2 + .18 * self.DamMin[0] * 3 + .216 * self.DamMin[0] * 4 + .504 * self.DamMin[0] * 5
-
         # Remove last hit from concentrated blast if the user is not afk
         if not self.Parent.Afk and self.Name in {'Lesser Concentrated Blast', 'Concentrated Blast'}:
             self.nT = 2
@@ -179,16 +174,16 @@ class Ability():
             if self.Name in {'Backhand', 'Impact', 'Binding Shot'}:
                 self.StunDuration = 0  # Abilities above loose their stun effect
 
-                for i in range(0, self.nS):  # Increase min by 8% per rank, max by 40% per rank
-                    self.DamMax[i] += 0.4 * self.Parent.Flanking
-                    self.DamMin[i] += 0.08 * self.Parent.Flanking
+                for i in range(0, self.nS):  # Increase damage by 40% per rank
+                    self.DamMax[i] *= 1 + 0.4 * self.Parent.Flanking
+                    self.DamMin[i] *= 1 + 0.4 * self.Parent.Flanking
 
             if self.Name in {'Forceful Backhand', 'Deep Impact', 'Tight Bindings'}:
                 self.StunDuration = 0  # Abilities above lose their stun effect
 
-                for i in range(0, self.nS):  # Increase min by 6% per rank, max by 30% per rank
-                    self.DamMax[i] += 0.3 * self.Parent.Flanking
-                    self.DamMin[i] += 0.06 * self.Parent.Flanking
+                for i in range(0, self.nS):  # Increase damage by 15% per rank
+                    self.DamMax[i] *= 1 + 0.15 * self.Parent.Flanking
+                    self.DamMin[i] *= 1 + 0.15 * self.Parent.Flanking
 
             if self.Parent.Logger.DebugMode:
                 self.Parent.Logger.Text += f'<li style="color: {self.Parent.Logger.TextColor["initialisation"]};">Ability upgrade {self.Name} (Flanking): Removed stun effect and increased Max and Min to {self.DamMax} and {self.DamMin} respectively</li>'
@@ -208,7 +203,9 @@ class Ability():
             if self.Name != 'Dismember':
                 self.BleedOnMove = 1.5
 
-            self.DamMax += 0.2 * self.Parent.Lunging / self.nD  # Increase max hit by 0.2 for every rank
+            # Increase damage by 6% for every rank
+            self.DamMax *= 1 + 0.06 * self.Parent.Lunging  
+            self.DamMin *= 1 + 0.06 * self.Parent.Lunging
 
             if self.Parent.Logger.DebugMode:
                 self.Parent.Logger.Text += f'<li style="color: {self.Parent.Logger.TextColor["initialisation"]};">Ability upgrade {self.Name} (Lunging): Set BleedOnMove to {self.BleedOnMove} and increased Max to {self.DamMax}</li>'
@@ -237,8 +234,8 @@ class Ability():
                 self.Parent.Logger.Text += f'<li style="color: {self.Parent.Logger.TextColor["initialisation"]};">Ability upgrade {self.Name} (Zuk Cape): Increased hits to {self.nT} and AdrenalineGain to {self.AdrenalineGain}</li>'
 
         if self.Parent.Cape.Name in {'Igneous Kal-Xil', 'Igneous Kal-Zuk'} and self.Name == 'Deadshot':
-            self.DamMax[0] = 2.1
-            self.DamMin[0] = 0.42
+            self.DamMax[0] = 1.45
+            self.DamMin[0] = 1.25
 
             self.DamMax = np.append(self.DamMax, np.full(7, 0.7))
             self.DamMin = np.append(self.DamMin, np.full(7, 0.7))
@@ -253,8 +250,8 @@ class Ability():
                 self.Parent.Logger.Text += f'<li style="color: {self.Parent.Logger.TextColor["initialisation"]};">Ability upgrade {self.Name} (Zuk Cape): Increased Max and Min to {self.DamMax} and {self.DamMin} respectively and AdrenalineGain to {self.AdrenalineGain}</li>'
 
         if self.Parent.Cape.Name in {'Igneous Kal-Mej', 'Igneous Kal-Zuk'} and self.Name == 'Omnipower':
-            self.DamMax = np.full(4, 1.8)
-            self.DamMin = np.full(4, 0.9)
+            self.DamMax = np.full(4, 1.5)
+            self.DamMin = np.full(4, 1.2)
 
             self.Timings = np.append(self.Timings, [self.Timings + 1] * 3)
 
@@ -301,6 +298,14 @@ class Ability():
                 self.Parent.Logger.Text += f'<li style="color: {self.Parent.Logger.TextColor["initialisation"]};">Ability upgrade {self.Name} (Planted Feet): Removed bleed effect and changed effect duration to {self.EffectDuration} ticks</li>'
 
             return
+        
+        if self.Parent.PlantedFeet and self.Name in {'Greater Sunshine', 'Greater Death\'s Swiftness'}:
+            self.Bleed = False
+
+            if self.Parent.Logger.DebugMode:
+                self.Parent.Logger.Text += f'<li style="color: {self.Parent.Logger.TextColor["initialisation"]};">Ability upgrade {self.Name} (Planted Feet): Removed bleed effect</li>'
+
+            return
 
         if self.Parent.Gloves.Name in {'Gloves of Passage', 'Enhanced gloves of Passage'} and self.Name in {'Smash', 'Havoc'}:
             self.Boost1 = True
@@ -309,12 +314,6 @@ class Ability():
 
             if self.Parent.Logger.DebugMode:
                 self.Parent.Logger.Text += f'<li style="color: {self.Parent.Logger.TextColor["initialisation"]};">Ability upgrade {self.Name} (Gloves of Passage): Next ability will do 10% extra damage</li>'
-
-        if self.Name == 'Hurricane' and self.Parent.MainHand.Name == 'Dark shard of Leng' and self.Parent.OffHand.Name == 'Dark sliver of Leng':
-            self.Equipment = 'any'
-
-            if self.Parent.Logger.DebugMode:
-                self.Parent.Logger.Text += f'<li style="color: {self.Parent.Logger.TextColor["initialisation"]};">Ability upgrade {self.Name} (Hurricane): Changed Hurricane equipment requirement to any</li>'
 
         if self.Name == 'Aftershock' and self.Parent.Aftershock > 1:
             self.DamMax[0] *= self.Parent.Aftershock
@@ -345,14 +344,7 @@ class Ability():
         else:
             nDT = dummy.nTarget
 
-        if self.Name in {'Quake', 'Greater Flurry'}:  # DamMax = 0.94, DamMin = 0.2, DamAvg = 0.57 for ALL! targets
-            for i in range(0, nDT - 1):
-                self.Hits = np.append(self.Hits, deepcopy(self.HitsSideTarget))
-
-                for j in range(0, self.nT):
-                    self.Hits[self.nT*(i + 1) + j].Target = i + 2
-
-        elif self.Name == 'Hurricane':  # First hit on main target equals the hit for all other targets
+        if self.Name == 'Hurricane':  # First hit on main target equals the hit for all other targets
             for i in range(0, nDT - 1):
                 self.Hits = np.append(self.Hits, deepcopy(self.Hits[0]))
                 self.Hits[-1].Target = i + 2
@@ -385,7 +377,7 @@ class Ability():
                     if i + 1 + dummy.nTarget <= 3:
                         self.Hits[-1].DamageMultiplier *= 0.5
                     else:
-                        self.Hits[-1].DamageMultiplier /= 6
+                        self.Hits[-1].DamageMultiplier /= 5.6
 
         elif self.Name == 'Book of Balance':  # Last hit of Book of Balance is AoE
             for i in range(0, nDT - 1):
@@ -441,7 +433,6 @@ class Ability():
             self.pForcedCritExtra = 0  # Champions ring
 
             self.pForcedCrit = self.Parent.pForcedCrit[self.Index]
-            self.pNatCrit = None
 
             self.DamMaxBonus = 0
             self.DamMinBonus = 0
@@ -465,47 +456,35 @@ class Ability():
                         Max = self.Parent.DamMax[self.Index] * self.Parent.Parent.BashBaseDamage
                         Min = self.Parent.DamMin[self.Index] * self.Parent.Parent.BashBaseDamage
 
-                    CritCap = self.Parent.Parent.CritCap  # Critical hit damage cap
-                    DmgCap = 10000  # Normal hit damage cap
+                    HitCap = 30000  # Damage cap
+                    CritChance = min(self.pForcedCrit, 1)
 
-                    if self.Parent.Parent.Precise:  # Increase min by 1.5% per rank
+                    if self.Parent.Parent.Precise:  # Increase min by 1.5% of max per rank
                         Min += self.Parent.Parent.Precise * 0.015 * Max
 
-                    # ---------- Formula used to calculate averages, yoinked from the rs wiki ------------
                     if self.Parent.Parent.Aura == 'Equilibrium':  # If the equilibrium aura is active
-                        self.pNatCrit = min(Max / (40 * (Max - Min)) + 0.0125, 1)
-                    elif self.Parent.Parent.Equilibrium:  # Increase min by 3% per rank and decrease max by 1% per rank
-                        self.pNatCrit = min(((25 - self.Parent.Parent.Equilibrium) * Max) / (500 * (Max - Min)) + self.Parent.Parent.Equilibrium / 2000, 1)
+                        CritChance = 0
+                        Min *= 1.12
+                        Max *= 1.12
+                    elif self.Parent.Parent.Equilibrium:  # Increase damage by 0.5% per rank
+                        EqIncrease = 1 + self.Parent.Parent.Equilibrium * 0.005
+                        Max *= EqIncrease
+                        Min *= EqIncrease
 
-                        EqMinIncrease = self.Parent.Parent.Equilibrium * 0.03 * (Max - Min)
-                        EqMaxDecrease = self.Parent.Parent.Equilibrium * 0.01 * (Max - Min)
-                        Max = Max - EqMaxDecrease
-                        Min = Min + EqMinIncrease
-                    else:
-                        self.pNatCrit = min((0.05 * Max) / (Max - Min), 1)
+                    MinCrit = Min * 1.5
+                    MaxCrit = Max * 1.5
 
-                    CritNatMin = max(Min + (1 - self.pNatCrit) * (Max - Min), Min)
+                    ChanceToHitCapNonCrit = 0 if Max == Min else 1 - (min(HitCap, Max) - min(HitCap, Min)) / (Max - Min)
+                    ChanceToHitCapCrit = 0 if MaxCrit == MinCrit else 1 - (min(HitCap, MaxCrit) - min(HitCap, MinCrit)) / (MaxCrit - MinCrit)
 
-                    CritForcedMin = (Min + 0.95 * (Max - Min))
-                    # CritForcedMax = (Min + (0.95 * (Max - Min)) / 0.95)
-                    CritForcedMax = Max
+                    AverageNonCrit = ChanceToHitCapNonCrit * HitCap + (1 - ChanceToHitCapNonCrit) * ((min(HitCap, Max))+(min(HitCap, Min))) / 2
+                    AverageCrit = ChanceToHitCapCrit * HitCap + (1 - ChanceToHitCapCrit) * ((min(HitCap, MaxCrit))+(min(HitCap, MinCrit))) / 2
 
-                    z1 = (CritCap - CritForcedMin) / (CritForcedMax - CritForcedMin)
-                    z2 = (CritCap - CritNatMin) / (Max - CritNatMin)
-
-                    y = (DmgCap - Min) / (CritNatMin - Min)
-
-                    pForcedCrit = min(self.pForcedCrit, 1)
-
-                    AvgCalc1 = max(0, min(1 - z1, 1)) * CritCap + min(max(0, z1), 1) * (min(CritCap, CritForcedMin) + min(CritCap, CritForcedMax)) / 2
-                    AvgCalc2 = max(0, min(1 - z2, 1)) * CritCap + min(max(0, z2), 1) * (min(CritCap, CritNatMin) + min(CritCap, Max)) / 2
-                    AvgCalc3 = max(0, min(1 - y, 1)) * DmgCap + min(max(0, y), 1) * (min(DmgCap, Min) + min(DmgCap, CritNatMin)) / 2
-
-                    Avg = pForcedCrit * AvgCalc1 + (1 - pForcedCrit) * (self.pNatCrit * AvgCalc2 + (1 - self.pNatCrit) * AvgCalc3)
+                    Avg = CritChance * AverageCrit + (1 - CritChance) * AverageNonCrit
                     # ------------------------------------------------------------------------------------
 
                     if self.Parent.Parent.Logger.DebugMode:
-                        self.Parent.Parent.Logger.Text += f'<li style="color: {self.Parent.Parent.Logger.TextColor["initialisation"]};">Ability Calculation: Avg hit of {self.Parent.Name} to {round(Avg, 2)}, pForced: {round(pForcedCrit, 4)}, pNat: {round(self.pNatCrit, 4)}</li>'
+                        self.Parent.Parent.Logger.Text += f'<li style="color: {self.Parent.Parent.Logger.TextColor["initialisation"]};">Ability Calculation: Avg hit of {self.Parent.Name} to {round(Avg, 2)}, CritChance: {round(CritChance, 4)}</li>'
 
                     self._Damage = Avg
 

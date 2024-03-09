@@ -3,9 +3,12 @@
     <div class="accordion" role="tablist">
       <b-card no-body class="mb-1" id="card-header" bg-variant="dark" text-variant="white" style="text-align: left;">
         <h2 style="text-align: center; margin-bottom: 15px; margin-top: 15px;">Revolution Bar <span v-html="latestVersion" style="font-size:small;"></span></h2>
-        <p style="text-align: center; margin-left: 15px; margin-right: 15px; color: pink;">Stuff may be broken, I'm working on it (slowly).
-<!--          If something seems broken, do not hesitate to contact me on discord:-->
-<!--          <a style="color: #4CAF50" href="https://discordapp.com/users/713459040386023579"><strong>Micky#5858</strong></a>.-->
+        <p style="text-align: center; margin-left: 15px; margin-right: 15px; color: pink;">
+          <ul style="list-style-type: none">
+            <li>This project is currently being maintained by Gamedolf</li>
+            <li>If something seems broken, it probably is.</li>
+            <li>Github fork can be found <a target="_blank" style="color: #4CAF50" href="https://github.com/Gamedolf/RunescapeCalculator"><strong>here</strong></a></li>
+          </ul>
         </p>
 
         <b-card no-body class="mb-0" bg-variant="dark" text-variant="white" >
@@ -61,7 +64,7 @@
                   don't let revolution activate this ability, but instead activate it manually once every
                   2 minutes.</li>
                   <li>As the resulting A ... Ability ... DPT suggests, auto attacks are not taken into account.</li>
-                  <li>All ability information used to determine the AADPT is summarized on a <a href="https://github.com/Asada-san/RunescapeCalculator/blob/master/api/AbilityInfo.xlsx" target="_blank" style="color: #4CAF50"><strong>spreadsheet</strong></a>.</li>
+                  <li>All ability information used to determine the AADPT is summarized on a <a href="https://github.com/Asada-san/RunescapeCalculator/blob/master/api/ItemInfo.xlsx" target="_blank" style="color: #4CAF50"><strong>spreadsheet</strong></a>.</li>
                   <li>The code (including html, js, css and python files) have been uploaded to <a href="https://github.com/Asada-san/RunescapeCalculator" target="_blank" style="color: #4CAF50"><strong>Github</strong></a>. You're free to use it however you want.</li>
                   <li>All ability images were yoinked from the RS3 wiki.</li>
                 </ul>

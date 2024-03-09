@@ -76,6 +76,7 @@ class Player:
 
         self.AnachroniaCapeStand = data['AnachroniaCapeStand']
         self.ChanTime = 0
+        self.NaturalInstinctTime = 0
         self.GreaterChainTime = 0  # Time for the greater chain effect to take effect
         self.GreaterChainTargets = []  # Target numbers hit by Greater Chain minus main target
         self.Bar = Bar(self)
@@ -262,19 +263,15 @@ class Player:
         if self._BaseDamageEffective is None:
             if self.MainHand.Class == 'Melee':
                 damage = self.BaseDamage * self.StrengthPrayerBoost
-                damage += self.StrengthLevelBoost * 6
                 damage *= self.getBoost()
             elif self.MainHand.Class == 'Range':
                 damage = self.BaseDamage * self.RangedPrayerBoost
-                damage += self.RangedLevelBoost * 6
                 damage *= self.getBoost()
             elif self.MainHand.Class == 'Magic':
                 damage = self.BaseDamage * self.MagicPrayerBoost
-                damage += self.MagicLevelBoost * 6
                 damage *= self.getBoost()
             else:
                 damage = self.BaseDamage * max(self.StrengthPrayerBoost, self.RangedPrayerBoost, self.MagicPrayerBoost)
-                damage += max(self.StrengthLevelBoost, self.RangedLevelBoost, self.MagicLevelBoost) * 6
 
             self._BaseDamageEffective = damage * self.BerserkersFury * (1 + self.Ruthless * 0.025)
 
@@ -323,6 +320,15 @@ class Player:
             if not self.CritAdrenalineBuffTime:
                 if logger.DebugMode:
                     logger.Text += f'<li style="color: {logger.TextColor["normal"]};">Player adrenaline gain buff has worn out</li>'
+
+        if self.NaturalInstinctTime:
+            self.NaturalInstinctTime -= 1
+
+            if self.Type == 'Basic':
+                self.AdrenalineGain = 16
+
+            if not self.NaturalInstinctTime:
+                logger.Text += f'<li style="color: {logger.TextColor["normal"]};">Player natural instinct buff has worn out</li>'
 
         # If the player used a channeled ability and its still active
         if self.ChanTime:
