@@ -76,6 +76,7 @@ class Player:
 
         self.AnachroniaCapeStand = data['AnachroniaCapeStand']
         self.ChanTime = 0
+        self.NaturalInstinctTime = 0
         self.GreaterChainTime = 0  # Time for the greater chain effect to take effect
         self.GreaterChainTargets = []  # Target numbers hit by Greater Chain minus main target
         self.Bar = Bar(self)
@@ -319,6 +320,15 @@ class Player:
             if not self.CritAdrenalineBuffTime:
                 if logger.DebugMode:
                     logger.Text += f'<li style="color: {logger.TextColor["normal"]};">Player adrenaline gain buff has worn out</li>'
+
+        if self.NaturalInstinctTime:
+            self.NaturalInstinctTime -= 1
+
+            if self.Type == 'Basic':
+                self.AdrenalineGain = 16
+
+            if not self.NaturalInstinctTime:
+                logger.Text += f'<li style="color: {logger.TextColor["normal"]};">Player natural instinct buff has worn out</li>'
 
         # If the player used a channeled ability and its still active
         if self.ChanTime:
