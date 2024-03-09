@@ -1,4 +1,4 @@
-let spreadsheet = '<a href="https://github.com/Asada-san/RunescapeCalculator/blob/master/api/AbilityInfo.xlsx" target="_blank" style="color: #4CAF50"><strong>Spreadsheet</strong></a>'
+let spreadsheet = '<a href="https://github.com/Asada-san/RunescapeCalculator/blob/master/api/ItemInfo.xlsx" target="_blank" style="color: #4CAF50"><strong>Spreadsheet</strong></a>'
 
     // {
     // version: '',
