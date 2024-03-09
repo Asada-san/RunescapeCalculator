@@ -355,7 +355,7 @@ def doDamage(CurrentHits, player, dummy, logger, settings):
         # Critical hit check: Increased Adrenaline when under the effect of Tsunami/Meteor Strike/Incendiary Shot
         if all([player.CritAdrenalineBuffTime, PHit.Type in {1, 2}]):
 
-            player.BasicAdrenalineGain += (PHit.pForcedCrit + (1 - PHit.pForcedCrit) * PHit.pNatCrit) * 2
+            player.BasicAdrenalineGain += PHit.pForcedCrit * 2
 
             if player.BasicAdrenalineGain > 1 and player.Adrenaline < player.MaxAdrenaline:
                 player.Adrenaline += 1
