@@ -188,8 +188,8 @@ def PunctureCheck(dummy, player, FA, logger):
 
         # Calculate its new average
         if dummy.nPuncture > 0:
-            NewHit[0].DamMaxBonus = .18 * dummy.nPuncture  # PunctureStack
-            NewHit[0].DamMinBonus = .036 * dummy.nPuncture  # PunctureStack
+            NewHit[0].DamMaxBonus = .15 * dummy.nPuncture  # PunctureStack
+            NewHit[0].DamMinBonus = .10 * dummy.nPuncture  # PunctureStack
             NewHit[0]._Damage = None
 
             # dummy.PHits[dummy.nPH] = Hit  # Put the hit with the new average in the pending hits
