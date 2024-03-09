@@ -174,16 +174,16 @@ class Ability():
             if self.Name in {'Backhand', 'Impact', 'Binding Shot'}:
                 self.StunDuration = 0  # Abilities above loose their stun effect
 
-                for i in range(0, self.nS):  # Increase min by 8% per rank, max by 40% per rank
-                    self.DamMax[i] += 0.4 * self.Parent.Flanking
-                    self.DamMin[i] += 0.08 * self.Parent.Flanking
+                for i in range(0, self.nS):  # Increase damage by 40% per rank
+                    self.DamMax[i] *= 1 + 0.4 * self.Parent.Flanking
+                    self.DamMin[i] *= 1 + 0.4 * self.Parent.Flanking
 
             if self.Name in {'Forceful Backhand', 'Deep Impact', 'Tight Bindings'}:
                 self.StunDuration = 0  # Abilities above lose their stun effect
 
-                for i in range(0, self.nS):  # Increase min by 6% per rank, max by 30% per rank
-                    self.DamMax[i] += 0.3 * self.Parent.Flanking
-                    self.DamMin[i] += 0.06 * self.Parent.Flanking
+                for i in range(0, self.nS):  # Increase damage by 15% per rank
+                    self.DamMax[i] *= 1 + 0.15 * self.Parent.Flanking
+                    self.DamMin[i] *= 1 + 0.15 * self.Parent.Flanking
 
             if self.Parent.Logger.DebugMode:
                 self.Parent.Logger.Text += f'<li style="color: {self.Parent.Logger.TextColor["initialisation"]};">Ability upgrade {self.Name} (Flanking): Removed stun effect and increased Max and Min to {self.DamMax} and {self.DamMin} respectively</li>'
