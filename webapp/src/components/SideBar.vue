@@ -31,7 +31,6 @@
 
 <script>
 import RevoCalc from './RevoCalc.vue'
-import AbilRot from './AbilRot.vue'
 import ItemIDs from './itemids.vue'
 import LinkList from './LinkList.vue'
 
@@ -44,7 +43,7 @@ if (localStorage.component !== undefined) {
 }
 
 export default {
-  name: "navbar",
+  name: "NavBar",
   data: function () {
     return {
       currentComponent: lastComponent,
@@ -67,7 +66,6 @@ export default {
   components: {
     ItemIDs,
     RevoCalc,
-    AbilRot,
     LinkList
   }
 }

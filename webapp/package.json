@@ -8,25 +8,25 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "bootstrap-vue": "^2.21.2",
-    "chart.js": "^2.9.4",
-    "chartjs-plugin-trendline": "^1.0.0",
-    "core-js": "^3.6.5",
-    "jsoneditor": "^9.6.0",
-    "vue": "^2.6.11",
+    "bootstrap-vue": "^2.23.1",
+    "chart.js": "^4.0.1",
+    "chartjs-plugin-trendline": "^2.0.0",
+    "core-js": "^3.26.1",
+    "jsoneditor": "^9.9.2",
+    "vue": "^2.4.0",
     "vue-awesome": "^4.5.0",
-    "vue-chartjs": "^3.5.1",
-    "vue-masonry": "^0.14.0",
-    "vue-select": "^3.18.3"
+    "vue-chartjs": "^5.0.1",
+    "vue-masonry": "^0.16.0",
+    "vue-select": "^3.20.0"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-eslint": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^6.7.2",
-    "eslint-plugin-vue": "^6.2.2",
-    "vue-template-compiler": "^2.6.11"
+    "@vue/cli-plugin-babel": "^5.0.8",
+    "@vue/cli-plugin-eslint": "^5.0.8",
+    "@vue/cli-service": "^5.0.8",
+    "@babel/eslint-parser": "^7.19.1",
+    "eslint": "^8.29.0",
+    "eslint-plugin-vue": "^9.8.0",
+    "vue-template-compiler": "^2.7.14"
   },
   "eslintConfig": {
     "root": true,
@@ -38,7 +38,7 @@
       "eslint:recommended"
     ],
     "parserOptions": {
-      "parser": "babel-eslint"
+      "parser": "@babel/eslint-parser"
     },
     "rules": {}
   },

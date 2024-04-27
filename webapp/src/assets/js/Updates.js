@@ -1,4 +1,4 @@
-let spreadsheet = '<a href="https://github.com/Asada-san/RunescapeCalculator/blob/master/api/AbilityInfo.xlsx" target="_blank" style="color: #4CAF50"><strong>Spreadsheet</strong></a>'
+let spreadsheet = '<a href="https://github.com/Asada-san/RunescapeCalculator/blob/master/api/ItemInfo.xlsx" target="_blank" style="color: #4CAF50"><strong>Spreadsheet</strong></a>'
 
     // {
     // version: '',
@@ -15,6 +15,22 @@ let spreadsheet = '<a href="https://github.com/Asada-san/RunescapeCalculator/blo
     // ]}
 
 export var updateInfo = [{
+    version: 'V2.04.0',
+    date: '9-3-2024',
+    items: [{
+        header: 'Additions',
+        subItems: [
+            'Combat beta calculation changes',
+            'Natural Instinct (might be broken)',
+            'Greater Sonic (no flow), Sunshine, Death\'s Swiftness',
+            'Steps to run locally'
+        ]}, {
+        header: 'Removals',
+        subItems: [
+            'DPL',
+            'Leng passive',
+        ]}
+    ]}, {
     version: 'V2.03.0',
     date: '24-6-2022',
     items: [{
